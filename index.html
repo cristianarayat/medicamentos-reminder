@@ -1,96 +1,111 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Recordatorio de Medicamentos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recordatorio de Medicamentos</title>
 
-<style>
-:root{
-  --azul:#2f80ed;
-  --fondo:#f2f4f7;
-  --blanco:#ffffff;
-  --texto:#333;
-}
+  <style>
+    :root{
+      --azul:#2f80ed;
+      --fondo:#f2f4f7;
+      --blanco:#ffffff;
+      --texto:#333;
+      --borde:#e0e0e0;
+    }
 
-*{ box-sizing:border-box; }
+    *{ box-sizing:border-box; font-family: Arial, Helvetica, sans-serif; }
 
-body{
-  margin:0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background:var(--fondo);
-  color:var(--texto);
-}
+    body{
+      margin:0;
+      background:var(--fondo);
+      color:var(--texto);
+    }
 
-header{
-  text-align:center;
-  padding:20px 10px;
-  background:#fff;
-}
+    header{
+      text-align:center;
+      padding:20px 15px 10px;
+    }
 
-header h1{
-  margin:0;
-  font-size:26px;
-}
+    header h1{
+      margin:0;
+      font-size:26px;
+    }
 
-header p{
-  margin:5px 0 0;
-  color:#666;
-}
+    header p{
+      margin:6px 0 0;
+      color:#666;
+    }
 
-.section{
-  display:none;
-  padding:20px;
-}
+    .container{
+      max-width:480px;
+      margin:0 auto;
+      padding:15px;
+    }
 
-.section.active{
-  display:block;
-}
+    .card{
+      background:var(--blanco);
+      border-radius:14px;
+      padding:18px;
+      margin-bottom:16px;
+      box-shadow:0 2px 6px rgba(0,0,0,.05);
+    }
 
-.card{
-  background:var(--blanco);
-  border-radius:16px;
-  padding:20px;
-  margin-bottom:20px;
-}
+    .center{text-align:center;}
 
-.menu-btn{
-  width:100%;
-  padding:16px;
-  margin:10px 0;
-  font-size:18px;
-  border:none;
-  border-radius:14px;
-  background:var(--azul);
-  color:white;
-  cursor:pointer;
-}
+    .menu-btn{
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:12px;
+      background:var(--azul);
+      color:#fff;
+      font-size:17px;
+      margin-bottom:12px;
+      cursor:pointer;
+    }
 
-.menu-btn:active{
-  opacity:0.85;
-}
+    .menu-btn:active{ opacity:.9; }
 
-.image-box{
-  background:#fff;
-  border-radius:16px;
-  padding:10px;
-  margin-top:20px;
-}
+    input, select{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid var(--borde);
+      margin-bottom:10px;
+      font-size:15px;
+    }
 
-.image-box img{
-  width:100%;
-  height:auto;
-  display:block;
-  border-radius:12px;
-}
+    label{
+      font-size:14px;
+      margin-bottom:4px;
+      display:block;
+    }
 
-footer{
-  text-align:center;
-  font-size:14px;
-  color:#777;
-  margin:30px 0 10px;
-}
-</style>
+    .hidden{ display:none; }
+
+    img.personas{
+      width:100%;
+      max-width:420px;
+      margin:10px auto 0;
+      display:block;
+      border-radius:14px;
+    }
+
+    footer{
+      text-align:center;
+      font-size:13px;
+      color:#777;
+      margin:20px 0 10px;
+    }
+
+    .back{
+      background:#ddd;
+      color:#333;
+    }
+
+    ul{ padding-left:18px; }
+  </style>
 </head>
 
 <body>
@@ -100,58 +115,65 @@ footer{
   <p>Menú principal</p>
 </header>
 
-<!-- ================= MENU ================= -->
-<div id="menu" class="section active">
+<div class="container">
 
-  <div class="card" style="text-align:center">
-    <h2>Bienvenido, María</h2>
-    <p>Edad: 72 años y 3 meses</p>
+  <!-- MENÚ PRINCIPAL -->
+  <div id="menu" class="card center">
+    <h2 id="saludo">Bienvenido</h2>
+    <p id="edadTexto"></p>
+
+    <button class="menu-btn" onclick="mostrar('datos')">👤 Datos personales</button>
+    <button class="menu-btn" onclick="mostrar('medicamentos')">💊 Medicamentos</button>
+    <button class="menu-btn" onclick="mostrar('seguimiento')">📋 Seguimiento</button>
+
+    <!-- IMAGEN -->
+    <img 
+      src="personas-inclusivas.png"
+      alt="Personas de distintas edades y capacidades"
+      class="personas"
+    />
   </div>
 
-  <button class="menu-btn" onclick="mostrar('datos')">👤 Datos personales</button>
-  <button class="menu-btn" onclick="mostrar('medicamentos')">💊 Medicamentos</button>
-  <button class="menu-btn" onclick="mostrar('seguimiento')">📋 Seguimiento</button>
+  <!-- DATOS PERSONALES -->
+  <div id="datos" class="card hidden">
+    <h3>Datos personales</h3>
 
-  <div class="image-box">
-    <img src="activos/personas-inclusivas.png"
-         alt="Personas de distintas edades y capacidades">
+    <label>Nombre</label>
+    <input id="nombre" placeholder="Ej: María González"/>
+
+    <label>Fecha de nacimiento</label>
+    <input id="nacimiento" type="date"/>
+
+    <button class="menu-btn" onclick="guardarDatos()">Guardar</button>
+    <button class="menu-btn back" onclick="volver()">Volver</button>
   </div>
 
-</div>
+  <!-- MEDICAMENTOS -->
+  <div id="medicamentos" class="card hidden">
+    <h3>Medicamentos</h3>
 
-<!-- ================= DATOS PERSONALES ================= -->
-<div id="datos" class="section">
+    <label>Nombre del medicamento</label>
+    <input id="medNombre" placeholder="Ej: Paracetamol"/>
 
-  <div class="card">
-    <h2>Datos personales</h2>
-    <p>Aquí irán los datos del usuario.</p>
+    <label>Dosis</label>
+    <input id="medDosis" placeholder="Ej: 1 comprimido"/>
+
+    <label>Horario</label>
+    <input id="medHora" type="time"/>
+
+    <button class="menu-btn" onclick="agregarMedicamento()">Agregar</button>
+
+    <ul id="listaMedicamentos"></ul>
+
+    <button class="menu-btn back" onclick="volver()">Volver</button>
   </div>
 
-  <button class="menu-btn" onclick="volver()">⬅ Volver</button>
-
-</div>
-
-<!-- ================= MEDICAMENTOS ================= -->
-<div id="medicamentos" class="section">
-
-  <div class="card">
-    <h2>Medicamentos</h2>
-    <p>Aquí se gestionarán los medicamentos.</p>
+  <!-- SEGUIMIENTO -->
+  <div id="seguimiento" class="card hidden">
+    <h3>Seguimiento</h3>
+    <p>Próximamente aquí verás las tomas registradas.</p>
+    <button class="menu-btn back" onclick="volver()">Volver</button>
   </div>
-
-  <button class="menu-btn" onclick="volver()">⬅ Volver</button>
-
-</div>
-
-<!-- ================= SEGUIMIENTO ================= -->
-<div id="seguimiento" class="section">
-
-  <div class="card">
-    <h2>Seguimiento</h2>
-    <p>Aquí se mostrará el seguimiento de tomas.</p>
-  </div>
-
-  <button class="menu-btn" onclick="volver()">⬅ Volver</button>
 
 </div>
 
@@ -160,14 +182,62 @@ footer{
 </footer>
 
 <script>
-function mostrar(id){
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+  function mostrar(id){
+    document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+  }
 
-function volver(){
-  mostrar('menu');
-}
+  function volver(){
+    mostrar('menu');
+  }
+
+  function guardarDatos(){
+    const nombre = document.getElementById('nombre').value;
+    const nac = document.getElementById('nacimiento').value;
+    if(!nombre || !nac){ alert('Completa todos los datos'); return; }
+
+    localStorage.setItem('nombre', nombre);
+    localStorage.setItem('nacimiento', nac);
+    cargarDatos();
+    volver();
+  }
+
+  function cargarDatos(){
+    const nombre = localStorage.getItem('nombre');
+    const nac = localStorage.getItem('nacimiento');
+    if(!nombre || !nac) return;
+
+    const edad = calcularEdad(nac);
+    document.getElementById('saludo').innerText = `Bienvenido, ${nombre}`;
+    document.getElementById('edadTexto').innerText =
+      `Edad: ${edad.años} años y ${edad.meses} meses`;
+  }
+
+  function calcularEdad(fecha){
+    const n = new Date(fecha);
+    const h = new Date();
+    let años = h.getFullYear() - n.getFullYear();
+    let meses = h.getMonth() - n.getMonth();
+    if(meses < 0){ años--; meses += 12; }
+    return {años, meses};
+  }
+
+  function agregarMedicamento(){
+    const n = document.getElementById('medNombre').value;
+    const d = document.getElementById('medDosis').value;
+    const h = document.getElementById('medHora').value;
+    if(!n||!d||!h){ alert('Completa todo'); return; }
+
+    const li = document.createElement('li');
+    li.innerText = `${n} – ${d} – ${h}`;
+    document.getElementById('listaMedicamentos').appendChild(li);
+
+    document.getElementById('medNombre').value='';
+    document.getElementById('medDosis').value='';
+    document.getElementById('medHora').value='';
+  }
+
+  cargarDatos();
 </script>
 
 </body>
