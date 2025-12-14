@@ -81,6 +81,14 @@ button{
   font-size:13px;
   margin:4px 4px 0 0;
 }
+
+img.med-img{
+  width:100%;
+  max-height:160px;
+  object-fit:contain;
+  border-radius:12px;
+  margin-bottom:10px;
+}
 </style>
 </head>
 
@@ -93,7 +101,7 @@ button{
 
 <div class="pattern-area">
 
-  <!-- PERFIL (RESUMEN) -->
+  <!-- PERFIL RESUMEN -->
   <div class="card" id="perfilResumen"></div>
 
   <!-- LISTA TRATAMIENTOS -->
@@ -105,6 +113,7 @@ button{
 
   <!-- FORMULARIO MEDICAMENTO -->
   <div class="card hidden" id="formMed">
+
     <div class="row">
       <div class="label">Nombre del medicamento</div>
       <input id="medNombre">
@@ -113,6 +122,11 @@ button{
     <div class="row">
       <div class="label">Dosis</div>
       <input id="medDosis" placeholder="Ej: 1 comprimido">
+    </div>
+
+    <div class="row">
+      <div class="label">Foto de la caja (opcional)</div>
+      <input type="file" id="medFoto" accept="image/*">
     </div>
 
     <div class="row">
@@ -145,12 +159,23 @@ perfilResumen.innerHTML = `
 // ===== TRATAMIENTOS =====
 let tratamientos = JSON.parse(localStorage.getItem("tratamientos")) || [];
 let horasTemp = [];
+let fotoTemp = null;
+
+// Foto
+medFoto.addEventListener("change", function(){
+  const file = this.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => fotoTemp = reader.result;
+  reader.readAsDataURL(file);
+});
 
 function renderLista(){
   lista.innerHTML = "";
   tratamientos.forEach((t,i)=>{
     lista.innerHTML += `
       <div class="list-item">
+        ${t.foto ? `<img class="med-img" src="${t.foto}">` : ""}
         <strong>${t.nombre}</strong><br>
         Dosis: ${t.dosis}<br>
         Horarios: ${t.horarios.join(", ")}<br>
@@ -168,7 +193,9 @@ function mostrarForm(){
 function ocultarForm(){
   formMed.classList.add("hidden");
   horasTemp = [];
+  fotoTemp = null;
   horas.innerHTML = "";
+  medFoto.value = "";
 }
 
 function agregarHora(){
@@ -180,7 +207,7 @@ function agregarHora(){
 
 function guardarMed(){
   if(!medNombre.value || !medDosis.value || !medDias.value || horasTemp.length===0){
-    alert("Complete todos los campos");
+    alert("Complete todos los campos obligatorios");
     return;
   }
 
@@ -190,10 +217,12 @@ function guardarMed(){
     horarios: horasTemp,
     dias: medDias.value,
     inicio: new Date().toISOString().slice(0,10),
-    activo:true
+    activo:true,
+    foto: fotoTemp
   });
 
   localStorage.setItem("tratamientos", JSON.stringify(tratamientos));
+
   medNombre.value = medDosis.value = medDias.value = "";
   ocultarForm();
   renderLista();
