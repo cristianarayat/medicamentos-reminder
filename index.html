@@ -67,17 +67,18 @@ input{
   box-sizing:border-box;
 }
 
-/* PERSONAS FIJAS */
+/* ===== ILUSTRACIONES SUAVES ===== */
 .people-strip{
   display:flex;
-  justify-content:space-around;
+  justify-content:space-between;
   align-items:flex-end;
   margin-top:24px;
-  opacity:0.75;
+  opacity:0.85;
 }
 
-.person{
-  font-size:46px; /* tamaño persona */
+.person-svg{
+  width:56px;
+  height:56px;
 }
 </style>
 </head>
@@ -98,12 +99,34 @@ input{
     <button onclick="mostrarSeccion('medicamentos')">💊 Medicamentos</button>
     <button onclick="mostrarSeccion('seguimiento')">📊 Seguimiento</button>
 
-    <!-- PERSONAS FIJAS -->
+    <!-- ILUSTRACIONES -->
     <div class="people-strip">
-      <div class="person">👵👴</div>
-      <div class="person">👩‍🦱</div>
-      <div class="person">🤱</div>
-      <div class="person">♿</div>
+      <!-- Abuelos -->
+      <svg class="person-svg" viewBox="0 0 64 64">
+        <circle cx="32" cy="20" r="10" fill="#f2c9ac"/>
+        <rect x="18" y="32" width="28" height="26" rx="12" fill="#c7d7e8"/>
+      </svg>
+
+      <!-- Joven -->
+      <svg class="person-svg" viewBox="0 0 64 64">
+        <circle cx="32" cy="18" r="9" fill="#d9a27c"/>
+        <rect x="20" y="30" width="24" height="28" rx="12" fill="#f4b6c2"/>
+      </svg>
+
+      <!-- Mamá con bebé -->
+      <svg class="person-svg" viewBox="0 0 64 64">
+        <circle cx="28" cy="18" r="9" fill="#f2c9ac"/>
+        <circle cx="40" cy="24" r="5" fill="#f7d7c4"/>
+        <rect x="18" y="30" width="28" height="26" rx="12" fill="#d5e8d4"/>
+      </svg>
+
+      <!-- Silla de ruedas -->
+      <svg class="person-svg" viewBox="0 0 64 64">
+        <circle cx="28" cy="16" r="8" fill="#f2c9ac"/>
+        <circle cx="24" cy="44" r="10" stroke="#999" stroke-width="3" fill="none"/>
+        <line x1="28" y1="24" x2="36" y2="36" stroke="#999" stroke-width="3"/>
+        <line x1="36" y1="36" x2="44" y2="36" stroke="#999" stroke-width="3"/>
+      </svg>
     </div>
   </div>
 
@@ -113,7 +136,7 @@ input{
     <div id="perfilResumen"></div>
 
     <button onclick="editarPerfil()">Modificar datos</button>
-    <button class="secondary" onclick="volverHome()">⬅ Volver al menú</button>
+    <button class="secondary" onclick="volverHome()">⬅ Volver</button>
   </div>
 
   <!-- FORM PERFIL -->
@@ -123,6 +146,11 @@ input{
     <div class="row">
       <div class="label">Nombre</div>
       <input id="nombre">
+    </div>
+
+    <div class="row">
+      <div class="label">Fecha de nacimiento</div>
+      <input id="fechaNacimiento" type="date">
     </div>
 
     <div class="row">
@@ -144,26 +172,12 @@ input{
     <button class="secondary" onclick="mostrarSeccion('perfil')">Cancelar</button>
   </div>
 
-  <!-- MEDICAMENTOS -->
-  <div class="card hidden" id="medicamentos">
-    <h3>Medicamentos</h3>
-    <p>(sin cambios en esta corrección)</p>
-    <button class="secondary" onclick="volverHome()">⬅ Volver</button>
-  </div>
-
-  <!-- SEGUIMIENTO -->
-  <div class="card hidden" id="seguimiento">
-    <h3>Seguimiento</h3>
-    <p>(sin cambios en esta corrección)</p>
-    <button class="secondary" onclick="volverHome()">⬅ Volver</button>
-  </div>
-
 </div>
 
 <script>
 // ===== NAVEGACIÓN =====
 function mostrarSeccion(id){
-  ["home","perfil","perfilForm","medicamentos","seguimiento"].forEach(s=>{
+  ["home","perfil","perfilForm"].forEach(s=>{
     const el = document.getElementById(s);
     if(el) el.classList.add("hidden");
   });
@@ -177,6 +191,7 @@ function volverHome(){
 // ===== PERFIL =====
 let usuario = JSON.parse(localStorage.getItem("usuario")) || {
   nombre:"",
+  fechaNacimiento:"",
   edad:"",
   cuidadorNombre:"",
   cuidadorTelefono:""
@@ -185,6 +200,7 @@ let usuario = JSON.parse(localStorage.getItem("usuario")) || {
 function renderPerfil(){
   perfilResumen.innerHTML = `
     <strong>Nombre:</strong> ${usuario.nombre || "-"}<br>
+    <strong>Fecha de nacimiento:</strong> ${usuario.fechaNacimiento || "-"}<br>
     <strong>Edad:</strong> ${usuario.edad || "-"}<br>
     <strong>Cuidador:</strong> ${usuario.cuidadorNombre || "-"}<br>
     <strong>Teléfono:</strong> ${usuario.cuidadorTelefono || "-"}
@@ -193,6 +209,7 @@ function renderPerfil(){
 
 function editarPerfil(){
   nombre.value = usuario.nombre;
+  fechaNacimiento.value = usuario.fechaNacimiento;
   edad.value = usuario.edad;
   cuidadorNombre.value = usuario.cuidadorNombre;
   cuidadorTelefono.value = usuario.cuidadorTelefono;
@@ -201,6 +218,7 @@ function editarPerfil(){
 
 function guardarPerfil(){
   usuario.nombre = nombre.value;
+  usuario.fechaNacimiento = fechaNacimiento.value;
   usuario.edad = edad.value;
   usuario.cuidadorNombre = cuidadorNombre.value;
   usuario.cuidadorTelefono = cuidadorTelefono.value;
