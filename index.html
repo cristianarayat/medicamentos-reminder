@@ -8,28 +8,35 @@
 <style>
 :root{
   --azul:#2f80ed;
-  --gris:#f4f6f8;
-  --texto:#333;
+  --gris:#f1f3f5;
   --card:#ffffff;
+  --texto:#333;
+  --borde:#dcdcdc;
 }
 
 body{
   margin:0;
   padding:20px;
   font-family: system-ui, Arial, sans-serif;
-  background:var(--gris);
   color:var(--texto);
+
+  /* Fondo médico suave */
+  background:
+    linear-gradient(rgba(241,243,245,0.92), rgba(241,243,245,0.92)),
+    url("https://images.unsplash.com/photo-1580281657521-8d62f5b6d3d1?auto=format&fit=crop&w=1200&q=60");
+  background-size:cover;
+  background-position:center;
 }
 
 h1{
   text-align:center;
-  margin-bottom:6px;
+  margin-bottom:4px;
 }
 
 .sub{
   text-align:center;
   color:#666;
-  margin-bottom:22px;
+  margin-bottom:24px;
 }
 
 .card{
@@ -37,8 +44,8 @@ h1{
   margin:0 auto;
   background:var(--card);
   padding:22px;
-  border-radius:16px;
-  box-shadow:0 8px 22px rgba(0,0,0,.12);
+  border-radius:18px;
+  box-shadow:0 10px 26px rgba(0,0,0,.12);
 }
 
 label{
@@ -50,32 +57,61 @@ label{
 
 input{
   width:100%;
+  box-sizing:border-box;
   padding:14px;
   margin-top:6px;
   font-size:16px;
-  border-radius:12px;
-  border:1px solid #ccc;
+  border-radius:14px;
+  border:1px solid var(--borde);
+  background:#fafafa;
 }
 
-.toggle{
+input:focus{
+  outline:none;
+  border-color:var(--azul);
+  background:#fff;
+}
+
+/* Opciones clickables */
+.option{
   display:flex;
   align-items:center;
   gap:12px;
-  margin-top:14px;
-  font-size:15px;
+  margin-top:16px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#f7f8fa;
+  cursor:pointer;
+  user-select:none;
 }
 
+.option input{
+  width:20px;
+  height:20px;
+  margin:0;
+}
+
+.option span{
+  font-size:15px;
+  font-weight:500;
+}
+
+/* Botón */
 button{
-  margin-top:26px;
+  margin-top:28px;
   width:100%;
   padding:16px;
   font-size:17px;
   font-weight:700;
   border:none;
-  border-radius:14px;
+  border-radius:16px;
   background:var(--azul);
   color:white;
   cursor:pointer;
+}
+
+button:active{
+  transform:scale(0.99);
 }
 
 .success{
@@ -104,14 +140,14 @@ button{
   <label>Teléfono del cuidador</label>
   <input id="cuidador" type="tel" placeholder="Ej: +56 9 1234 5678">
 
-  <div class="toggle">
+  <div class="option" onclick="voz.checked = !voz.checked">
     <input id="voz" type="checkbox" checked>
-    <label for="voz">Usar aviso por voz</label>
+    <span>Usar aviso por voz</span>
   </div>
 
-  <div class="toggle">
+  <div class="option" onclick="vibracion.checked = !vibracion.checked">
     <input id="vibracion" type="checkbox" checked>
-    <label for="vibracion">Usar vibración</label>
+    <span>Usar vibración</span>
   </div>
 
   <button onclick="guardarUsuario()">Continuar</button>
