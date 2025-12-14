@@ -8,238 +8,342 @@
 <style>
 :root{
   --azul:#2f80ed;
-  --fondo:#f2f4f7;
-  --blanco:#ffffff;
+  --gris:#eef1f4;
+  --card:#ffffff;
   --texto:#333;
+  --borde:#d0d4d9;
+  --ok:#27ae60;
 }
 
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+*{ box-sizing:border-box; }
 
 body{
   margin:0;
-  background:var(--fondo);
-}
-
-header{
-  text-align:center;
-  padding:20px 10px 10px;
-}
-
-header h1{
-  margin:5px 0;
-  font-size:26px;
+  font-family: system-ui, Arial, sans-serif;
+  background:var(--gris);
   color:var(--texto);
 }
 
-header small{
-  color:#666;
+.header{
+  padding:18px;
+  background:#f7f9fb;
+  text-align:center;
+}
+
+.header h1{
+  margin:0;
 }
 
 .container{
-  max-width:480px;
-  margin:auto;
-  padding:10px;
+  padding:20px;
 }
 
 .card{
-  background:var(--blanco);
+  max-width:480px;
+  margin:0 auto 18px;
+  background:var(--card);
+  padding:22px;
   border-radius:18px;
-  padding:20px;
-  margin-bottom:15px;
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
+  box-shadow:0 14px 32px rgba(0,0,0,.15);
 }
 
-.menu-btn{
+.hidden{ display:none; }
+
+button{
   width:100%;
-  padding:16px;
-  margin:10px 0;
-  font-size:18px;
+  height:54px;
+  border-radius:16px;
   border:none;
-  border-radius:14px;
+  font-size:17px;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:16px;
   background:var(--azul);
   color:white;
-  cursor:pointer;
 }
 
-.menu-btn:active{
-  transform:scale(.98);
+.secondary{
+  background:#6c757d;
 }
 
-.hidden{
-  display:none;
+.success{
+  background:var(--ok);
 }
 
-label{
-  font-weight:bold;
-  margin-top:15px;
-  display:block;
+.row{
+  margin-top:14px;
+}
+
+.label{
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:6px;
 }
 
 input{
   width:100%;
+  height:52px;
   padding:14px;
-  margin-top:6px;
-  border-radius:10px;
-  border:1px solid #ccc;
+  border-radius:14px;
+  border:1px solid var(--borde);
   font-size:16px;
 }
 
-.switch{
+/* ===== SWITCH ===== */
+.switch-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-top:15px;
+  padding:14px;
+  border-radius:14px;
+  background:#f3f5f7;
+  margin-top:14px;
+}
+
+.switch-row span{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:600;
+}
+
+.switch{
+  position:relative;
+  width:52px;
+  height:28px;
 }
 
 .switch input{
-  width:50px;
-  height:25px;
+  opacity:0;
+  width:0;
+  height:0;
 }
 
-.save-msg{
-  color:green;
-  margin-top:15px;
-  font-weight:bold;
-  text-align:center;
+.slider{
+  position:absolute;
+  cursor:pointer;
+  top:0; left:0; right:0; bottom:0;
+  background:#ccc;
+  border-radius:28px;
+  transition:.3s;
 }
 
-img.main-img{
-  width:100%;
-  margin-top:15px;
-  border-radius:16px;
+.slider:before{
+  position:absolute;
+  content:"";
+  height:22px;
+  width:22px;
+  left:3px;
+  bottom:3px;
+  background:white;
+  border-radius:50%;
+  transition:.3s;
 }
 
-footer{
-  text-align:center;
+input:checked + .slider{
+  background:var(--azul);
+}
+
+input:checked + .slider:before{
+  transform:translateX(24px);
+}
+
+/* ===== HOME ===== */
+.bienvenida{
+  margin-bottom:10px;
+}
+
+.bienvenida strong{
+  font-size:18px;
+}
+
+.bienvenida span{
   font-size:14px;
-  color:#777;
-  padding:20px;
+  color:#555;
+}
+
+.menu-img{
+  margin-top:26px;
+  display:flex;
+  justify-content:center;
+}
+
+.menu-img img{
+  width:100%;
+  max-width:440px;
+  height:auto;
+  border-radius:14px;
+}
+
+/* ===== MENSAJE ===== */
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#27ae60;
+  color:white;
+  padding:14px 22px;
+  border-radius:14px;
+  font-weight:700;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  z-index:9999;
 }
 </style>
 </head>
 
 <body>
 
-<header>
+<div class="header">
   <h1>💊 Recordatorio de Medicamentos</h1>
-  <small>Menú principal</small>
-</header>
+</div>
 
 <div class="container">
 
-  <!-- MENU PRINCIPAL -->
-  <div class="card" id="menu">
-    <h2 id="bienvenida">Bienvenido</h2>
-    <p id="edad"></p>
+  <!-- HOME -->
+  <div class="card" id="home">
+    <div class="bienvenida" id="bienvenida"></div>
 
-    <button class="menu-btn" onclick="mostrar('datos')">👤 Datos personales</button>
-    <button class="menu-btn" onclick="mostrar('meds')">💊 Medicamentos</button>
-    <button class="menu-btn" onclick="mostrar('seguimiento')">📊 Seguimiento</button>
+    <h2>Menú principal</h2>
 
-    <!-- IMAGEN PRINCIPAL -->
-    <img src="personas-inclusivas.png"
-         alt="Personas de distintas edades y capacidades"
-         class="main-img">
+    <button onclick="mostrar('perfil')">👤 Datos personales</button>
+    <button onclick="mostrar('medicamentos')">💊 Medicamentos</button>
+    <button onclick="mostrar('seguimiento')">📊 Seguimiento</button>
+
+    <div class="menu-img">
+      <img src="personas-inclusivas.png" alt="Personas inclusivas">
+    </div>
   </div>
 
-  <!-- DATOS PERSONALES -->
-  <div class="card hidden" id="datos">
-    <h2>Datos personales</h2>
+  <!-- PERFIL -->
+  <div class="card hidden" id="perfil">
+    <h3>Datos personales</h3>
 
-    <label>Nombre</label>
-    <input id="nombre">
-
-    <label>Fecha de nacimiento</label>
-    <input type="date" id="fecha">
-
-    <label>Nombre del cuidador</label>
-    <input id="cuidador">
-
-    <label>Teléfono del cuidador</label>
-    <input type="tel" id="telefono">
-
-    <div class="switch">
-      <span>📳 Vibración</span>
-      <input type="checkbox" id="vibracion">
+    <div class="row">
+      <div class="label">Nombre</div>
+      <input id="nombre">
     </div>
 
-    <div class="switch">
+    <div class="row">
+      <div class="label">Fecha de nacimiento</div>
+      <input type="date" id="fechaNacimiento">
+    </div>
+
+    <div class="row">
+      <div class="label">Nombre del cuidador</div>
+      <input id="cuidadorNombre">
+    </div>
+
+    <div class="row">
+      <div class="label">Teléfono del cuidador</div>
+      <input id="cuidadorTelefono">
+    </div>
+
+    <!-- SWITCH VOZ -->
+    <div class="switch-row">
       <span>🔊 Aviso por voz</span>
-      <input type="checkbox" id="voz">
+      <label class="switch">
+        <input type="checkbox" id="voz">
+        <span class="slider"></span>
+      </label>
     </div>
 
-    <button class="menu-btn" onclick="guardarDatos()">💾 Guardar</button>
-    <div class="save-msg hidden" id="msg">Datos guardados correctamente</div>
+    <!-- SWITCH VIBRACIÓN -->
+    <div class="switch-row">
+      <span>📳 Vibración</span>
+      <label class="switch">
+        <input type="checkbox" id="vibracion">
+        <span class="slider"></span>
+      </label>
+    </div>
 
-    <button class="menu-btn" style="background:#999" onclick="volver()">⬅ Volver</button>
+    <button class="success" onclick="guardarPerfil()">Guardar</button>
+    <button class="secondary" onclick="mostrar('home')">⬅ Volver</button>
   </div>
 
   <!-- MEDICAMENTOS -->
-  <div class="card hidden" id="meds">
-    <h2>Medicamentos</h2>
-    <p>Sección lista para agregar medicamentos permanentes.</p>
-    <button class="menu-btn" style="background:#999" onclick="volver()">⬅ Volver</button>
+  <div class="card hidden" id="medicamentos">
+    <h3>Medicamentos</h3>
+    <p>(continúa en la siguiente fase)</p>
+    <button class="secondary" onclick="mostrar('home')">⬅ Volver</button>
   </div>
 
   <!-- SEGUIMIENTO -->
   <div class="card hidden" id="seguimiento">
-    <h2>Seguimiento</h2>
-    <p>Registro de tomas y alertas.</p>
-    <button class="menu-btn" style="background:#999" onclick="volver()">⬅ Volver</button>
+    <h3>Seguimiento</h3>
+    <p>(continúa en la siguiente fase)</p>
+    <button class="secondary" onclick="mostrar('home')">⬅ Volver</button>
   </div>
 
 </div>
 
-<footer>
-  Desarrollado por CA Tecnología
-</footer>
-
 <script>
+/* ===== UTIL ===== */
 function mostrar(id){
-  document.getElementById('menu').classList.add('hidden');
-  document.getElementById(id).classList.remove('hidden');
+  ["home","perfil","medicamentos","seguimiento"].forEach(s=>{
+    document.getElementById(s).classList.add("hidden");
+  });
+  document.getElementById(id).classList.remove("hidden");
 }
 
-function volver(){
-  document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
-  document.getElementById('menu').classList.remove('hidden');
+function calcularEdad(fecha){
+  if(!fecha) return "";
+  const hoy=new Date(), nac=new Date(fecha);
+  let a=hoy.getFullYear()-nac.getFullYear();
+  let m=hoy.getMonth()-nac.getMonth();
+  if(hoy.getDate()<nac.getDate()) m--;
+  if(m<0){ a--; m+=12; }
+  return `${a} años y ${m} meses`;
 }
 
-function guardarDatos(){
-  localStorage.setItem('nombre',nombre.value);
-  localStorage.setItem('fecha',fecha.value);
-  localStorage.setItem('cuidador',cuidador.value);
-  localStorage.setItem('telefono',telefono.value);
-  localStorage.setItem('vibracion',vibracion.checked);
-  localStorage.setItem('voz',voz.checked);
-
-  document.getElementById('msg').classList.remove('hidden');
-  cargar();
+function toast(msg){
+  const t=document.createElement("div");
+  t.className="toast";
+  t.innerText=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2000);
 }
 
-function cargar(){
-  if(localStorage.nombre){
-    nombre.value=localStorage.nombre;
-    cuidador.value=localStorage.cuidador;
-    telefono.value=localStorage.telefono;
-    vibracion.checked=localStorage.vibracion==="true";
-    voz.checked=localStorage.voz==="true";
-    fecha.value=localStorage.fecha;
+/* ===== PERFIL ===== */
+let usuario = JSON.parse(localStorage.getItem("usuario")) || {
+  nombre:"",
+  fechaNacimiento:"",
+  cuidadorNombre:"",
+  cuidadorTelefono:"",
+  voz:false,
+  vibracion:false
+};
 
-    const f=new Date(localStorage.fecha);
-    const hoy=new Date();
-    let años=hoy.getFullYear()-f.getFullYear();
-    let meses=hoy.getMonth()-f.getMonth();
-    if(meses<0){años--;meses+=12;}
+function render(){
+  bienvenida.innerHTML = usuario.nombre
+    ? `<strong>Bienvenido ${usuario.nombre}</strong><br>
+       <span>Edad: ${calcularEdad(usuario.fechaNacimiento)}</span>`
+    : `<strong>Bienvenido</strong>`;
 
-    document.getElementById('bienvenida').innerText=
-      `Bienvenido ${localStorage.nombre}`;
-    document.getElementById('edad').innerText=
-      `Edad: ${años} años y ${meses} meses`;
-  }
+  nombre.value = usuario.nombre;
+  fechaNacimiento.value = usuario.fechaNacimiento;
+  cuidadorNombre.value = usuario.cuidadorNombre;
+  cuidadorTelefono.value = usuario.cuidadorTelefono;
+  voz.checked = usuario.voz;
+  vibracion.checked = usuario.vibracion;
 }
 
-cargar();
+function guardarPerfil(){
+  usuario.nombre = nombre.value;
+  usuario.fechaNacimiento = fechaNacimiento.value;
+  usuario.cuidadorNombre = cuidadorNombre.value;
+  usuario.cuidadorTelefono = cuidadorTelefono.value;
+  usuario.voz = voz.checked;
+  usuario.vibracion = vibracion.checked;
+
+  localStorage.setItem("usuario", JSON.stringify(usuario));
+  render();
+  toast("Datos guardados correctamente");
+}
+
+/* INIT */
+render();
+mostrar("home");
 </script>
 
 </body>
