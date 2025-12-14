@@ -15,32 +15,49 @@
   --patron:#c3c8ce;
 }
 
-/* ===== FONDO CON PATRÓN MÉDICO RICO ===== */
+/* ===== BODY GENERAL ===== */
 body{
   margin:0;
-  padding:20px;
+  padding:0;
   font-family: system-ui, Arial, sans-serif;
   color:var(--texto);
+  background:var(--gris);
+}
+
+/* ===== HEADER LIMPIO (SIN PATRÓN) ===== */
+.header{
+  padding:24px 20px 12px 20px;
+  background:#f7f9fb;
+}
+
+h1{
+  text-align:center;
+  margin:0;
+}
+
+.sub{
+  text-align:center;
+  color:#666;
+  margin-top:4px;
+}
+
+/* ===== ZONA CON PATRÓN MÉDICO ===== */
+.pattern-area{
+  padding:20px;
   background-color:var(--gris);
   background-image:
     url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'>\
 <g fill='none' stroke='%23c3c8ce' stroke-width='3' opacity='0.9'>\
-<!-- Cápsula -->\
 <rect x='20' y='74' width='48' height='18' rx='9'/>\
 <line x1='44' y1='74' x2='44' y2='92'/>\
-<!-- Pastilla redonda -->\
 <circle cx='118' cy='36' r='10'/>\
-<!-- Pastilla pequeña -->\
 <circle cx='100' cy='110' r='6'/>\
-<!-- Jeringa -->\
 <rect x='86' y='64' width='36' height='6' rx='3'/>\
 <line x1='122' y1='67' x2='136' y2='67'/>\
 <line x1='136' y1='64' x2='136' y2='70'/>\
-<!-- Frasco -->\
 <rect x='18' y='18' width='20' height='28' rx='4'/>\
 <rect x='22' y='14' width='12' height='6' rx='2'/>\
-<!-- Caja / blíster -->\
 <rect x='90' y='88' width='28' height='20' rx='3'/>\
 <line x1='90' y1='98' x2='118' y2='98'/>\
 </g>\
@@ -48,19 +65,7 @@ body{
   background-repeat:repeat;
 }
 
-/* ===== TÍTULOS ===== */
-h1{
-  text-align:center;
-  margin-bottom:4px;
-}
-
-.sub{
-  text-align:center;
-  color:#666;
-  margin-bottom:24px;
-}
-
-/* ===== TARJETA ===== */
+/* ===== CARD ===== */
 .card{
   max-width:420px;
   margin:0 auto;
@@ -143,58 +148,67 @@ button:active{
 
 <body>
 
-<h1>💊 Recordatorio de Medicamentos</h1>
-<div class="sub">Datos del usuario</div>
+<div class="header">
+  <h1>💊 Recordatorio de Medicamentos</h1>
+  <div class="sub">Datos del usuario</div>
+</div>
 
-<div class="card">
+<div class="pattern-area">
 
-  <label>Nombre del usuario</label>
-  <input id="nombre" placeholder="Ej: María González">
+  <div class="card">
 
-  <label>Edad (opcional)</label>
-  <input id="edad" type="number" placeholder="Ej: 72">
+    <label>Nombre del usuario</label>
+    <input id="nombre" placeholder="Ej: María González">
 
-  <label>Nombre del cuidador</label>
-  <input id="cuidadorNombre" placeholder="Ej: Juan Pérez">
+    <label>Edad</label>
+    <input id="edad" type="number" placeholder="Ej: 72">
 
-  <label>Teléfono del cuidador</label>
-  <input id="cuidadorTel" type="tel" placeholder="Ej: +56 9 1234 5678">
+    <label>Nombre del cuidador</label>
+    <input id="cuidadorNombre" placeholder="Ej: Juan Pérez">
 
-  <div class="option" onclick="voz.checked = !voz.checked">
-    <input id="voz" type="checkbox" checked>
-    <span>Usar aviso por voz</span>
+    <label>Teléfono del cuidador</label>
+    <input id="cuidadorTel" type="tel" placeholder="Ej: +56 9 1234 5678">
+
+    <div class="option" onclick="voz.checked = !voz.checked">
+      <input id="voz" type="checkbox" checked>
+      <span>Usar aviso por voz</span>
+    </div>
+
+    <div class="option" onclick="vibracion.checked = !vibracion.checked">
+      <input id="vibracion" type="checkbox" checked>
+      <span>Usar vibración</span>
+    </div>
+
+    <button onclick="guardarUsuario()">Continuar</button>
+
+    <div id="msg" class="success"></div>
+
   </div>
-
-  <div class="option" onclick="vibracion.checked = !vibracion.checked">
-    <input id="vibracion" type="checkbox" checked>
-    <span>Usar vibración</span>
-  </div>
-
-  <button onclick="guardarUsuario()">Continuar</button>
-
-  <div id="msg" class="success"></div>
 
 </div>
 
 <script>
 function limpiarTelefono(t){
-  return t.replace(/\\D/g,'');
+  return t.replace(/\D/g,'');
 }
 
 function guardarUsuario(){
   const telRaw = cuidadorTel.value.trim();
   const telLimpio = limpiarTelefono(telRaw);
 
-  if(!nombre.value.trim()){
-    alert("Por favor ingrese el nombre del usuario");
+  if(
+    !nombre.value.trim() ||
+    !edad.value ||
+    !cuidadorNombre.value.trim() ||
+    !telRaw
+  ){
+    alert("Por favor complete todos los campos");
     return;
   }
 
-  if(telRaw){
-    if(telLimpio.length < 8 || telLimpio.length > 15){
-      alert("El teléfono del cuidador debe tener entre 8 y 15 números");
-      return;
-    }
+  if(telLimpio.length < 8 || telLimpio.length > 15){
+    alert("El teléfono del cuidador debe tener entre 8 y 15 números");
+    return;
   }
 
   const usuario = {
