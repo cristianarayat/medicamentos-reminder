@@ -8,239 +8,262 @@
 <style>
 :root{
   --azul:#2f80ed;
-  --fondo:#f2f4f7;
-  --blanco:#ffffff;
+  --gris:#eef1f4;
+  --card:#ffffff;
   --texto:#333;
-  --borde:#ddd;
+  --borde:#d0d4d9;
 }
-
-*{box-sizing:border-box}
 
 body{
   margin:0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background:var(--fondo);
+  font-family: system-ui, Arial, sans-serif;
+  background:var(--gris);
   color:var(--texto);
 }
 
-header{
+.header{
+  padding:20px;
+  background:#f7f9fb;
   text-align:center;
-  padding:25px 15px 15px;
 }
 
-header h1{
-  margin:0;
-  font-size:26px;
-}
-
-header p{
-  margin:5px 0 0;
-  color:#666;
-}
-
-.container{
-  max-width:420px;
-  margin:0 auto;
-  padding:15px;
+.pattern-area{
+  padding:20px;
 }
 
 .card{
-  background:var(--blanco);
+  max-width:480px;
+  margin:0 auto 16px;
+  background:var(--card);
+  padding:22px;
   border-radius:18px;
-  padding:20px;
-  margin-bottom:20px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+  box-shadow:0 14px 32px rgba(0,0,0,.15);
 }
 
-.menu-btn{
+.hidden{ display:none; }
+
+button{
   width:100%;
-  padding:16px;
-  margin-bottom:12px;
-  font-size:18px;
+  height:56px;
+  border-radius:16px;
   border:none;
-  border-radius:14px;
+  font-size:17px;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:16px;
   background:var(--azul);
   color:white;
-  cursor:pointer;
 }
 
-.menu-btn:active{
-  transform:scale(0.98);
+.secondary{
+  background:#6c757d;
 }
 
-.image-box img{
-  width:100%;
-  border-radius:18px;
+.row{
+  margin-top:14px;
 }
 
-label{
-  display:block;
-  margin-top:15px;
+.label{
+  font-size:14px;
   font-weight:600;
+  margin-bottom:6px;
 }
 
 input{
   width:100%;
-  padding:12px;
-  margin-top:6px;
-  border-radius:10px;
+  height:52px;
+  padding:14px;
+  border-radius:14px;
   border:1px solid var(--borde);
-  font-size:16px;
+  box-sizing:border-box;
+}
+
+/* ===== TOGGLE ===== */
+.toggle{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  background:#f2f4f7;
+  border-radius:14px;
+  margin-top:14px;
+}
+
+.toggle input{
+  display:none;
 }
 
 .switch{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-top:18px;
-  padding:12px;
-  border-radius:12px;
-  background:#f7f7f7;
+  width:48px;
+  height:26px;
+  background:#ccc;
+  border-radius:13px;
+  position:relative;
+  transition:.3s;
 }
 
-.switch input{
+.switch::after{
+  content:"";
   width:22px;
   height:22px;
+  background:#fff;
+  border-radius:50%;
+  position:absolute;
+  top:2px;
+  left:2px;
+  transition:.3s;
 }
 
-.footer{
-  text-align:center;
-  font-size:13px;
-  color:#777;
-  margin:20px 0;
+.toggle input:checked + .switch{
+  background:var(--azul);
 }
 
-.hidden{display:none}
-
-.back-btn{
-  margin-top:20px;
-  background:#999;
+.toggle input:checked + .switch::after{
+  transform:translateX(22px);
 }
 </style>
 </head>
 
 <body>
 
-<header>
+<div class="header">
   <h1>💊 Recordatorio de Medicamentos</h1>
-  <p>Menú principal</p>
-</header>
-
-<div class="container">
-
-  <!-- MENU PRINCIPAL -->
-  <div id="menu" class="card">
-    <div id="bienvenida"></div>
-
-    <button class="menu-btn" onclick="abrirDatos()">👤 Datos personales</button>
-    <button class="menu-btn" onclick="abrirMedicamentos()">💊 Medicamentos</button>
-    <button class="menu-btn" onclick="alert('Seguimiento en desarrollo')">📋 Seguimiento</button>
-
-    <div class="image-box">
-      <img src="personas-inclusivas.png" alt="Personas de distintas edades y capacidades">
-    </div>
-  </div>
-
-  <!-- DATOS PERSONALES -->
-  <div id="datos" class="card hidden">
-
-    <h2>Datos personales</h2>
-
-    <label>Nombre</label>
-    <input id="nombre">
-
-    <label>Fecha de nacimiento</label>
-    <input type="date" id="fecha">
-
-    <label>Nombre del cuidador</label>
-    <input id="cuidador">
-
-    <label>Teléfono del cuidador</label>
-    <input id="telefono">
-
-    <div class="switch">
-      <span>🔔 Vibración</span>
-      <input type="checkbox" id="vibracion">
-    </div>
-
-    <div class="switch">
-      <span>🔊 Aviso por voz</span>
-      <input type="checkbox" id="voz">
-    </div>
-
-    <button class="menu-btn" onclick="guardarDatos()">💾 Guardar</button>
-    <button class="menu-btn back-btn" onclick="volverMenu()">⬅ Volver</button>
-
-  </div>
-
-  <!-- MEDICAMENTOS -->
-  <div id="medicamentos" class="card hidden">
-    <h2>Medicamentos</h2>
-    <p>Formulario se mantiene como estaba (siguiente fase).</p>
-
-    <button class="menu-btn back-btn" onclick="volverMenu()">⬅ Volver</button>
-  </div>
-
 </div>
 
-<div class="footer">
-  Desarrollado por CA Tecnología
+<div class="pattern-area">
+
+  <!-- HOME -->
+  <div class="card" id="home">
+    <h2>Menú principal</h2>
+    <button onclick="mostrarSeccion('perfil')">👤 Datos personales</button>
+    <button onclick="mostrarSeccion('medicamentos')">💊 Medicamentos</button>
+    <button onclick="mostrarSeccion('seguimiento')">📊 Seguimiento</button>
+  </div>
+
+  <!-- PERFIL -->
+  <div class="card hidden" id="perfil">
+    <h3>Datos personales</h3>
+
+    <div id="perfilResumen" style="margin-bottom:14px;"></div>
+
+    <div class="row">
+      <div class="label">Nombre del usuario</div>
+      <input id="nombre">
+    </div>
+
+    <div class="row">
+      <div class="label">Fecha de nacimiento</div>
+      <input type="date" id="fechaNacimiento">
+    </div>
+
+    <div class="row">
+      <div class="label">Nombre del cuidador</div>
+      <input id="cuidadorNombre">
+    </div>
+
+    <div class="row">
+      <div class="label">Teléfono del cuidador</div>
+      <input id="cuidadorTelefono">
+    </div>
+
+    <!-- TOGGLES -->
+    <div class="toggle">
+      <span>Vibración</span>
+      <label>
+        <input type="checkbox" id="vibracion">
+        <div class="switch"></div>
+      </label>
+    </div>
+
+    <div class="toggle">
+      <span>Aviso por voz</span>
+      <label>
+        <input type="checkbox" id="voz">
+        <div class="switch"></div>
+      </label>
+    </div>
+
+    <button onclick="guardarPerfil()">Guardar</button>
+    <button class="secondary" onclick="mostrarSeccion('home')">⬅ Volver</button>
+  </div>
+
+  <!-- MEDICAMENTOS (placeholder estable) -->
+  <div class="card hidden" id="medicamentos">
+    <h3>Medicamentos</h3>
+    <p>Sección en desarrollo.</p>
+    <button class="secondary" onclick="mostrarSeccion('home')">⬅ Volver</button>
+  </div>
+
+  <!-- SEGUIMIENTO (placeholder estable) -->
+  <div class="card hidden" id="seguimiento">
+    <h3>Seguimiento</h3>
+    <p>Sección en desarrollo.</p>
+    <button class="secondary" onclick="mostrarSeccion('home')">⬅ Volver</button>
+  </div>
+
 </div>
 
 <script>
-function abrirDatos(){
-  menu.classList.add("hidden");
-  datos.classList.remove("hidden");
+// ===== UTILIDAD EDAD =====
+function calcularEdad(fecha){
+  if(!fecha) return "";
+  const hoy = new Date();
+  const nac = new Date(fecha);
+  let años = hoy.getFullYear() - nac.getFullYear();
+  let meses = hoy.getMonth() - nac.getMonth();
+  if(hoy.getDate() < nac.getDate()) meses--;
+  if(meses < 0){ años--; meses += 12; }
+  return `${años} años y ${meses} meses`;
 }
 
-function abrirMedicamentos(){
-  menu.classList.add("hidden");
-  medicamentos.classList.remove("hidden");
+// ===== NAVEGACIÓN =====
+function mostrarSeccion(id){
+  ["home","perfil","medicamentos","seguimiento"].forEach(s=>{
+    document.getElementById(s).classList.add("hidden");
+  });
+  document.getElementById(id).classList.remove("hidden");
 }
 
-function volverMenu(){
-  datos.classList.add("hidden");
-  medicamentos.classList.add("hidden");
-  menu.classList.remove("hidden");
-}
-
-function guardarDatos(){
-  const data={
-    nombre:nombre.value,
-    fecha:fecha.value,
-    cuidador:cuidador.value,
-    telefono:telefono.value,
-    vibracion:vibracion.checked,
-    voz:voz.checked
-  };
-  localStorage.setItem("datosUsuario",JSON.stringify(data));
-  cargarBienvenida();
-  volverMenu();
-}
-
-function cargarBienvenida(){
-  const d=JSON.parse(localStorage.getItem("datosUsuario"));
-  if(!d||!d.fecha)return;
-  const n=new Date(d.fecha);
-  const h=new Date();
-  let años=h.getFullYear()-n.getFullYear();
-  let meses=h.getMonth()-n.getMonth();
-  if(meses<0){años--;meses+=12;}
-  bienvenida.innerHTML=`<h2>Bienvenido, ${d.nombre}</h2><p>Edad: ${años} años y ${meses} meses</p>`;
-}
-
-window.onload=()=>{
-  const d=JSON.parse(localStorage.getItem("datosUsuario"));
-  if(d){
-    nombre.value=d.nombre||"";
-    fecha.value=d.fecha||"";
-    cuidador.value=d.cuidador||"";
-    telefono.value=d.telefono||"";
-    vibracion.checked=d.vibracion||false;
-    voz.checked=d.voz||false;
-  }
-  cargarBienvenida();
+// ===== PERFIL =====
+let usuario = JSON.parse(localStorage.getItem("usuario")) || {
+  nombre:"",
+  fechaNacimiento:"",
+  cuidadorNombre:"",
+  cuidadorTelefono:"",
+  vibracion:false,
+  voz:false
 };
+
+function renderPerfil(){
+  perfilResumen.innerHTML = `
+    <strong>${usuario.nombre || "Usuario"}</strong><br>
+    ${usuario.fechaNacimiento ? "Edad: " + calcularEdad(usuario.fechaNacimiento) : ""}
+  `;
+}
+
+function guardarPerfil(){
+  usuario.nombre = nombre.value;
+  usuario.fechaNacimiento = fechaNacimiento.value;
+  usuario.cuidadorNombre = cuidadorNombre.value;
+  usuario.cuidadorTelefono = cuidadorTelefono.value;
+  usuario.vibracion = vibracion.checked;
+  usuario.voz = voz.checked;
+
+  localStorage.setItem("usuario", JSON.stringify(usuario));
+  renderPerfil();
+  alert("Datos guardados correctamente");
+}
+
+// ===== INIT =====
+nombre.value = usuario.nombre;
+fechaNacimiento.value = usuario.fechaNacimiento;
+cuidadorNombre.value = usuario.cuidadorNombre;
+cuidadorTelefono.value = usuario.cuidadorTelefono;
+vibracion.checked = usuario.vibracion;
+voz.checked = usuario.voz;
+
+renderPerfil();
+mostrarSeccion("home");
 </script>
 
 </body>
