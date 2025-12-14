@@ -41,7 +41,6 @@ body{
 
 .row{ margin-top:14px; }
 .label{ font-size:14px; font-weight:600; color:#555; margin-bottom:6px; }
-.value{ font-size:16px; }
 
 input, button{
   width:100%;
@@ -125,6 +124,11 @@ img.med-img{
     </div>
 
     <div class="row">
+      <div class="label">Lugar donde se guarda</div>
+      <input id="medLugar" placeholder="Ej: Velador del dormitorio">
+    </div>
+
+    <div class="row">
       <div class="label">Foto de la caja (opcional)</div>
       <input type="file" id="medFoto" accept="image/*">
     </div>
@@ -178,6 +182,7 @@ function renderLista(){
         ${t.foto ? `<img class="med-img" src="${t.foto}">` : ""}
         <strong>${t.nombre}</strong><br>
         Dosis: ${t.dosis}<br>
+        📍 Lugar: <strong>${t.lugar}</strong><br>
         Horarios: ${t.horarios.join(", ")}<br>
         Duración: ${t.dias} días
         <button class="secondary" onclick="eliminar(${i})">Eliminar</button>
@@ -206,7 +211,7 @@ function agregarHora(){
 }
 
 function guardarMed(){
-  if(!medNombre.value || !medDosis.value || !medDias.value || horasTemp.length===0){
+  if(!medNombre.value || !medDosis.value || !medLugar.value || !medDias.value || horasTemp.length===0){
     alert("Complete todos los campos obligatorios");
     return;
   }
@@ -214,6 +219,7 @@ function guardarMed(){
   tratamientos.push({
     nombre: medNombre.value,
     dosis: medDosis.value,
+    lugar: medLugar.value,
     horarios: horasTemp,
     dias: medDias.value,
     inicio: new Date().toISOString().slice(0,10),
@@ -223,7 +229,7 @@ function guardarMed(){
 
   localStorage.setItem("tratamientos", JSON.stringify(tratamientos));
 
-  medNombre.value = medDosis.value = medDias.value = "";
+  medNombre.value = medDosis.value = medLugar.value = medDias.value = "";
   ocultarForm();
   renderLista();
 }
