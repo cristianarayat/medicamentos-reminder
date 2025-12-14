@@ -13,13 +13,14 @@
   --texto:#333;
 }
 
-*{ box-sizing:border-box; }
+*{
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
+}
 
 body{
   margin:0;
-  font-family:Arial, Helvetica, sans-serif;
   background:var(--fondo);
-  color:var(--texto);
 }
 
 .container{
@@ -30,73 +31,101 @@ body{
 
 .card{
   background:var(--blanco);
-  border-radius:16px;
+  border-radius:18px;
   padding:20px;
   margin-bottom:20px;
   box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
 
-h1{
-  text-align:center;
-  margin:10px 0;
+h1,h2{
+  margin:0 0 10px 0;
+  color:var(--texto);
 }
 
-h2{
-  margin-top:0;
-}
-
-.center{ text-align:center; }
-
-.menu-btn{
+button{
   width:100%;
-  padding:15px;
-  margin:10px 0;
+  padding:16px;
+  margin-top:12px;
   border:none;
   border-radius:14px;
   background:var(--azul);
-  color:#fff;
-  font-size:18px;
+  color:white;
+  font-size:17px;
   cursor:pointer;
 }
 
-.menu-btn:hover{ opacity:.9; }
+button.secondary{
+  background:#ddd;
+  color:#333;
+}
 
-input, select{
+.hidden{
+  display:none;
+}
+
+input{
   width:100%;
-  padding:12px;
+  padding:14px;
   margin-top:6px;
-  margin-bottom:15px;
   border-radius:10px;
   border:1px solid #ccc;
   font-size:16px;
 }
 
-label{ font-weight:bold; }
-
-.switch{
+/* SWITCH */
+.switch-row{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin:12px 0;
+  margin-top:16px;
+}
+
+.switch{
+  position:relative;
+  width:50px;
+  height:28px;
 }
 
 .switch input{
-  width:50px;
-  height:25px;
+  opacity:0;
+  width:0;
+  height:0;
+}
+
+.slider{
+  position:absolute;
+  cursor:pointer;
+  top:0;left:0;right:0;bottom:0;
+  background:#ccc;
+  border-radius:28px;
+  transition:.3s;
+}
+
+.slider:before{
+  position:absolute;
+  content:"";
+  height:22px;
+  width:22px;
+  left:3px;
+  bottom:3px;
+  background:white;
+  border-radius:50%;
+  transition:.3s;
+}
+
+input:checked + .slider{
+  background:var(--azul);
+}
+
+input:checked + .slider:before{
+  transform:translateX(22px);
 }
 
 img{
   width:100%;
-  border-radius:14px;
+  border-radius:16px;
+  margin-top:10px;
 }
-
-.footer{
-  text-align:center;
-  font-size:14px;
-  color:#777;
-}
-
-.hidden{ display:none; }
 </style>
 </head>
 
@@ -104,76 +133,67 @@ img{
 
 <div class="container">
 
-  <!-- MENÚ PRINCIPAL -->
-  <div id="menu" class="card">
-    <h1>💊 Recordatorio de Medicamentos</h1>
+<!-- MENÚ PRINCIPAL -->
+<div id="menu" class="card">
+  <h2 id="bienvenida"></h2>
+  <p>Menú principal</p>
 
-    <div class="card center">
-      <h2 id="bienvenida">Bienvenido</h2>
-      <p id="edadTexto"></p>
-    </div>
+  <button onclick="mostrar('datos')">👤 Datos personales</button>
+  <button onclick="mostrar('meds')">💊 Medicamentos</button>
+  <button onclick="mostrar('seg')">📊 Seguimiento</button>
 
-    <button class="menu-btn" onclick="mostrar('datos')">👤 Datos personales</button>
-    <button class="menu-btn" onclick="mostrar('medicamentos')">💊 Medicamentos</button>
-    <button class="menu-btn" onclick="mostrar('seguimiento')">📊 Seguimiento</button>
+  <img src="personas-inclusivas.png" alt="Personas de distintas edades y capacidades">
+</div>
 
-    <div class="card">
-      <img src="personas-inclusivas.png" alt="Personas de distintas edades y capacidades">
-    </div>
+<!-- DATOS PERSONALES -->
+<div id="datos" class="card hidden">
+  <h2>Datos personales</h2>
 
-    <div class="footer">Desarrollado por CA Tecnología</div>
-  </div>
+  <label>Nombre</label>
+  <input id="nombre">
 
-  <!-- DATOS PERSONALES -->
-  <div id="datos" class="card hidden">
-    <h2>Datos personales</h2>
+  <label>Fecha de nacimiento</label>
+  <input type="date" id="fecha">
 
-    <label>Nombre</label>
-    <input id="nombre">
+  <label>Nombre del cuidador</label>
+  <input id="cuidador">
 
-    <label>Fecha de nacimiento</label>
-    <input type="date" id="fechaNacimiento">
+  <label>Teléfono del cuidador</label>
+  <input id="telefono">
 
-    <label>Nombre del cuidador</label>
-    <input id="cuidador">
-
-    <label>Teléfono del cuidador</label>
-    <input id="telefono">
-
-    <div class="switch">
-      <span>📳 Vibración</span>
+  <div class="switch-row">
+    <span>Vibración</span>
+    <label class="switch">
       <input type="checkbox" id="vibracion">
-    </div>
+      <span class="slider"></span>
+    </label>
+  </div>
 
-    <div class="switch">
-      <span>🔊 Aviso por voz</span>
+  <div class="switch-row">
+    <span>Aviso por voz</span>
+    <label class="switch">
       <input type="checkbox" id="voz">
-    </div>
-
-    <button class="menu-btn" onclick="guardarDatos()">💾 Guardar</button>
-    <button class="menu-btn" onclick="volver()">⬅ Volver</button>
+      <span class="slider"></span>
+    </label>
   </div>
 
-  <!-- MEDICAMENTOS -->
-  <div id="medicamentos" class="card hidden">
-    <h2>Medicamentos</h2>
+  <button onclick="guardar()">💾 Guardar</button>
+  <button class="secondary" onclick="mostrar('menu')">⬅ Volver</button>
+</div>
 
-    <label>Nombre del medicamento</label>
-    <input id="medNombre">
+<!-- MEDICAMENTOS -->
+<div id="meds" class="card hidden">
+  <h2>Medicamentos</h2>
+  <p>Medicamentos permanentes configurados.</p>
+  <button class="secondary" onclick="mostrar('menu')">⬅ Volver</button>
+</div>
 
-    <label>Horario</label>
-    <input type="time" id="medHora">
-
-    <button class="menu-btn" onclick="guardarMedicamento()">💾 Guardar medicamento</button>
-    <button class="menu-btn" onclick="volver()">⬅ Volver</button>
-  </div>
-
-  <!-- SEGUIMIENTO -->
-  <div id="seguimiento" class="card hidden">
-    <h2>Seguimiento</h2>
-    <p>Aquí se mostrará el historial de tomas.</p>
-    <button class="menu-btn" onclick="volver()">⬅ Volver</button>
-  </div>
+<!-- SEGUIMIENTO -->
+<div id="seg" class="card hidden">
+  <h2>Seguimiento</h2>
+  <p>Historial y control de tomas.</p>
+  <button class="secondary" onclick="mostrar('menu')">⬅ Volver</button>
+</div>
 
 </div>
 
@@ -183,55 +203,35 @@ function mostrar(id){
   document.getElementById(id).classList.remove('hidden');
 }
 
-function volver(){
-  document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
-  document.getElementById('menu').classList.remove('hidden');
+function guardar(){
+  localStorage.setItem('nombre',nombre.value);
+  localStorage.setItem('fecha',fecha.value);
+  localStorage.setItem('cuidador',cuidador.value);
+  localStorage.setItem('telefono',telefono.value);
+  localStorage.setItem('vibracion',vibracion.checked);
+  localStorage.setItem('voz',voz.checked);
+  cargar();
 }
 
-function guardarDatos(){
-  localStorage.setItem('datos', JSON.stringify({
-    nombre:nombre.value,
-    fecha:fechaNacimiento.value,
-    cuidador:cuidador.value,
-    telefono:telefono.value,
-    vibracion:vibracion.checked,
-    voz:voz.checked
-  }));
-  alert("Datos guardados correctamente");
-  actualizarBienvenida();
-}
+function cargar(){
+  nombre.value=localStorage.getItem('nombre')||'';
+  fecha.value=localStorage.getItem('fecha')||'';
+  cuidador.value=localStorage.getItem('cuidador')||'';
+  telefono.value=localStorage.getItem('telefono')||'';
+  vibracion.checked=localStorage.getItem('vibracion')==='true';
+  voz.checked=localStorage.getItem('voz')==='true';
 
-function guardarMedicamento(){
-  alert("Medicamento guardado");
-}
-
-function actualizarBienvenida(){
-  const d = JSON.parse(localStorage.getItem('datos'));
-  if(!d || !d.fecha) return;
-
-  const fn = new Date(d.fecha);
-  const hoy = new Date();
-
-  let años = hoy.getFullYear() - fn.getFullYear();
-  let meses = hoy.getMonth() - fn.getMonth();
-  if(meses < 0){ años--; meses += 12; }
-
-  bienvenida.innerText = "Bienvenido " + d.nombre;
-  edadTexto.innerText = `Edad: ${años} años y ${meses} meses`;
-}
-
-window.onload = ()=>{
-  const d = JSON.parse(localStorage.getItem('datos'));
-  if(d){
-    nombre.value=d.nombre||"";
-    fechaNacimiento.value=d.fecha||"";
-    cuidador.value=d.cuidador||"";
-    telefono.value=d.telefono||"";
-    vibracion.checked=d.vibracion||false;
-    voz.checked=d.voz||false;
-    actualizarBienvenida();
+  if(fecha.value){
+    const f=new Date(fecha.value);
+    const hoy=new Date();
+    let años=hoy.getFullYear()-f.getFullYear();
+    let meses=hoy.getMonth()-f.getMonth();
+    if(meses<0){años--;meses+=12;}
+    bienvenida.innerText=`Bienvenido ${nombre.value||''} ${años} años y ${meses} meses`;
   }
-};
+}
+
+cargar();
 </script>
 
 </body>
