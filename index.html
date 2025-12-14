@@ -2,150 +2,167 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Recordatorio de Medicamentos</title>
 
   <style>
-    :root{
-      --azul:#2f80ed;
-      --gris:#f2f4f7;
-      --tarjeta:#ffffff;
-      --texto:#333;
-      --borde:#dcdfe4;
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f4f8;
+      color: #333;
     }
 
-    *{
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    header {
+      background: #ffffff;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
     }
 
-    body{
-      margin:0;
-      background:var(--gris);
-      color:var(--texto);
+    header h1 {
+      margin: 0;
+      font-size: 26px;
     }
 
-    header{
-      background:#fff;
-      padding:24px 16px 12px;
-      text-align:center;
-      border-bottom:1px solid var(--borde);
+    header p {
+      margin: 5px 0 0;
+      color: #666;
     }
 
-    header h1{
-      margin:0;
-      font-size:26px;
+    .container {
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
     }
 
-    header p{
-      margin:6px 0 0;
-      color:#666;
-      font-size:15px;
+    .welcome {
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 20px;
     }
 
-    .contenedor{
-      max-width:480px;
-      margin:0 auto;
-      padding:16px;
+    .menu-button {
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      background: #2f80ed;
+      color: #fff;
+      cursor: pointer;
     }
 
-    .bienvenida{
-      background:var(--tarjeta);
-      border-radius:14px;
-      padding:16px;
-      margin-bottom:16px;
-      box-shadow:0 6px 20px rgba(0,0,0,.05);
-      text-align:center;
+    .menu-button:active {
+      background: #2567c7;
     }
 
-    .bienvenida strong{
-      display:block;
-      font-size:18px;
-      margin-bottom:4px;
+    .image-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 10px;
+      margin-top: 25px;
+      text-align: center;
     }
 
-    .menu{
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-      margin-bottom:20px;
+    .image-box img {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 14px;
     }
 
-    .boton-menu{
-      background:var(--azul);
-      color:#fff;
-      border:none;
-      border-radius:14px;
-      padding:16px;
-      font-size:16px;
-      cursor:pointer;
-      box-shadow:0 4px 14px rgba(47,128,237,.3);
+    footer {
+      text-align: center;
+      font-size: 13px;
+      color: #777;
+      margin: 30px 0 10px;
     }
 
-    .boton-menu:active{
-      transform:scale(.98);
+    /* SECCIONES */
+    .section {
+      display: none;
     }
 
-    .imagen-inclusiva{
-      background:#fff;
-      border-radius:16px;
-      padding:12px;
-      box-shadow:0 6px 20px rgba(0,0,0,.05);
-      text-align:center;
+    .section.active {
+      display: block;
     }
 
-    .imagen-inclusiva img{
-      width:100%;
-      max-width:420px;
-      height:auto;
-      display:block;
-      margin:0 auto;
-    }
-
-    footer{
-      text-align:center;
-      font-size:13px;
-      color:#888;
-      margin:18px 0 8px;
+    .back-btn {
+      margin-bottom: 15px;
+      background: #ccc;
+      color: #333;
     }
   </style>
 </head>
 
 <body>
 
-  <header>
-    <h1>💊 Recordatorio de Medicamentos</h1>
-    <p>Menú principal</p>
-  </header>
+<header>
+  <h1>💊 Recordatorio de Medicamentos</h1>
+  <p>Menú principal</p>
+</header>
 
-  <div class="contenedor">
+<div class="container">
 
-    <!-- BIENVENIDA -->
-    <div class="bienvenida">
-      <strong>Bienvenido, María</strong>
+  <!-- MENÚ PRINCIPAL -->
+  <div id="menu" class="section active">
+    <div class="welcome">
+      <strong>Bienvenido, María</strong><br/>
       Edad: 72 años y 3 meses
     </div>
 
-    <!-- MENÚ -->
-    <div class="menu">
-      <button class="boton-menu">👤 Datos personales</button>
-      <button class="boton-menu">💊 Medicamentos</button>
-      <button class="boton-menu">📋 Seguimiento</button>
+    <button class="menu-button" onclick="mostrarSeccion('datos')">👤 Datos personales</button>
+    <button class="menu-button" onclick="mostrarSeccion('medicamentos')">💊 Medicamentos</button>
+    <button class="menu-button" onclick="mostrarSeccion('seguimiento')">📋 Seguimiento</button>
+
+    <div class="image-box">
+      <img src="activos/personas-inclusivas.png"
+           alt="Personas de distintas edades y capacidades">
     </div>
-
-    <!-- IMAGEN INCLUSIVA -->
-    <div class="imagen-inclusiva">
-      <img 
-        src="activos/personas-inclusivas.png" 
-        alt="Personas de distintas edades y capacidades"
-      >
-    </div>
-
-    <footer>
-      Desarrollado por CA Tecnología
-    </footer>
-
   </div>
+
+  <!-- DATOS PERSONALES -->
+  <div id="datos" class="section">
+    <button class="menu-button back-btn" onclick="volverMenu()">⬅ Volver</button>
+    <h3>Datos personales</h3>
+    <p>Aquí irá la edición de datos del usuario.</p>
+  </div>
+
+  <!-- MEDICAMENTOS -->
+  <div id="medicamentos" class="section">
+    <button class="menu-button back-btn" onclick="volverMenu()">⬅ Volver</button>
+    <h3>Medicamentos</h3>
+    <p>Aquí se agregan y modifican medicamentos.</p>
+  </div>
+
+  <!-- SEGUIMIENTO -->
+  <div id="seguimiento" class="section">
+    <button class="menu-button back-btn" onclick="volverMenu()">⬅ Volver</button>
+    <h3>Seguimiento</h3>
+    <p>Historial de medicamentos tomados.</p>
+  </div>
+
+</div>
+
+<footer>
+  Desarrollado por CA Tecnología
+</footer>
+
+<script>
+  function mostrarSeccion(id) {
+    document.querySelectorAll('.section').forEach(sec => {
+      sec.classList.remove('active');
+    });
+    document.getElementById(id).classList.add('active');
+  }
+
+  function volverMenu() {
+    mostrarSeccion('menu');
+  }
+</script>
 
 </body>
 </html>
