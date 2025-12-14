@@ -14,7 +14,7 @@
   --borde:#d0d4d9;
 }
 
-/* ===== BODY ===== */
+/* ===== BASE ===== */
 body{
   margin:0;
   font-family: system-ui, Arial, sans-serif;
@@ -79,16 +79,33 @@ input{
   font-size:16px;
 }
 
-/* ===== RESUMEN ===== */
-.summary{
-  line-height:1.8;
-  font-size:16px;
+/* ===== OPCIONES ===== */
+.option{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:16px;
+  padding:14px;
+  border-radius:14px;
+  background:#f3f5f7;
+  cursor:pointer;
 }
 
-.summary strong{
+.option input{
+  width:20px;
+  height:20px;
+  margin:0;
+}
+
+/* ===== RESUMEN ===== */
+.summary-row{
+  margin-top:14px;
+}
+
+.summary-row strong{
   display:block;
-  color:#555;
   font-size:14px;
+  color:#666;
 }
 
 /* ===== BOTONES ===== */
@@ -123,9 +140,15 @@ button{
 
 <div class="pattern-area">
 
-  <!-- RESUMEN BLOQUEADO -->
+  <!-- RESUMEN -->
   <div class="card hidden" id="resumen">
-    <div class="summary" id="summaryText"></div>
+    <div class="summary-row"><strong>Usuario</strong><span id="r_nombre"></span></div>
+    <div class="summary-row"><strong>Fecha de nacimiento</strong><span id="r_nacimiento"></span></div>
+    <div class="summary-row"><strong>Cuidador</strong><span id="r_cuidador"></span></div>
+    <div class="summary-row"><strong>Teléfono</strong><span id="r_tel"></span></div>
+    <div class="summary-row"><strong>Aviso por voz</strong><span id="r_voz"></span></div>
+    <div class="summary-row"><strong>Vibración</strong><span id="r_vibracion"></span></div>
+
     <button class="secondary" onclick="editar()">Modificar datos</button>
   </div>
 
@@ -144,6 +167,16 @@ button{
     <label>Teléfono del cuidador</label>
     <input id="cuidadorTel" type="tel">
 
+    <div class="option" onclick="voz.checked = !voz.checked">
+      <input id="voz" type="checkbox" checked>
+      <span>Usar aviso por voz</span>
+    </div>
+
+    <div class="option" onclick="vibracion.checked = !vibracion.checked">
+      <input id="vibracion" type="checkbox" checked>
+      <span>Usar vibración</span>
+    </div>
+
     <button onclick="guardar()">Guardar datos</button>
 
   </div>
@@ -158,7 +191,12 @@ function limpiarTelefono(t){
 function guardar(){
   const tel = limpiarTelefono(cuidadorTel.value);
 
-  if(!nombre.value || !nacimiento.value || !cuidadorNombre.value || !tel){
+  if(
+    !nombre.value ||
+    !nacimiento.value ||
+    !cuidadorNombre.value ||
+    !tel
+  ){
     alert("Por favor complete todos los campos");
     return;
   }
@@ -172,7 +210,9 @@ function guardar(){
     nombre: nombre.value,
     nacimiento: nacimiento.value,
     cuidadorNombre: cuidadorNombre.value,
-    cuidadorTel: tel
+    cuidadorTel: tel,
+    voz: voz.checked,
+    vibracion: vibracion.checked
   };
 
   localStorage.setItem("usuario", JSON.stringify(usuario));
@@ -183,12 +223,12 @@ function mostrarResumen(u){
   formulario.classList.add("hidden");
   resumen.classList.remove("hidden");
 
-  summaryText.innerHTML = `
-    <strong>Usuario</strong>${u.nombre}
-    <strong>Fecha de nacimiento</strong>${u.nacimiento}
-    <strong>Cuidador</strong>${u.cuidadorNombre}
-    <strong>Teléfono</strong>${u.cuidadorTel}
-  `;
+  r_nombre.innerText = u.nombre;
+  r_nacimiento.innerText = u.nacimiento;
+  r_cuidador.innerText = u.cuidadorNombre;
+  r_tel.innerText = u.cuidadorTel;
+  r_voz.innerText = u.voz ? "Activado" : "Desactivado";
+  r_vibracion.innerText = u.vibracion ? "Activada" : "Desactivada";
 }
 
 function editar(){
