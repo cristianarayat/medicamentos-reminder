@@ -8,26 +8,37 @@
 <style>
 :root{
   --azul:#2f80ed;
-  --gris:#f1f3f5;
+  --gris:#f4f6f8;
   --card:#ffffff;
   --texto:#333;
   --borde:#dcdcdc;
 }
 
+/* ===== FONDO MONOCROMO MÉDICO ===== */
 body{
   margin:0;
   padding:20px;
   font-family: system-ui, Arial, sans-serif;
   color:var(--texto);
-
-  /* Fondo médico suave */
-  background:
-    linear-gradient(rgba(241,243,245,0.92), rgba(241,243,245,0.92)),
-    url("https://images.unsplash.com/photo-1580281657521-8d62f5b6d3d1?auto=format&fit=crop&w=1200&q=60");
-  background-size:cover;
-  background-position:center;
+  background:var(--gris);
+  position:relative;
+  overflow-x:hidden;
 }
 
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(rgba(244,246,248,0.94), rgba(244,246,248,0.94)),
+    url("https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1200&q=60");
+  background-size:cover;
+  background-position:center;
+  filter:grayscale(100%);
+  z-index:-1;
+}
+
+/* ===== TÍTULOS ===== */
 h1{
   text-align:center;
   margin-bottom:4px;
@@ -39,6 +50,7 @@ h1{
   margin-bottom:24px;
 }
 
+/* ===== TARJETA ===== */
 .card{
   max-width:420px;
   margin:0 auto;
@@ -48,6 +60,7 @@ h1{
   box-shadow:0 10px 26px rgba(0,0,0,.12);
 }
 
+/* ===== FORM ===== */
 label{
   display:block;
   margin-top:16px;
@@ -72,7 +85,7 @@ input:focus{
   background:#fff;
 }
 
-/* Opciones clickables */
+/* ===== OPCIONES CLICKABLES ===== */
 .option{
   display:flex;
   align-items:center;
@@ -91,12 +104,7 @@ input:focus{
   margin:0;
 }
 
-.option span{
-  font-size:15px;
-  font-weight:500;
-}
-
-/* Botón */
+/* ===== BOTÓN ===== */
 button{
   margin-top:28px;
   width:100%;
@@ -137,8 +145,11 @@ button:active{
   <label>Edad (opcional)</label>
   <input id="edad" type="number" placeholder="Ej: 72">
 
+  <label>Nombre del cuidador</label>
+  <input id="cuidadorNombre" placeholder="Ej: Juan Pérez">
+
   <label>Teléfono del cuidador</label>
-  <input id="cuidador" type="tel" placeholder="Ej: +56 9 1234 5678">
+  <input id="cuidadorTel" type="tel" placeholder="Ej: +56 9 1234 5678">
 
   <div class="option" onclick="voz.checked = !voz.checked">
     <input id="voz" type="checkbox" checked>
@@ -157,19 +168,34 @@ button:active{
 </div>
 
 <script>
-function guardarUsuario(){
-  const usuario = {
-    nombre: nombre.value.trim(),
-    edad: edad.value,
-    cuidador: cuidador.value.trim(),
-    voz: voz.checked,
-    vibracion: vibracion.checked
-  };
+function limpiarTelefono(t){
+  return t.replace(/\D/g,'');
+}
 
-  if(!usuario.nombre){
+function guardarUsuario(){
+  const telRaw = cuidadorTel.value.trim();
+  const telLimpio = limpiarTelefono(telRaw);
+
+  if(!nombre.value.trim()){
     alert("Por favor ingrese el nombre del usuario");
     return;
   }
+
+  if(telRaw){
+    if(telLimpio.length < 8 || telLimpio.length > 15){
+      alert("El teléfono del cuidador debe tener entre 8 y 15 números");
+      return;
+    }
+  }
+
+  const usuario = {
+    nombre: nombre.value.trim(),
+    edad: edad.value,
+    cuidadorNombre: cuidadorNombre.value.trim(),
+    cuidadorTel: telLimpio,
+    voz: voz.checked,
+    vibracion: vibracion.checked
+  };
 
   localStorage.setItem("usuario", JSON.stringify(usuario));
   msg.innerText = "Datos guardados correctamente ✅";
