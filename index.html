@@ -6,6 +6,11 @@
 <title>Recordatorio de Medicamentos</title>
 
 <style>
+/* Evita pull-to-refresh */
+html, body {
+  overscroll-behavior: contain;
+}
+
 :root{
   --azul:#2f80ed;
   --gris:#eef1f4;
@@ -50,7 +55,7 @@ button{
   font-size:17px;
   font-weight:700;
   cursor:pointer;
-  margin-top:16px;
+  margin-top:14px;
   background:var(--azul);
   color:white;
 }
@@ -67,22 +72,22 @@ button{
   margin-bottom:6px;
 }
 
-input[type="text"],
-input[type="date"]{
+input, select{
   width:100%;
   height:52px;
   padding:14px;
   border-radius:14px;
   border:1px solid var(--borde);
   box-sizing:border-box;
+  font-size:16px;
 }
 
 .toggle{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:14px;
   background:#f3f5f7;
+  padding:14px;
   border-radius:14px;
   margin-top:12px;
 }
@@ -103,32 +108,22 @@ input[type="date"]{
 
     <h2>Menú principal</h2>
 
-    <button onclick="mostrarSeccion('perfil')">👤 Datos personales</button>
-    <button disabled>💊 Medicamentos (siguiente paso)</button>
-    <button disabled>📊 Seguimiento (siguiente paso)</button>
+    <button onclick="mostrar('perfil')">👤 Datos personales</button>
+    <button onclick="mostrar('medicamentos')">💊 Medicamentos</button>
+    <button onclick="mostrar('seguimiento')">📊 Seguimiento</button>
 
-    <img 
-      src="personas-inclusivas.png"
-      style="width:100%; margin-top:24px;"
-      alt="Personas inclusivas">
+    <div style="margin-top:24px;text-align:center;">
+      <img src="personas-inclusivas.png" style="width:100%;max-width:420px;">
+    </div>
   </div>
 
   <!-- PERFIL -->
   <div class="card hidden" id="perfil">
     <h3>Datos personales</h3>
-    <div id="perfilResumen"></div>
-
-    <button onclick="editarPerfil()">Modificar datos</button>
-    <button class="secondary" onclick="volverHome()">⬅ Volver</button>
-  </div>
-
-  <!-- FORM PERFIL -->
-  <div class="card hidden" id="perfilForm">
-    <h3>Editar datos personales</h3>
 
     <div class="row">
-      <div class="label">Nombre</div>
-      <input type="text" id="nombre">
+      <div class="label">Nombre del usuario</div>
+      <input id="nombre">
     </div>
 
     <div class="row">
@@ -136,97 +131,105 @@ input[type="date"]{
       <input type="date" id="fechaNacimiento">
     </div>
 
-    <div class="toggle">
-      <span>🔊 Mensajes por voz</span>
-      <input type="checkbox" id="voz">
+    <div class="row">
+      <div class="label">Nombre del cuidador</div>
+      <input id="cuidadorNombre">
+    </div>
+
+    <div class="row">
+      <div class="label">Teléfono del cuidador</div>
+      <input id="cuidadorTelefono">
     </div>
 
     <div class="toggle">
-      <span>📳 Vibración</span>
+      <span>Vibración</span>
       <input type="checkbox" id="vibracion">
     </div>
 
-    <button onclick="guardarPerfil()">Guardar</button>
-    <button class="secondary" onclick="mostrarSeccion('perfil')">Cancelar</button>
+    <div class="toggle">
+      <span>Mensaje por voz</span>
+      <input type="checkbox" id="voz">
+    </div>
+
+    <button onclick="guardarPerfil()">Guardar datos</button>
+    <button class="secondary" onclick="mostrar('home')">⬅ Volver</button>
+  </div>
+
+  <!-- MEDICAMENTOS (BASE ESTABLE PARA SIGUIENTE FASE) -->
+  <div class="card hidden" id="medicamentos">
+    <h3>Medicamentos</h3>
+    <p>(Formulario de medicamentos se mantiene para la siguiente fase)</p>
+    <button class="secondary" onclick="mostrar('home')">⬅ Volver</button>
+  </div>
+
+  <!-- SEGUIMIENTO -->
+  <div class="card hidden" id="seguimiento">
+    <h3>Seguimiento</h3>
+    <p>(Historial de tomas – siguiente fase)</p>
+    <button class="secondary" onclick="mostrar('home')">⬅ Volver</button>
   </div>
 
 </div>
 
 <script>
-// ===== UTILIDAD EDAD =====
-function calcularEdad(fecha){
-  if(!fecha) return "";
-  const hoy = new Date();
-  const nac = new Date(fecha);
-
-  let años = hoy.getFullYear() - nac.getFullYear();
-  let meses = hoy.getMonth() - nac.getMonth();
-
-  if(hoy.getDate() < nac.getDate()) meses--;
-  if(meses < 0){ años--; meses += 12; }
-
-  return `${años} años y ${meses} meses`;
-}
-
-// ===== CARGA SEGURA DE USUARIO =====
-let usuario = JSON.parse(localStorage.getItem("usuario"));
-if(!usuario){
-  usuario = {
-    nombre:"",
-    fechaNacimiento:"",
-    voz:true,
-    vibracion:true
-  };
-  localStorage.setItem("usuario", JSON.stringify(usuario));
-}
-
-// ===== NAVEGACIÓN =====
-function mostrarSeccion(id){
-  ["home","perfil","perfilForm"].forEach(s=>{
+function mostrar(id){
+  ["home","perfil","medicamentos","seguimiento"].forEach(s=>{
     document.getElementById(s).classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
 }
 
-function volverHome(){ mostrarSeccion("home"); }
+// Edad automática
+function calcularEdad(fecha){
+  if(!fecha) return "";
+  const hoy = new Date();
+  const nac = new Date(fecha);
+  let años = hoy.getFullYear() - nac.getFullYear();
+  let meses = hoy.getMonth() - nac.getMonth();
+  if(hoy.getDate() < nac.getDate()) meses--;
+  if(meses < 0){ años--; meses += 12; }
+  return `${años} años y ${meses} meses`;
+}
 
-// ===== PERFIL =====
-function renderPerfil(){
-  perfilResumen.innerHTML = `
-    <strong>Nombre:</strong> ${usuario.nombre || "-"}<br>
-    <strong>Edad:</strong> ${usuario.fechaNacimiento ? calcularEdad(usuario.fechaNacimiento) : "-"}<br>
-    <strong>Voz:</strong> ${usuario.voz ? "Sí" : "No"}<br>
-    <strong>Vibración:</strong> ${usuario.vibracion ? "Sí" : "No"}
-  `;
+// PERFIL
+let usuario = JSON.parse(localStorage.getItem("usuario")) || {
+  nombre:"",
+  fechaNacimiento:"",
+  cuidadorNombre:"",
+  cuidadorTelefono:"",
+  vibracion:false,
+  voz:false
+};
 
+function render(){
   bienvenida.innerHTML = `
     <strong>Bienvenido ${usuario.nombre || ""}</strong><br>
     <span>${usuario.fechaNacimiento ? "Edad: " + calcularEdad(usuario.fechaNacimiento) : ""}</span>
   `;
-}
 
-function editarPerfil(){
   nombre.value = usuario.nombre;
   fechaNacimiento.value = usuario.fechaNacimiento;
-  voz.checked = usuario.voz;
+  cuidadorNombre.value = usuario.cuidadorNombre;
+  cuidadorTelefono.value = usuario.cuidadorTelefono;
   vibracion.checked = usuario.vibracion;
-  mostrarSeccion("perfilForm");
+  voz.checked = usuario.voz;
 }
 
 function guardarPerfil(){
   usuario.nombre = nombre.value;
   usuario.fechaNacimiento = fechaNacimiento.value;
-  usuario.voz = voz.checked;
+  usuario.cuidadorNombre = cuidadorNombre.value;
+  usuario.cuidadorTelefono = cuidadorTelefono.value;
   usuario.vibracion = vibracion.checked;
+  usuario.voz = voz.checked;
 
   localStorage.setItem("usuario", JSON.stringify(usuario));
-  renderPerfil();
-  mostrarSeccion("perfil");
+  render();
+  mostrar("home");
 }
 
-// INIT
-renderPerfil();
-mostrarSeccion("home");
+render();
+mostrar("home");
 </script>
 
 </body>
