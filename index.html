@@ -13,6 +13,7 @@
   --texto:#333;
   --borde:#d0d4d9;
   --ok:#27ae60;
+  --rojo:#c0392b;
 }
 
 body{
@@ -28,9 +29,7 @@ body{
   text-align:center;
 }
 
-.pattern-area{
-  padding:20px;
-}
+.pattern-area{ padding:20px; }
 
 .card{
   max-width:420px;
@@ -41,73 +40,47 @@ body{
   box-shadow:0 14px 32px rgba(0,0,0,.15);
 }
 
-/* ===== FORM ===== */
-.row{
-  margin-top:14px;
-}
+.row{ margin-top:14px; }
+.label{ font-size:14px; font-weight:600; margin-bottom:6px; }
 
-.label{
-  font-size:14px;
-  font-weight:600;
-  color:#555;
-  margin-bottom:6px;
-}
-
-/* inputs y botones unificados */
-input,
-button{
+input, button{
   width:100%;
+  height:52px;
   box-sizing:border-box;
   padding:14px;
   border-radius:14px;
   border:1px solid var(--borde);
   font-size:16px;
-  height:52px;
 }
 
-input[type="file"]{
-  padding:10px;
-  background:#fff;
-}
+input[type="file"]{ padding:10px; }
 
 button{
-  background:var(--azul);
-  color:white;
-  font-weight:700;
   border:none;
+  font-weight:700;
   cursor:pointer;
   margin-top:18px;
+  background:var(--azul);
+  color:#fff;
 }
 
-.secondary{
-  background:#6c757d;
-}
+.secondary{ background:#6c757d; }
+.ok{ background:var(--ok); }
+.danger{ background:var(--rojo); }
 
-.ok{
-  background:var(--ok);
-}
+.hidden{ display:none; }
 
-.hidden{
-  display:none;
-}
-
-/* fila hora + botón */
 .row-inline{
   display:flex;
   gap:10px;
-  margin-top:10px;
 }
 
-.row-inline input{
-  flex:1;
-}
-
+.row-inline input{ flex:1; }
 .row-inline button{
   width:140px;
   margin-top:0;
 }
 
-/* badges horarios */
 .badge{
   display:inline-block;
   background:#eef3ff;
@@ -118,20 +91,17 @@ button{
   margin:6px 6px 0 0;
 }
 
-/* toggle */
 .toggle{
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
+  background:#f3f5f7;
   padding:14px;
   border-radius:14px;
-  background:#f3f5f7;
   cursor:pointer;
 }
 
-.toggle input{
-  display:none;
-}
+.toggle input{ display:none; }
 
 .switch{
   width:48px;
@@ -139,7 +109,6 @@ button{
   background:#ccc;
   border-radius:13px;
   position:relative;
-  transition:.2s;
 }
 
 .switch::after{
@@ -151,7 +120,6 @@ button{
   position:absolute;
   top:2px;
   left:2px;
-  transition:.2s;
 }
 
 input:checked + .switch{
@@ -162,7 +130,6 @@ input:checked + .switch::after{
   transform:translateX(22px);
 }
 
-/* lista */
 .list-item{
   border:1px solid var(--borde);
   border-radius:14px;
@@ -184,7 +151,6 @@ img.med-img{
 
 <div class="header">
   <h1>💊 Recordatorio de Medicamentos</h1>
-  <div>Tratamientos</div>
 </div>
 
 <div class="pattern-area">
@@ -209,16 +175,16 @@ img.med-img{
 
     <div class="row">
       <div class="label">Dosis</div>
-      <input id="medDosis" placeholder="Ej: 1 comprimido">
+      <input id="medDosis">
     </div>
 
     <div class="row">
       <div class="label">Lugar donde se guarda</div>
-      <input id="medLugar" placeholder="Ej: Velador del dormitorio">
+      <input id="medLugar">
     </div>
 
     <div class="row">
-      <div class="label">Foto de la caja (opcional)</div>
+      <div class="label">Foto de la caja</div>
       <input type="file" id="medFoto" accept="image/*">
     </div>
 
@@ -232,7 +198,7 @@ img.med-img{
 
     <div class="row" id="diasRow">
       <div class="label">Días de duración</div>
-      <input type="number" id="medDias" min="1">
+      <input type="number" id="medDias">
     </div>
 
     <div class="row">
@@ -251,78 +217,60 @@ img.med-img{
 </div>
 
 <script>
-// PERFIL
+// ===== USUARIO =====
 const usuario = JSON.parse(localStorage.getItem("usuario"));
 perfilResumen.innerHTML = `
-  <strong>${usuario.nombre}</strong><br>
-  Cuidador: ${usuario.cuidadorNombre}<br>
-  Voz: ${usuario.voz ? "Sí" : "No"} · Vibración: ${usuario.vibracion ? "Sí" : "No"}
+<strong>${usuario.nombre}</strong><br>
+Cuidador: ${usuario.cuidadorNombre}<br>
+Tel: ${usuario.cuidadorTelefono}<br>
+Voz: ${usuario.voz ? "Sí" : "No"} · Vibración: ${usuario.vibracion ? "Sí" : "No"}
 `;
 
-// TRATAMIENTOS
+// ===== DATOS =====
 let tratamientos = JSON.parse(localStorage.getItem("tratamientos")) || [];
+let historialTomas = JSON.parse(localStorage.getItem("historialTomas")) || [];
+let alarmasDisparadas = {};
 let horasTemp = [];
 let fotoTemp = null;
 
+// ===== PERMISOS =====
+if("Notification" in window && Notification.permission !== "granted"){
+  Notification.requestPermission();
+}
+
+// ===== FOTO =====
 medFoto.addEventListener("change", e=>{
   const file = e.target.files[0];
   if(!file) return;
   const r = new FileReader();
-  r.onload = () => fotoTemp = r.result;
+  r.onload = ()=> fotoTemp = r.result;
   r.readAsDataURL(file);
 });
 
+// ===== UI =====
 function togglePermanente(){
   medPermanente.checked = !medPermanente.checked;
   diasRow.style.display = medPermanente.checked ? "none" : "block";
 }
 
-function renderLista(){
-  lista.innerHTML = "";
-  tratamientos.forEach((t,i)=>{
-    lista.innerHTML += `
-      <div class="list-item">
-        ${t.foto ? `<img class="med-img" src="${t.foto}">` : ""}
-        <strong>${t.nombre}</strong><br>
-        Dosis: ${t.dosis}<br>
-        📍 ${t.lugar}<br>
-        ${t.permanente ? "♾️ Permanente" : `⏳ ${t.dias} días`}<br>
-        Horarios: ${t.horarios.join(", ")}
-        <button class="secondary" onclick="eliminar(${i})">Eliminar</button>
-      </div>
-    `;
-  });
-}
-
-function mostrarForm(){
-  formMed.classList.remove("hidden");
-}
-
+function mostrarForm(){ formMed.classList.remove("hidden"); }
 function ocultarForm(){
   formMed.classList.add("hidden");
-  horasTemp = [];
-  fotoTemp = null;
-  horas.innerHTML = "";
-  medFoto.value = "";
-  medPermanente.checked = false;
-  diasRow.style.display = "block";
+  horasTemp=[]; horas.innerHTML="";
+  medNombre.value=medDosis.value=medLugar.value=medDias.value="";
+  medFoto.value=""; fotoTemp=null;
 }
 
 function agregarHora(){
   if(!horaInput.value) return;
   horasTemp.push(horaInput.value);
-  horaInput.value="";
   horas.innerHTML = horasTemp.map(h=>`<span class="badge">${h}</span>`).join("");
+  horaInput.value="";
 }
 
 function guardarMed(){
   if(!medNombre.value || !medDosis.value || !medLugar.value || horasTemp.length===0){
-    alert("Complete todos los campos obligatorios");
-    return;
-  }
-
-  if(!medPermanente.checked && !medDias.value){
-    alert("Indique la duración o marque como permanente");
+    alert("Complete todos los campos");
     return;
   }
 
@@ -333,13 +281,11 @@ function guardarMed(){
     horarios: horasTemp,
     dias: medPermanente.checked ? null : medDias.value,
     permanente: medPermanente.checked,
-    inicio: new Date().toISOString().slice(0,10),
-    foto: fotoTemp
+    foto: fotoTemp,
+    activo:true
   });
 
   localStorage.setItem("tratamientos", JSON.stringify(tratamientos));
-
-  medNombre.value = medDosis.value = medLugar.value = medDias.value = "";
   ocultarForm();
   renderLista();
 }
@@ -350,7 +296,104 @@ function eliminar(i){
   renderLista();
 }
 
+function renderLista(){
+  lista.innerHTML="";
+  tratamientos.forEach((t,i)=>{
+    lista.innerHTML+=`
+      <div class="list-item">
+        ${t.foto?`<img class="med-img" src="${t.foto}">`:""}
+        <strong>${t.nombre}</strong><br>
+        Dosis: ${t.dosis}<br>
+        📍 ${t.lugar}<br>
+        ${t.permanente?"♾️ Permanente":`⏳ ${t.dias} días`}<br>
+        Horarios: ${t.horarios.join(", ")}
+        <button class="secondary" onclick="eliminar(${i})">Eliminar</button>
+      </div>`;
+  });
+}
+
+// ===== ALARMAS =====
+function iniciarAlarmas(){
+  setInterval(verificarAlarmas,60000);
+}
+
+function verificarAlarmas(){
+  const ahora = new Date();
+  const horaActual = ahora.toTimeString().slice(0,5);
+  const hoy = ahora.toISOString().slice(0,10);
+
+  tratamientos.forEach(t=>{
+    if(!t.activo) return;
+    t.horarios.forEach(h=>{
+      const clave = `${t.nombre}-${h}-${hoy}`;
+      if(h===horaActual && !alarmasDisparadas[clave]){
+        alarmasDisparadas[clave]=true;
+        dispararAlarma(t,h,hoy);
+      }
+    });
+  });
+}
+
+function dispararAlarma(t,hora,fecha){
+  // Notificación
+  if(Notification.permission==="granted"){
+    new Notification("Medicamento",{
+      body:`${usuario.nombre}, tome ${t.nombre}. Está en ${t.lugar}.`,
+      icon:t.foto||undefined
+    });
+  }
+
+  // Vibración
+  if(usuario.vibracion && navigator.vibrate){
+    navigator.vibrate([500,300,500]);
+  }
+
+  // Voz
+  if(usuario.voz && "speechSynthesis" in window){
+    const msg = new SpeechSynthesisUtterance(
+      `${usuario.nombre}, es hora de tomar su medicamento ${t.nombre}. Está en ${t.lugar}.`
+    );
+    msg.lang="es-ES";
+    speechSynthesis.speak(msg);
+  }
+
+  mostrarPopup(t,hora,fecha);
+}
+
+function mostrarPopup(t,hora,fecha){
+  const p=document.createElement("div");
+  p.className="card";
+  p.style.position="fixed";
+  p.style.bottom="20px";
+  p.style.left="50%";
+  p.style.transform="translateX(-50%)";
+  p.style.zIndex="9999";
+
+  p.innerHTML=`
+    <strong>${t.nombre}</strong><br>
+    Hora: ${hora}
+    <button class="ok">Tomado</button>
+    <button class="danger">Omitido</button>
+  `;
+
+  document.body.appendChild(p);
+
+  p.querySelector(".ok").onclick=()=>registrar(t,hora,fecha,"Tomado",p);
+  p.querySelector(".danger").onclick=()=>registrar(t,hora,fecha,"Omitido",p);
+}
+
+function registrar(t,hora,fecha,estado,p){
+  historialTomas.push({medicamento:t.nombre,hora,fecha,estado});
+  localStorage.setItem("historialTomas",JSON.stringify(historialTomas));
+  p.remove();
+
+  if(estado==="Omitido"){
+    alert(`Avisar al cuidador: ${usuario.cuidadorTelefono}`);
+  }
+}
+
 renderLista();
+iniciarAlarmas();
 </script>
 
 </body>
