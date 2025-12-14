@@ -25,45 +25,39 @@ header{
   background:var(--blanco);
   padding:20px;
   text-align:center;
-  border-bottom:1px solid #ddd;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
-h1{
-  margin:0;
-  font-size:26px;
-}
-
-.sub{
-  color:#666;
-}
+h1{margin:0;font-size:26px;}
+h2{margin:5px 0 0;color:#666;font-weight:normal;}
 
 .container{
   max-width:420px;
   margin:20px auto;
-  padding:10px;
+  padding:0 15px;
 }
 
 .card{
   background:var(--blanco);
-  border-radius:14px;
-  padding:18px;
-  margin-bottom:16px;
-  box-shadow:0 4px 10px rgba(0,0,0,.05);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:15px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
 
 .menu-btn{
   width:100%;
   padding:16px;
-  margin:10px 0;
   border:none;
   border-radius:14px;
   background:var(--azul);
-  color:#fff;
-  font-size:18px;
+  color:white;
+  font-size:16px;
+  margin-bottom:12px;
   cursor:pointer;
 }
 
-.menu-btn:active{opacity:.8;}
+.menu-btn:active{opacity:0.9}
 
 input, select{
   width:100%;
@@ -72,39 +66,34 @@ input, select{
   margin-bottom:14px;
   border-radius:10px;
   border:1px solid #ccc;
-  font-size:16px;
-}
-
-label{
-  font-weight:bold;
   font-size:14px;
 }
 
-.switch{
+label{
+  font-size:14px;
+  font-weight:bold;
+}
+
+.checkbox{
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  margin:12px 0;
+  gap:10px;
+  margin-bottom:14px;
 }
 
-.hidden{display:none;}
-
-.image-box{
-  margin-top:20px;
-  text-align:center;
-}
-
-.image-box img{
+img{
   width:100%;
-  max-width:360px;
-  border-radius:14px;
+  border-radius:16px;
+  margin-top:10px;
 }
+
+.hidden{display:none}
 
 footer{
   text-align:center;
+  color:#888;
   font-size:13px;
-  color:#777;
-  margin:30px 0 10px;
+  margin:20px 0;
 }
 </style>
 </head>
@@ -113,92 +102,76 @@ footer{
 
 <header>
   <h1>💊 Recordatorio de Medicamentos</h1>
-  <div class="sub">Menú principal</div>
+  <h2>Menú principal</h2>
 </header>
 
 <div class="container">
 
-  <!-- MENÚ -->
-  <div id="menu">
-    <div class="card" style="text-align:center">
-      <h2>Bienvenido, María</h2>
-      <p>Edad: 72 años y 3 meses</p>
-    </div>
+  <!-- BIENVENIDA -->
+  <div class="card" id="bienvenida">
+    <strong id="saludo">Bienvenido</strong><br>
+    <span id="edad"></span>
+  </div>
 
+  <!-- MENÚ -->
+  <div class="card" id="menu">
     <button class="menu-btn" onclick="mostrar('datos')">👤 Datos personales</button>
     <button class="menu-btn" onclick="mostrar('medicamentos')">💊 Medicamentos</button>
     <button class="menu-btn" onclick="mostrar('seguimiento')">📋 Seguimiento</button>
-
-    <div class="image-box">
-      <img src="personas-inclusivas.png" alt="Personas de distintas edades y capacidades">
-    </div>
   </div>
 
   <!-- DATOS PERSONALES -->
-  <div id="datos" class="hidden">
-    <div class="card">
-      <h3>Datos personales</h3>
+  <div class="card hidden" id="datos">
+    <h3>Datos personales</h3>
 
-      <label>Nombre del usuario</label>
-      <input type="text" placeholder="Ej: María González">
+    <label>Nombre</label>
+    <input id="nombre" placeholder="Ej: María González">
 
-      <label>Fecha de nacimiento</label>
-      <input type="date">
+    <label>Fecha de nacimiento</label>
+    <input id="nacimiento" type="date">
 
-      <label>Nombre del cuidador</label>
-      <input type="text" placeholder="Ej: Juan Pérez">
+    <label>Nombre del cuidador</label>
+    <input id="cuidador">
 
-      <label>Teléfono del cuidador</label>
-      <input type="tel" placeholder="+56 9 1234 5678">
+    <label>Teléfono del cuidador</label>
+    <input id="telefono" placeholder="+56 9 1234 5678">
 
-      <div class="switch">
-        <span>Aviso por voz</span>
-        <input type="checkbox" checked>
-      </div>
-
-      <div class="switch">
-        <span>Vibración</span>
-        <input type="checkbox" checked>
-      </div>
-
-      <button class="menu-btn" onclick="volver()">Guardar y volver</button>
-    </div>
+    <button class="menu-btn" onclick="guardarDatos()">Guardar</button>
+    <button class="menu-btn" onclick="volver()">Volver</button>
   </div>
 
   <!-- MEDICAMENTOS -->
-  <div id="medicamentos" class="hidden">
-    <div class="card">
-      <h3>Agregar medicamento</h3>
+  <div class="card hidden" id="medicamentos">
+    <h3>Medicamentos</h3>
 
-      <label>Nombre del medicamento</label>
-      <input type="text" placeholder="Ej: Paracetamol">
+    <label>Nombre del medicamento</label>
+    <input id="medNombre">
 
-      <label>Dosis</label>
-      <input type="text" placeholder="Ej: 1 comprimido">
+    <label>Dosis</label>
+    <input id="medDosis" placeholder="Ej: 1 comprimido">
 
-      <label>Lugar donde se guarda</label>
-      <input type="text" placeholder="Ej: Velador del dormitorio">
+    <label>Lugar donde se guarda</label>
+    <input id="medLugar">
 
-      <div class="switch">
-        <span>Medicamento permanente</span>
-        <input type="checkbox">
-      </div>
-
-      <label>Horario</label>
-      <input type="time">
-
-      <button class="menu-btn" onclick="volver()">Guardar medicamento</button>
+    <div class="checkbox">
+      <input type="checkbox" id="permanente">
+      <label for="permanente">Medicamento permanente</label>
     </div>
+
+    <button class="menu-btn" onclick="guardarMedicamento()">Guardar medicamento</button>
+    <button class="menu-btn" onclick="volver()">Volver</button>
   </div>
 
   <!-- SEGUIMIENTO -->
-  <div id="seguimiento" class="hidden">
-    <div class="card">
-      <h3>Seguimiento</h3>
-      <p>Aquí se mostrará el historial de medicamentos tomados.</p>
+  <div class="card hidden" id="seguimiento">
+    <h3>Seguimiento</h3>
+    <p>Aquí se mostrará el historial de tomas.</p>
+    <button class="menu-btn" onclick="volver()">Volver</button>
+  </div>
 
-      <button class="menu-btn" onclick="volver()">Volver al menú</button>
-    </div>
+  <!-- IMAGEN -->
+  <div class="card">
+    <img src="personas-inclusivas.png" alt="Personas de distintas edades y capacidades">
   </div>
 
 </div>
@@ -209,18 +182,35 @@ footer{
 
 <script>
 function mostrar(id){
-  document.getElementById('menu').classList.add('hidden');
-  document.getElementById('datos').classList.add('hidden');
-  document.getElementById('medicamentos').classList.add('hidden');
-  document.getElementById('seguimiento').classList.add('hidden');
+  document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
 }
 
 function volver(){
-  document.getElementById('datos').classList.add('hidden');
-  document.getElementById('medicamentos').classList.add('hidden');
-  document.getElementById('seguimiento').classList.add('hidden');
+  document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
+  document.getElementById('bienvenida').classList.remove('hidden');
   document.getElementById('menu').classList.remove('hidden');
+}
+
+function guardarDatos(){
+  const nombre=document.getElementById('nombre').value;
+  const nac=document.getElementById('nacimiento').value;
+
+  if(!nombre || !nac){
+    alert("Completa todos los datos");
+    return;
+  }
+
+  const edadCalc=new Date().getFullYear()-new Date(nac).getFullYear();
+  document.getElementById('saludo').innerText="Bienvenido, "+nombre;
+  document.getElementById('edad').innerText="Edad: "+edadCalc+" años";
+
+  volver();
+}
+
+function guardarMedicamento(){
+  alert("Medicamento guardado correctamente");
+  volver();
 }
 </script>
 
