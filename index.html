@@ -8,13 +8,13 @@
 <style>
 :root{
   --azul:#2f80ed;
-  --gris:#f4f6f8;
+  --gris:#f2f4f6;
   --card:#ffffff;
   --texto:#333;
   --borde:#dcdcdc;
 }
 
-/* ===== FONDO MONOCROMO MÉDICO ===== */
+/* ===== BODY ===== */
 body{
   margin:0;
   padding:20px;
@@ -25,20 +25,24 @@ body{
   overflow-x:hidden;
 }
 
+/* ===== FONDO MÉDICO REAL ===== */
 body::before{
   content:"";
   position:fixed;
   inset:0;
   background:
-    linear-gradient(rgba(244,246,248,0.94), rgba(244,246,248,0.94)),
-    url("https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1200&q=60");
+    linear-gradient(
+      rgba(242,244,246,0.80),
+      rgba(242,244,246,0.80)
+    ),
+    url("https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1600&q=80");
   background-size:cover;
   background-position:center;
-  filter:grayscale(100%);
+  filter:grayscale(100%) contrast(1.15);
   z-index:-1;
 }
 
-/* ===== TÍTULOS ===== */
+/* ===== TITULOS ===== */
 h1{
   text-align:center;
   margin-bottom:4px;
@@ -50,14 +54,14 @@ h1{
   margin-bottom:24px;
 }
 
-/* ===== TARJETA ===== */
+/* ===== CARD ===== */
 .card{
   max-width:420px;
   margin:0 auto;
   background:var(--card);
   padding:22px;
   border-radius:18px;
-  box-shadow:0 10px 26px rgba(0,0,0,.12);
+  box-shadow:0 12px 28px rgba(0,0,0,.15);
 }
 
 /* ===== FORM ===== */
@@ -85,7 +89,7 @@ input:focus{
   background:#fff;
 }
 
-/* ===== OPCIONES CLICKABLES ===== */
+/* ===== OPCIONES ===== */
 .option{
   display:flex;
   align-items:center;
@@ -93,9 +97,8 @@ input:focus{
   margin-top:16px;
   padding:12px 14px;
   border-radius:14px;
-  background:#f7f8fa;
+  background:#f6f7f9;
   cursor:pointer;
-  user-select:none;
 }
 
 .option input{
@@ -104,7 +107,7 @@ input:focus{
   margin:0;
 }
 
-/* ===== BOTÓN ===== */
+/* ===== BOTON ===== */
 button{
   margin-top:28px;
   width:100%;
