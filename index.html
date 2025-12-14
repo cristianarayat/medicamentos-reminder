@@ -81,6 +81,47 @@ button{
   margin:4px 4px 0 0;
 }
 
+.toggle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px;
+  border-radius:14px;
+  background:#f3f5f7;
+  cursor:pointer;
+}
+
+.toggle input{ display:none; }
+
+.switch{
+  width:48px;
+  height:26px;
+  background:#ccc;
+  border-radius:13px;
+  position:relative;
+  transition:.2s;
+}
+
+.switch::after{
+  content:"";
+  width:22px;
+  height:22px;
+  background:#fff;
+  border-radius:50%;
+  position:absolute;
+  top:2px;
+  left:2px;
+  transition:.2s;
+}
+
+input:checked + .switch{
+  background:var(--azul);
+}
+
+input:checked + .switch::after{
+  transform:translateX(22px);
+}
+
 img.med-img{
   width:100%;
   max-height:160px;
@@ -100,17 +141,17 @@ img.med-img{
 
 <div class="pattern-area">
 
-  <!-- PERFIL RESUMEN -->
+  <!-- PERFIL -->
   <div class="card" id="perfilResumen"></div>
 
-  <!-- LISTA TRATAMIENTOS -->
+  <!-- LISTA -->
   <div class="card">
     <h3>Tratamientos activos</h3>
     <div id="lista"></div>
     <button onclick="mostrarForm()">Agregar medicamento</button>
   </div>
 
-  <!-- FORMULARIO MEDICAMENTO -->
+  <!-- FORMULARIO -->
   <div class="card hidden" id="formMed">
 
     <div class="row">
@@ -120,17 +161,30 @@ img.med-img{
 
     <div class="row">
       <div class="label">Dosis</div>
-      <input id="medDosis" placeholder="Ej: 1 comprimido">
+      <input id="medDosis">
     </div>
 
     <div class="row">
       <div class="label">Lugar donde se guarda</div>
-      <input id="medLugar" placeholder="Ej: Velador del dormitorio">
+      <input id="medLugar">
     </div>
 
     <div class="row">
       <div class="label">Foto de la caja (opcional)</div>
       <input type="file" id="medFoto" accept="image/*">
+    </div>
+
+    <div class="row toggle" onclick="togglePermanente()">
+      <span>Medicamento permanente</span>
+      <label>
+        <input type="checkbox" id="medPermanente">
+        <div class="switch"></div>
+      </label>
+    </div>
+
+    <div class="row" id="diasRow">
+      <div class="label">Días de duración</div>
+      <input type="number" id="medDias" min="1">
     </div>
 
     <div class="row">
@@ -140,11 +194,6 @@ img.med-img{
       <div id="horas"></div>
     </div>
 
-    <div class="row">
-      <div class="label">Días de duración</div>
-      <input type="number" id="medDias" min="1">
-    </div>
-
     <button class="ok" onclick="guardarMed()">Guardar medicamento</button>
     <button class="secondary" onclick="ocultarForm()">Cancelar</button>
   </div>
@@ -152,7 +201,7 @@ img.med-img{
 </div>
 
 <script>
-// ===== PERFIL =====
+// PERFIL
 const usuario = JSON.parse(localStorage.getItem("usuario"));
 perfilResumen.innerHTML = `
   <strong>${usuario.nombre}</strong><br>
@@ -160,19 +209,23 @@ perfilResumen.innerHTML = `
   Voz: ${usuario.voz ? "Sí" : "No"} · Vibración: ${usuario.vibracion ? "Sí" : "No"}
 `;
 
-// ===== TRATAMIENTOS =====
+// TRATAMIENTOS
 let tratamientos = JSON.parse(localStorage.getItem("tratamientos")) || [];
 let horasTemp = [];
 let fotoTemp = null;
 
-// Foto
-medFoto.addEventListener("change", function(){
-  const file = this.files[0];
+medFoto.addEventListener("change", e=>{
+  const file = e.target.files[0];
   if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => fotoTemp = reader.result;
-  reader.readAsDataURL(file);
+  const r = new FileReader();
+  r.onload = () => fotoTemp = r.result;
+  r.readAsDataURL(file);
 });
+
+function togglePermanente(){
+  medPermanente.checked = !medPermanente.checked;
+  diasRow.style.display = medPermanente.checked ? "none" : "block";
+}
 
 function renderLista(){
   lista.innerHTML = "";
@@ -182,25 +235,24 @@ function renderLista(){
         ${t.foto ? `<img class="med-img" src="${t.foto}">` : ""}
         <strong>${t.nombre}</strong><br>
         Dosis: ${t.dosis}<br>
-        📍 Lugar: <strong>${t.lugar}</strong><br>
-        Horarios: ${t.horarios.join(", ")}<br>
-        Duración: ${t.dias} días
+        📍 ${t.lugar}<br>
+        ${t.permanente ? "♾️ Permanente" : `⏳ ${t.dias} días`}<br>
+        Horarios: ${t.horarios.join(", ")}
         <button class="secondary" onclick="eliminar(${i})">Eliminar</button>
       </div>
     `;
   });
 }
 
-function mostrarForm(){
-  formMed.classList.remove("hidden");
-}
-
+function mostrarForm(){ formMed.classList.remove("hidden"); }
 function ocultarForm(){
   formMed.classList.add("hidden");
   horasTemp = [];
   fotoTemp = null;
   horas.innerHTML = "";
   medFoto.value = "";
+  medPermanente.checked = false;
+  diasRow.style.display = "block";
 }
 
 function agregarHora(){
@@ -211,8 +263,13 @@ function agregarHora(){
 }
 
 function guardarMed(){
-  if(!medNombre.value || !medDosis.value || !medLugar.value || !medDias.value || horasTemp.length===0){
+  if(!medNombre.value || !medDosis.value || !medLugar.value || horasTemp.length===0){
     alert("Complete todos los campos obligatorios");
+    return;
+  }
+
+  if(!medPermanente.checked && !medDias.value){
+    alert("Indique la duración o marque como permanente");
     return;
   }
 
@@ -221,14 +278,13 @@ function guardarMed(){
     dosis: medDosis.value,
     lugar: medLugar.value,
     horarios: horasTemp,
-    dias: medDias.value,
+    dias: medPermanente.checked ? null : medDias.value,
+    permanente: medPermanente.checked,
     inicio: new Date().toISOString().slice(0,10),
-    activo:true,
     foto: fotoTemp
   });
 
   localStorage.setItem("tratamientos", JSON.stringify(tratamientos));
-
   medNombre.value = medDosis.value = medLugar.value = medDias.value = "";
   ocultarForm();
   renderLista();
