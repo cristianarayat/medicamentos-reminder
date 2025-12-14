@@ -55,22 +55,26 @@ button{
 
 .secondary{ background:#6c757d; }
 
-.row{ margin-top:14px; }
-.label{ font-size:14px; font-weight:600; margin-bottom:6px; }
-
-input{
-  width:100%;
-  height:52px;
-  padding:14px;
-  border-radius:14px;
-  border:1px solid var(--borde);
-  box-sizing:border-box;
+/* ===== ANIMACIÓN PERSONAS ===== */
+.people-strip{
+  overflow:hidden;
+  margin-top:20px;
 }
 
-.banner{
-  width:100%;
-  border-radius:14px;
-  margin-bottom:16px;
+.people-track{
+  display:flex;
+  gap:28px;
+  font-size:42px;
+  animation: scrollPeople 18s linear infinite;
+}
+
+@keyframes scrollPeople{
+  0%{ transform: translateX(-100%); }
+  100%{ transform: translateX(100%); }
+}
+
+.people{
+  opacity:0.7;
 }
 </style>
 </head>
@@ -85,48 +89,44 @@ input{
 
   <!-- HOME -->
   <div class="card" id="home">
-
-    <!-- IMAGEN REPRESENTATIVA -->
-    <img
-      class="banner"
-      src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=1200&auto=format&fit=crop"
-      alt="Personas de distintas edades y capacidades">
-
     <h2>Menú principal</h2>
 
     <button onclick="mostrarSeccion('perfil')">👤 Datos personales</button>
     <button onclick="mostrarSeccion('medicamentos')">💊 Medicamentos</button>
     <button onclick="mostrarSeccion('seguimiento')">📊 Seguimiento</button>
+
+    <!-- FRANJA ANIMADA -->
+    <div class="people-strip">
+      <div class="people-track">
+        <div class="people">👵👴</div>
+        <div class="people">👩‍🦱</div>
+        <div class="people">🤱</div>
+        <div class="people">♿</div>
+
+        <!-- duplicado para loop suave -->
+        <div class="people">👵👴</div>
+        <div class="people">👩‍🦱</div>
+        <div class="people">🤱</div>
+        <div class="people">♿</div>
+      </div>
+    </div>
   </div>
 
   <!-- PERFIL -->
   <div class="card hidden" id="perfil">
     <h3>Datos personales</h3>
-
     <div id="perfilResumen"></div>
-
-    <button onclick="editarPerfil()">Modificar datos personales</button>
-    <button class="secondary" onclick="volverHome()">⬅ Volver al menú</button>
+    <button onclick="editarPerfil()">Modificar datos</button>
+    <button class="secondary" onclick="volverHome()">⬅ Volver</button>
   </div>
 
   <!-- FORM PERFIL -->
   <div class="card hidden" id="perfilForm">
     <h3>Editar datos personales</h3>
 
-    <div class="row">
-      <div class="label">Nombre</div>
-      <input id="nombre">
-    </div>
-
-    <div class="row">
-      <div class="label">Nombre del cuidador</div>
-      <input id="cuidadorNombre">
-    </div>
-
-    <div class="row">
-      <div class="label">Teléfono del cuidador</div>
-      <input id="cuidadorTelefono">
-    </div>
+    <input id="nombre" placeholder="Nombre del usuario">
+    <input id="cuidadorNombre" placeholder="Nombre del cuidador">
+    <input id="cuidadorTelefono" placeholder="Teléfono del cuidador">
 
     <button onclick="guardarPerfil()">Guardar</button>
     <button class="secondary" onclick="mostrarSeccion('perfil')">Cancelar</button>
@@ -135,14 +135,14 @@ input{
   <!-- MEDICAMENTOS -->
   <div class="card hidden" id="medicamentos">
     <h3>Medicamentos</h3>
-    <p>(sin cambios en esta fase)</p>
+    <p>(se mantiene igual por ahora)</p>
     <button class="secondary" onclick="volverHome()">⬅ Volver</button>
   </div>
 
   <!-- SEGUIMIENTO -->
   <div class="card hidden" id="seguimiento">
     <h3>Seguimiento</h3>
-    <p>(sin cambios en esta fase)</p>
+    <p>(se mantiene igual por ahora)</p>
     <button class="secondary" onclick="volverHome()">⬅ Volver</button>
   </div>
 
