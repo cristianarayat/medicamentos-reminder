@@ -3,161 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>💊 Recordatorio de Medicamentos</title>
+<title>Recordatorio de Medicamentos</title>
 
 <style>
 /* =========================
    ESTILOS GENERALES
-   ========================= */
-
+========================= */
 body{
   margin:0;
   font-family: Arial, sans-serif;
-  background:#f2f2f2;
+  background:#f2f4f7;
   color:#333;
 }
-
-h1,h2,h3{
-  margin-top:0;
+h1,h2,h3{margin:0 0 10px}
+.hidden{display:none}
+.container{
+  max-width:420px;
+  margin:auto;
+  padding:15px;
 }
-
-.hidden{
-  display:none;
-}
-
 .card{
   background:#fff;
-  max-width:480px;
-  margin:16px auto;
-  padding:20px;
   border-radius:14px;
-  box-shadow:0 8px 20px rgba(0,0,0,.15);
+  padding:15px;
+  margin-bottom:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,.1);
 }
-
 button{
   width:100%;
   padding:14px;
-  margin-top:12px;
-  font-size:16px;
+  margin-top:10px;
   border:none;
-  border-radius:12px;
-  cursor:pointer;
+  border-radius:10px;
+  font-size:16px;
   background:#2f80ed;
   color:#fff;
 }
-
-button.secondary{
-  background:#777;
-}
-
-label{
-  font-weight:bold;
-  display:block;
-  margin-top:12px;
-}
-
-input, select{
+button.sec{background:#6c757d}
+label{font-size:14px;font-weight:bold}
+input,select{
   width:100%;
   padding:12px;
-  margin-top:6px;
-  border-radius:10px;
+  margin-top:5px;
+  border-radius:8px;
   border:1px solid #ccc;
-  box-sizing:border-box;
+}
+.footer{
+  text-align:center;
+  font-size:13px;
+  opacity:.7;
+  margin-top:20px;
 }
 
 /* =========================
-   SWITCH DESLIZABLE
-   ========================= */
-
+   SWITCH
+========================= */
 .switch{
-  position:relative;
-  display:inline-block;
-  width:50px;
-  height:26px;
-  margin-left:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
 }
-
-.switch input{
-  display:none;
-}
-
+.switch input{display:none}
 .slider{
-  position:absolute;
-  cursor:pointer;
-  top:0; left:0; right:0; bottom:0;
+  width:46px;height:24px;
   background:#ccc;
-  transition:.4s;
-  border-radius:26px;
+  border-radius:24px;
+  position:relative;
 }
-
 .slider:before{
-  position:absolute;
   content:"";
-  height:20px;
-  width:20px;
-  left:3px;
-  bottom:3px;
-  background:white;
-  transition:.4s;
+  position:absolute;
+  width:20px;height:20px;
+  left:2px;top:2px;
+  background:#fff;
   border-radius:50%;
+  transition:.3s;
 }
-
 input:checked + .slider{
   background:#2f80ed;
 }
-
 input:checked + .slider:before{
-  transform:translateX(24px);
-}
-
-/* =========================
-   FOOTER
-   ========================= */
-
-.footer{
-  text-align:center;
-  font-size:12px;
-  color:#666;
-  margin:20px 0;
+  transform:translateX(22px);
 }
 
 /* =========================
    MEDICAMENTOS
-   ========================= */
-
+========================= */
 .med-item{
-  border-bottom:1px solid #ddd;
-  padding:10px 0;
+  border-top:1px solid #eee;
+  padding-top:10px;
+  margin-top:10px;
+}
+.med-item img{
+  width:100%;
+  border-radius:10px;
+  margin-top:5px;
 }
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <!-- =========================
-     PANTALLA PRINCIPAL
-     ========================= -->
-
-<div class="card" id="home">
+     HOME
+========================= -->
+<div id="home" class="card">
   <h1>💊 Recordatorio de Medicamentos</h1>
-
   <div id="bienvenida"></div>
 
   <button onclick="mostrar('perfil')">👤 Datos personales</button>
   <button onclick="mostrar('medicamentos')">💊 Medicamentos</button>
   <button onclick="mostrar('seguimiento')">📊 Seguimiento</button>
 
-  <img src="personas-inclusivas.png" style="width:100%; margin-top:20px;">
+  <img src="activos/personas-inclusivas.png" style="width:100%;margin-top:15px">
 
   <div class="footer">Desarrollado por CA Tecnología</div>
 </div>
 
 <!-- =========================
-     DATOS PERSONALES
-     ========================= -->
-
-<div class="card hidden" id="perfil">
+     PERFIL
+========================= -->
+<div id="perfil" class="card hidden">
   <h2>Datos personales</h2>
 
   <label>Nombre</label>
@@ -166,89 +135,89 @@ input:checked + .slider:before{
   <label>Fecha de nacimiento</label>
   <input type="date" id="fechaNacimiento">
 
-  <label>Nombre del cuidador</label>
+  <label>Nombre cuidador</label>
   <input id="cuidadorNombre">
 
-  <label>Teléfono del cuidador</label>
+  <label>Teléfono cuidador</label>
   <input id="cuidadorTelefono">
 
-  <label>
-    Vibración
-    <span class="switch">
-      <input type="checkbox" id="vibracion">
-      <span class="slider"></span>
-    </span>
-  </label>
-
-  <label>
-    Voz
-    <span class="switch">
+  <div class="switch">
+    🔊 Voz
+    <label>
       <input type="checkbox" id="voz">
       <span class="slider"></span>
-    </span>
-  </label>
+    </label>
+  </div>
+
+  <div class="switch">
+    📳 Vibración
+    <label>
+      <input type="checkbox" id="vibracion">
+      <span class="slider"></span>
+    </label>
+  </div>
 
   <button onclick="guardarPerfil()">Guardar</button>
-  <button class="secondary" onclick="mostrar('home')">Volver</button>
+  <button class="sec" onclick="mostrar('home')">Volver</button>
 
   <div class="footer">Desarrollado por CA Tecnología</div>
 </div>
 
 <!-- =========================
      MEDICAMENTOS
-     ========================= -->
-
-<div class="card hidden" id="medicamentos">
+========================= -->
+<div id="medicamentos" class="card hidden">
   <h2>Medicamentos</h2>
 
-  <form id="formMedicamentos">
-    <label>Nombre del medicamento</label>
-    <input id="medNombre">
+  <label>Nombre</label>
+  <input id="medNombre">
 
-    <label>Dosis</label>
-    <input id="medDosis">
+  <label>Dosis (cantidad)</label>
+  <input type="number" id="medDosis" min="1" value="1" onchange="generarHorarios()">
 
-    <label>Horario</label>
-    <input type="time" id="medHorario">
+  <div id="horarios"></div>
 
-    <label>Lugar donde se guarda</label>
-    <input id="medLugar">
+  <label>Días de tratamiento</label>
+  <input type="number" id="medDias">
 
-    <label>Foto (opcional)</label>
-    <input type="file" id="medFoto" accept="image/*">
+  <label>Lugar donde se guarda</label>
+  <input id="medLugar">
 
+  <label>Foto (opcional)</label>
+  <input type="file" id="medFoto" accept="image/*">
+
+  <div class="switch">
+    Permanente
     <label>
-      Permanente
       <input type="checkbox" id="medPermanente">
+      <span class="slider"></span>
     </label>
+  </div>
 
-    <button type="button" onclick="agregarMedicamento()">Guardar medicamento</button>
-  </form>
+  <button onclick="agregarMedicamento()">Guardar medicamento</button>
+  <button class="sec" onclick="mostrar('home')">Volver</button>
 
   <div id="listaMedicamentos"></div>
-
-  <button class="secondary" onclick="mostrar('home')">Volver</button>
 
   <div class="footer">Desarrollado por CA Tecnología</div>
 </div>
 
 <!-- =========================
      SEGUIMIENTO
-     ========================= -->
-
-<div class="card hidden" id="seguimiento">
+========================= -->
+<div id="seguimiento" class="card hidden">
   <h2>Seguimiento</h2>
-  <p>Próxima fase</p>
-
-  <button class="secondary" onclick="mostrar('home')">Volver</button>
+  <p>En desarrollo…</p>
+  <button class="sec" onclick="mostrar('home')">Volver</button>
   <div class="footer">Desarrollado por CA Tecnología</div>
 </div>
 
-<!-- =========================
-     SCRIPT
-     ========================= -->
+</div>
 
 <script>
+/* =========================
+   NAVEGACIÓN
+========================= */
 function mostrar(id){
   ["home","perfil","medicamentos","seguimiento"].forEach(s=>{
     document.getElementById(s).classList.add("hidden");
@@ -256,59 +225,96 @@ function mostrar(id){
   document.getElementById(id).classList.remove("hidden");
 }
 
-/* ===== PERFIL ===== */
-
+/* =========================
+   PERFIL
+========================= */
 let perfil = JSON.parse(localStorage.getItem("perfil")) || {};
 
+function calcularEdad(fecha){
+  if(!fecha) return "";
+  const h=new Date(), n=new Date(fecha);
+  let a=h.getFullYear()-n.getFullYear();
+  let m=h.getMonth()-n.getMonth();
+  if(h.getDate()<n.getDate())m--;
+  if(m<0){a--;m+=12;}
+  return `${a} años y ${m} meses`;
+}
+
 function guardarPerfil(){
-  perfil = {
+  const tel=document.getElementById("cuidadorTelefono").value.replace(/\D/g,"");
+  if(tel.length<8){
+    alert("Teléfono inválido");
+    return;
+  }
+  perfil={
     nombre:nombre.value,
-    fecha:fechaNacimiento.value,
-    cuidador:cuidadorNombre.value,
-    telefono:cuidadorTelefono.value,
-    vibracion:vibracion.checked,
-    voz:voz.checked
+    fechaNacimiento:fechaNacimiento.value,
+    cuidadorNombre:cuidadorNombre.value,
+    cuidadorTelefono:tel,
+    voz:voz.checked,
+    vibracion:vibracion.checked
   };
-  localStorage.setItem("perfil", JSON.stringify(perfil));
+  localStorage.setItem("perfil",JSON.stringify(perfil));
   alert("Datos guardados correctamente");
+  renderBienvenida();
 }
 
-if(perfil.nombre){
-  bienvenida.innerHTML = `<strong>Bienvenido ${perfil.nombre}</strong>`;
+function renderBienvenida(){
+  if(!perfil.nombre) return;
+  bienvenida.innerHTML=`<strong>Bienvenido ${perfil.nombre}</strong><br>
+  Edad: ${calcularEdad(perfil.fechaNacimiento)}`;
 }
+renderBienvenida();
 
-/* ===== MEDICAMENTOS ===== */
+/* =========================
+   MEDICAMENTOS
+========================= */
+let medicamentos=JSON.parse(localStorage.getItem("medicamentos"))||[];
 
-let medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
+function generarHorarios(){
+  const d=+medDosis.value;
+  horarios.innerHTML="";
+  for(let i=1;i<=d;i++){
+    horarios.innerHTML+=`<label>Horario ${i}</label><input type="time" class="h">`;
+  }
+}
 
 function agregarMedicamento(){
-  const med = {
-    nombre:medNombre.value,
-    dosis:medDosis.value,
-    horario:medHorario.value,
-    lugar:medLugar.value,
-    permanente:medPermanente.checked
+  const hs=[...document.querySelectorAll(".h")].map(i=>i.value);
+  const reader=new FileReader();
+  reader.onload=()=>{
+    medicamentos.push({
+      nombre:medNombre.value,
+      dosis:medDosis.value,
+      horarios:hs,
+      dias:medDias.value,
+      lugar:medLugar.value,
+      permanente:medPermanente.checked,
+      foto:reader.result||""
+    });
+    localStorage.setItem("medicamentos",JSON.stringify(medicamentos));
+    listarMedicamentos();
   };
-  medicamentos.push(med);
-  localStorage.setItem("medicamentos", JSON.stringify(medicamentos));
-  mostrarMedicamentos();
-  formMedicamentos.reset();
+  const f=medFoto.files[0];
+  if(f) reader.readAsDataURL(f);
+  else reader.onload();
 }
 
-function mostrarMedicamentos(){
+function listarMedicamentos(){
   listaMedicamentos.innerHTML="";
   medicamentos.forEach(m=>{
-    listaMedicamentos.innerHTML += `
-      <div class="med-item">
-        <strong>${m.nombre}</strong><br>
-        Dosis: ${m.dosis}<br>
-        Horario: ${m.horario}<br>
-        Lugar: ${m.lugar}<br>
-        Tipo: ${m.permanente ? "Permanente" : "Temporal"}
-      </div>
-    `;
+    listaMedicamentos.innerHTML+=`
+    <div class="med-item">
+      <strong>${m.nombre}</strong><br>
+      Dosis: ${m.dosis}<br>
+      Horarios: ${m.horarios.join(", ")}<br>
+      Días: ${m.dias}<br>
+      Lugar: ${m.lugar}<br>
+      ${m.foto?`<img src="${m.foto}">`:""}
+    </div>`;
   });
 }
+listarMedicamentos();
 </script>
 
 </body>
