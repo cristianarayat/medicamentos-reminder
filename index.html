@@ -63,52 +63,81 @@ body{
   box-shadow:0 14px 32px rgba(0,0,0,.15);
 }
 
-/* ===== FILAS UNIFICADAS ===== */
+/* ===== FILA BASE ===== */
 .row{
   margin-top:16px;
 }
 
-.row-label{
+.label{
   font-size:14px;
   font-weight:600;
   color:#555;
   margin-bottom:6px;
 }
 
-.row-value{
-  font-size:16px;
-}
-
-/* ===== INPUT ===== */
-input{
+input[type="text"],
+input[type="tel"],
+input[type="date"]{
   width:100%;
+  box-sizing:border-box;
   padding:14px;
   border-radius:14px;
   border:1px solid var(--borde);
   font-size:16px;
+  background:#fff;
 }
 
-/* ===== OPCIONES ===== */
-.option{
+/* ===== TOGGLES GRANDES ===== */
+.toggle{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:14px;
+  padding:16px;
   border-radius:14px;
   background:#f3f5f7;
+  cursor:pointer;
+  user-select:none;
 }
 
-.option span{
-  font-size:15px;
+.toggle span{
+  font-size:16px;
   font-weight:500;
 }
 
-.option input{
-  width:22px;
-  height:22px;
+.toggle input{
+  display:none;
 }
 
-/* ===== BOTONES ===== */
+.switch{
+  width:48px;
+  height:26px;
+  background:#ccc;
+  border-radius:13px;
+  position:relative;
+  transition:.2s;
+}
+
+.switch::after{
+  content:"";
+  width:22px;
+  height:22px;
+  background:#fff;
+  border-radius:50%;
+  position:absolute;
+  top:2px;
+  left:2px;
+  transition:.2s;
+}
+
+input:checked + .switch{
+  background:var(--azul);
+}
+
+input:checked + .switch::after{
+  transform:translateX(22px);
+}
+
+/* ===== BOTÓN ===== */
 button{
   width:100%;
   padding:16px;
@@ -119,14 +148,9 @@ button{
   background:var(--azul);
   color:white;
   cursor:pointer;
-  margin-top:24px;
+  margin-top:26px;
 }
 
-.secondary{
-  background:#6c757d;
-}
-
-.hidden{display:none;}
 </style>
 </head>
 
@@ -139,76 +163,46 @@ button{
 
 <div class="pattern-area">
 
-  <!-- RESUMEN -->
-  <div class="card hidden" id="resumen">
+  <div class="card">
 
     <div class="row">
-      <div class="row-label">Usuario</div>
-      <div class="row-value" id="r_nombre"></div>
+      <div class="label">Nombre del usuario</div>
+      <input type="text" id="nombre">
     </div>
 
     <div class="row">
-      <div class="row-label">Fecha de nacimiento</div>
-      <div class="row-value" id="r_nacimiento"></div>
+      <div class="label">Fecha de nacimiento</div>
+      <input type="date" id="nacimiento">
     </div>
 
     <div class="row">
-      <div class="row-label">Cuidador</div>
-      <div class="row-value" id="r_cuidador"></div>
+      <div class="label">Nombre del cuidador</div>
+      <input type="text" id="cuidadorNombre">
     </div>
 
     <div class="row">
-      <div class="row-label">Teléfono</div>
-      <div class="row-value" id="r_tel"></div>
+      <div class="label">Teléfono del cuidador</div>
+      <input type="tel" id="cuidadorTel">
     </div>
 
-    <div class="row">
-      <div class="row-label">Aviso por voz</div>
-      <div class="row-value" id="r_voz"></div>
-    </div>
-
-    <div class="row">
-      <div class="row-label">Vibración</div>
-      <div class="row-value" id="r_vibracion"></div>
-    </div>
-
-    <button class="secondary" onclick="editar()">Modificar datos</button>
-  </div>
-
-  <!-- FORMULARIO -->
-  <div class="card" id="formulario">
-
-    <div class="row">
-      <div class="row-label">Nombre del usuario</div>
-      <input id="nombre">
-    </div>
-
-    <div class="row">
-      <div class="row-label">Fecha de nacimiento</div>
-      <input id="nacimiento" type="date">
-    </div>
-
-    <div class="row">
-      <div class="row-label">Nombre del cuidador</div>
-      <input id="cuidadorNombre">
-    </div>
-
-    <div class="row">
-      <div class="row-label">Teléfono del cuidador</div>
-      <input id="cuidadorTel" type="tel">
-    </div>
-
-    <div class="row option" onclick="voz.checked = !voz.checked">
+    <div class="row toggle" onclick="voz.click()">
       <span>Aviso por voz</span>
-      <input id="voz" type="checkbox" checked>
+      <label>
+        <input type="checkbox" id="voz" checked>
+        <div class="switch"></div>
+      </label>
     </div>
 
-    <div class="row option" onclick="vibracion.checked = !vibracion.checked">
+    <div class="row toggle" onclick="vibracion.click()">
       <span>Vibración</span>
-      <input id="vibracion" type="checkbox" checked>
+      <label>
+        <input type="checkbox" id="vibracion" checked>
+        <div class="switch"></div>
+      </label>
     </div>
 
     <button onclick="guardar()">Guardar datos</button>
+
   </div>
 
 </div>
@@ -241,29 +235,7 @@ function guardar(){
   };
 
   localStorage.setItem("usuario", JSON.stringify(usuario));
-  mostrarResumen(usuario);
-}
-
-function mostrarResumen(u){
-  formulario.classList.add("hidden");
-  resumen.classList.remove("hidden");
-
-  r_nombre.innerText = u.nombre;
-  r_nacimiento.innerText = u.nacimiento;
-  r_cuidador.innerText = u.cuidadorNombre;
-  r_tel.innerText = u.cuidadorTel;
-  r_voz.innerText = u.voz ? "Activado" : "Desactivado";
-  r_vibracion.innerText = u.vibracion ? "Activada" : "Desactivada";
-}
-
-function editar(){
-  resumen.classList.add("hidden");
-  formulario.classList.remove("hidden");
-}
-
-const guardado = localStorage.getItem("usuario");
-if(guardado){
-  mostrarResumen(JSON.parse(guardado));
+  alert("Datos guardados correctamente");
 }
 </script>
 
