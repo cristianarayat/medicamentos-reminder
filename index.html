@@ -12,8 +12,6 @@
   --card:#ffffff;
   --texto:#333;
   --borde:#d0d4d9;
-  --ok:#27ae60;
-  --rojo:#c0392b;
 }
 
 body{
@@ -56,8 +54,6 @@ button{
 }
 
 .secondary{ background:#6c757d; }
-.ok{ background:var(--ok); }
-.danger{ background:var(--rojo); }
 
 .row{ margin-top:14px; }
 .label{ font-size:14px; font-weight:600; margin-bottom:6px; }
@@ -71,21 +67,10 @@ input{
   box-sizing:border-box;
 }
 
-.list-item{
-  border:1px solid var(--borde);
+.banner{
+  width:100%;
   border-radius:14px;
-  padding:14px;
-  margin-top:12px;
-}
-
-.badge{
-  display:inline-block;
-  background:#eef3ff;
-  color:#2f80ed;
-  padding:6px 10px;
-  border-radius:10px;
-  font-size:13px;
-  margin:6px 6px 0 0;
+  margin-bottom:16px;
 }
 </style>
 </head>
@@ -100,7 +85,15 @@ input{
 
   <!-- HOME -->
   <div class="card" id="home">
+
+    <!-- IMAGEN REPRESENTATIVA -->
+    <img
+      class="banner"
+      src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?q=80&w=1200&auto=format&fit=crop"
+      alt="Personas de distintas edades y capacidades">
+
     <h2>Menú principal</h2>
+
     <button onclick="mostrarSeccion('perfil')">👤 Datos personales</button>
     <button onclick="mostrarSeccion('medicamentos')">💊 Medicamentos</button>
     <button onclick="mostrarSeccion('seguimiento')">📊 Seguimiento</button>
@@ -109,40 +102,47 @@ input{
   <!-- PERFIL -->
   <div class="card hidden" id="perfil">
     <h3>Datos personales</h3>
+
     <div id="perfilResumen"></div>
-    <button class="secondary" onclick="volverHome()">⬅ Volver</button>
+
+    <button onclick="editarPerfil()">Modificar datos personales</button>
+    <button class="secondary" onclick="volverHome()">⬅ Volver al menú</button>
+  </div>
+
+  <!-- FORM PERFIL -->
+  <div class="card hidden" id="perfilForm">
+    <h3>Editar datos personales</h3>
+
+    <div class="row">
+      <div class="label">Nombre</div>
+      <input id="nombre">
+    </div>
+
+    <div class="row">
+      <div class="label">Nombre del cuidador</div>
+      <input id="cuidadorNombre">
+    </div>
+
+    <div class="row">
+      <div class="label">Teléfono del cuidador</div>
+      <input id="cuidadorTelefono">
+    </div>
+
+    <button onclick="guardarPerfil()">Guardar</button>
+    <button class="secondary" onclick="mostrarSeccion('perfil')">Cancelar</button>
   </div>
 
   <!-- MEDICAMENTOS -->
   <div class="card hidden" id="medicamentos">
     <h3>Medicamentos</h3>
-    <div id="lista"></div>
-    <button onclick="mostrarForm()">Agregar medicamento</button>
+    <p>(sin cambios en esta fase)</p>
     <button class="secondary" onclick="volverHome()">⬅ Volver</button>
-  </div>
-
-  <!-- FORMULARIO MED -->
-  <div class="card hidden" id="formMed">
-    <h3>Nuevo medicamento</h3>
-
-    <div class="row"><div class="label">Nombre</div><input id="medNombre"></div>
-    <div class="row"><div class="label">Dosis</div><input id="medDosis"></div>
-    <div class="row"><div class="label">Lugar</div><input id="medLugar"></div>
-
-    <div class="row"><div class="label">Horario</div>
-      <input type="time" id="horaInput">
-      <button class="secondary" onclick="agregarHora()">Agregar horario</button>
-      <div id="horas"></div>
-    </div>
-
-    <button class="ok" onclick="guardarMed()">Guardar</button>
-    <button class="secondary" onclick="cerrarForm()">Cancelar</button>
   </div>
 
   <!-- SEGUIMIENTO -->
   <div class="card hidden" id="seguimiento">
     <h3>Seguimiento</h3>
-    <div id="listaSeguimiento"></div>
+    <p>(sin cambios en esta fase)</p>
     <button class="secondary" onclick="volverHome()">⬅ Volver</button>
   </div>
 
@@ -151,89 +151,50 @@ input{
 <script>
 // ===== NAVEGACIÓN =====
 function mostrarSeccion(id){
-  ["home","perfil","medicamentos","seguimiento","formMed"].forEach(s=>{
+  ["home","perfil","perfilForm","medicamentos","seguimiento"].forEach(s=>{
     const el = document.getElementById(s);
     if(el) el.classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
-  if(id==="seguimiento") renderSeguimiento();
 }
-function volverHome(){ mostrarSeccion("home"); }
+
+function volverHome(){
+  mostrarSeccion("home");
+}
 
 // ===== PERFIL =====
-const usuario = JSON.parse(localStorage.getItem("usuario")) || {
-  nombre:"Usuario",
-  cuidadorNombre:"Cuidador",
+let usuario = JSON.parse(localStorage.getItem("usuario")) || {
+  nombre:"",
+  cuidadorNombre:"",
   cuidadorTelefono:""
 };
-perfilResumen.innerHTML = `
-<strong>${usuario.nombre}</strong><br>
-Cuidador: ${usuario.cuidadorNombre}<br>
-Tel: ${usuario.cuidadorTelefono}
-`;
 
-// ===== MEDICAMENTOS =====
-let tratamientos = JSON.parse(localStorage.getItem("tratamientos")) || [];
-let historialTomas = JSON.parse(localStorage.getItem("historialTomas")) || [];
-let horasTemp=[];
-
-function renderLista(){
-  lista.innerHTML="";
-  tratamientos.forEach((t,i)=>{
-    lista.innerHTML+=`
-      <div class="list-item">
-        <strong>${t.nombre}</strong><br>
-        Dosis: ${t.dosis}<br>
-        📍 ${t.lugar}<br>
-        Horarios: ${t.horarios.join(", ")}
-        <button class="secondary" onclick="eliminar(${i})">Eliminar</button>
-      </div>`;
-  });
+function renderPerfil(){
+  perfilResumen.innerHTML = `
+    <strong>Nombre:</strong> ${usuario.nombre || "-"}<br>
+    <strong>Cuidador:</strong> ${usuario.cuidadorNombre || "-"}<br>
+    <strong>Teléfono:</strong> ${usuario.cuidadorTelefono || "-"}
+  `;
 }
 
-function mostrarForm(){ mostrarSeccion("formMed"); }
-function cerrarForm(){ mostrarSeccion("medicamentos"); }
-
-function agregarHora(){
-  if(!horaInput.value) return;
-  horasTemp.push(horaInput.value);
-  horas.innerHTML = horasTemp.map(h=>`<span class="badge">${h}</span>`).join("");
-  horaInput.value="";
+function editarPerfil(){
+  nombre.value = usuario.nombre;
+  cuidadorNombre.value = usuario.cuidadorNombre;
+  cuidadorTelefono.value = usuario.cuidadorTelefono;
+  mostrarSeccion("perfilForm");
 }
 
-function guardarMed(){
-  tratamientos.push({
-    nombre: medNombre.value,
-    dosis: medDosis.value,
-    lugar: medLugar.value,
-    horarios: horasTemp,
-    activo:true
-  });
-  localStorage.setItem("tratamientos",JSON.stringify(tratamientos));
-  horasTemp=[]; horas.innerHTML="";
-  cerrarForm(); renderLista();
+function guardarPerfil(){
+  usuario.nombre = nombre.value;
+  usuario.cuidadorNombre = cuidadorNombre.value;
+  usuario.cuidadorTelefono = cuidadorTelefono.value;
+  localStorage.setItem("usuario", JSON.stringify(usuario));
+  renderPerfil();
+  mostrarSeccion("perfil");
 }
 
-function eliminar(i){
-  tratamientos.splice(i,1);
-  localStorage.setItem("tratamientos",JSON.stringify(tratamientos));
-  renderLista();
-}
-
-// ===== SEGUIMIENTO =====
-function renderSeguimiento(){
-  listaSeguimiento.innerHTML="";
-  historialTomas.slice().reverse().forEach(h=>{
-    listaSeguimiento.innerHTML+=`
-      <div class="list-item">
-        <strong>${h.medicamento}</strong><br>
-        Fecha: ${h.fecha} – ${h.hora}<br>
-        Estado: ${h.estado}
-      </div>`;
-  });
-}
-
-renderLista();
+// INIT
+renderPerfil();
 mostrarSeccion("home");
 </script>
 
