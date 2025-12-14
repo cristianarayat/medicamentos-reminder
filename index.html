@@ -1,156 +1,174 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Recordatorio de Medicamentos</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Recordatorio de Medicamentos</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f2f4f7;
-      color: #333;
-    }
+<style>
+:root{
+  --azul:#2f80ed;
+  --fondo:#f2f4f7;
+  --blanco:#ffffff;
+  --texto:#333;
+}
 
-    header {
-      text-align: center;
-      padding: 20px 10px 10px;
-      background: #ffffff;
-      border-bottom: 1px solid #ddd;
-    }
+*{ box-sizing:border-box; }
 
-    header h1 {
-      margin: 0;
-      font-size: 26px;
-    }
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background:var(--fondo);
+  color:var(--texto);
+}
 
-    header p {
-      margin: 5px 0 0;
-      color: #666;
-    }
+header{
+  text-align:center;
+  padding:20px 10px;
+  background:#fff;
+}
 
-    .container {
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 16px;
-    }
+header h1{
+  margin:0;
+  font-size:26px;
+}
 
-    .welcome-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
+header p{
+  margin:5px 0 0;
+  color:#666;
+}
 
-    .welcome-card h2 {
-      margin: 0;
-      font-size: 20px;
-    }
+.section{
+  display:none;
+  padding:20px;
+}
 
-    .welcome-card p {
-      margin: 6px 0 0;
-      color: #555;
-    }
+.section.active{
+  display:block;
+}
 
-    .menu-btn {
-      width: 100%;
-      padding: 16px;
-      margin-bottom: 12px;
-      font-size: 16px;
-      border: none;
-      border-radius: 12px;
-      background: #2f80ed;
-      color: #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-    }
+.card{
+  background:var(--blanco);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+}
 
-    .menu-btn:active {
-      background: #2566c2;
-    }
+.menu-btn{
+  width:100%;
+  padding:16px;
+  margin:10px 0;
+  font-size:18px;
+  border:none;
+  border-radius:14px;
+  background:var(--azul);
+  color:white;
+  cursor:pointer;
+}
 
-    .image-box {
-      margin-top: 20px;
-      background: #fff;
-      border-radius: 12px;
-      padding: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    }
+.menu-btn:active{
+  opacity:0.85;
+}
 
-    .image-box img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      display: block;
-    }
+.image-box{
+  background:#fff;
+  border-radius:16px;
+  padding:10px;
+  margin-top:20px;
+}
 
-    footer {
-      text-align: center;
-      font-size: 13px;
-      color: #777;
-      margin: 20px 0 10px;
-    }
-  </style>
+.image-box img{
+  width:100%;
+  height:auto;
+  display:block;
+  border-radius:12px;
+}
+
+footer{
+  text-align:center;
+  font-size:14px;
+  color:#777;
+  margin:30px 0 10px;
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <h1>💊 Recordatorio de Medicamentos</h1>
-    <p>Menú principal</p>
-  </header>
+<header>
+  <h1>💊 Recordatorio de Medicamentos</h1>
+  <p>Menú principal</p>
+</header>
 
-  <div class="container">
+<!-- ================= MENU ================= -->
+<div id="menu" class="section active">
 
-    <div class="welcome-card">
-      <h2>Bienvenido, María</h2>
-      <p>Edad: 72 años y 3 meses</p>
-    </div>
-
-    <button class="menu-btn" onclick="irDatos()">
-      👤 Datos personales
-    </button>
-
-    <button class="menu-btn" onclick="irMedicamentos()">
-      💊 Medicamentos
-    </button>
-
-    <button class="menu-btn" onclick="irSeguimiento()">
-      📋 Seguimiento
-    </button>
-
-    <div class="image-box">
-      <!-- RUTA CORREGIDA -->
-      <img 
-        src="/activos/personas-inclusivas.png" 
-        alt="Personas de distintas edades y capacidades">
-    </div>
-
-    <footer>
-      Desarrollado por CA Tecnología
-    </footer>
-
+  <div class="card" style="text-align:center">
+    <h2>Bienvenido, María</h2>
+    <p>Edad: 72 años y 3 meses</p>
   </div>
 
-  <script>
-    function irDatos() {
-      alert("Aquí irán los datos personales");
-    }
+  <button class="menu-btn" onclick="mostrar('datos')">👤 Datos personales</button>
+  <button class="menu-btn" onclick="mostrar('medicamentos')">💊 Medicamentos</button>
+  <button class="menu-btn" onclick="mostrar('seguimiento')">📋 Seguimiento</button>
 
-    function irMedicamentos() {
-      alert("Aquí irán los medicamentos");
-    }
+  <div class="image-box">
+    <img src="activos/personas-inclusivas.png"
+         alt="Personas de distintas edades y capacidades">
+  </div>
 
-    function irSeguimiento() {
-      alert("Aquí irá el seguimiento");
-    }
-  </script>
+</div>
+
+<!-- ================= DATOS PERSONALES ================= -->
+<div id="datos" class="section">
+
+  <div class="card">
+    <h2>Datos personales</h2>
+    <p>Aquí irán los datos del usuario.</p>
+  </div>
+
+  <button class="menu-btn" onclick="volver()">⬅ Volver</button>
+
+</div>
+
+<!-- ================= MEDICAMENTOS ================= -->
+<div id="medicamentos" class="section">
+
+  <div class="card">
+    <h2>Medicamentos</h2>
+    <p>Aquí se gestionarán los medicamentos.</p>
+  </div>
+
+  <button class="menu-btn" onclick="volver()">⬅ Volver</button>
+
+</div>
+
+<!-- ================= SEGUIMIENTO ================= -->
+<div id="seguimiento" class="section">
+
+  <div class="card">
+    <h2>Seguimiento</h2>
+    <p>Aquí se mostrará el seguimiento de tomas.</p>
+  </div>
+
+  <button class="menu-btn" onclick="volver()">⬅ Volver</button>
+
+</div>
+
+<footer>
+  Desarrollado por CA Tecnología
+</footer>
+
+<script>
+function mostrar(id){
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function volver(){
+  mostrar('menu');
+}
+</script>
 
 </body>
 </html>
