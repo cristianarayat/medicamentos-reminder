@@ -29,28 +29,9 @@ body{
   text-align:center;
 }
 
-/* ===== PATRÓN ===== */
+/* ===== FONDO ===== */
 .pattern-area{
   padding:20px;
-  background-color:var(--gris);
-  background-image:
-    url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'>\
-<g fill='none' stroke='%23c3c8ce' stroke-width='3' opacity='0.9'>\
-<rect x='20' y='74' width='48' height='18' rx='9'/>\
-<line x1='44' y1='74' x2='44' y2='92'/>\
-<circle cx='118' cy='36' r='10'/>\
-<circle cx='100' cy='110' r='6'/>\
-<rect x='86' y='64' width='36' height='6' rx='3'/>\
-<line x1='122' y1='67' x2='136' y2='67'/>\
-<line x1='136' y1='64' x2='136' y2='70'/>\
-<rect x='18' y='18' width='20' height='28' rx='4'/>\
-<rect x='22' y='14' width='12' height='6' rx='2'/>\
-<rect x='90' y='88' width='28' height='20' rx='3'/>\
-<line x1='90' y1='98' x2='118' y2='98'/>\
-</g>\
-</svg>");
-  background-repeat:repeat;
 }
 
 /* ===== CARD ===== */
@@ -63,7 +44,7 @@ body{
   box-shadow:0 14px 32px rgba(0,0,0,.15);
 }
 
-/* ===== FILA BASE ===== */
+/* ===== FILAS ===== */
 .row{
   margin-top:16px;
 }
@@ -75,19 +56,21 @@ body{
   margin-bottom:6px;
 }
 
-input[type="text"],
-input[type="tel"],
-input[type="date"]{
+.value{
+  font-size:16px;
+}
+
+/* ===== INPUT ===== */
+input{
   width:100%;
   box-sizing:border-box;
   padding:14px;
   border-radius:14px;
   border:1px solid var(--borde);
   font-size:16px;
-  background:#fff;
 }
 
-/* ===== TOGGLES GRANDES ===== */
+/* ===== TOGGLES ===== */
 .toggle{
   display:flex;
   align-items:center;
@@ -96,12 +79,10 @@ input[type="date"]{
   border-radius:14px;
   background:#f3f5f7;
   cursor:pointer;
-  user-select:none;
 }
 
 .toggle span{
   font-size:16px;
-  font-weight:500;
 }
 
 .toggle input{
@@ -137,7 +118,7 @@ input:checked + .switch::after{
   transform:translateX(22px);
 }
 
-/* ===== BOTÓN ===== */
+/* ===== BOTONES ===== */
 button{
   width:100%;
   padding:16px;
@@ -151,6 +132,11 @@ button{
   margin-top:26px;
 }
 
+.secondary{
+  background:#6c757d;
+}
+
+.hidden{ display:none; }
 </style>
 </head>
 
@@ -163,80 +149,87 @@ button{
 
 <div class="pattern-area">
 
-  <div class="card">
+  <!-- RESUMEN -->
+  <div class="card hidden" id="resumen">
+    <div class="row"><div class="label">Usuario</div><div class="value" id="r_nombre"></div></div>
+    <div class="row"><div class="label">Nacimiento</div><div class="value" id="r_nacimiento"></div></div>
+    <div class="row"><div class="label">Cuidador</div><div class="value" id="r_cuidador"></div></div>
+    <div class="row"><div class="label">Teléfono</div><div class="value" id="r_tel"></div></div>
+    <div class="row"><div class="label">Aviso por voz</div><div class="value" id="r_voz"></div></div>
+    <div class="row"><div class="label">Vibración</div><div class="value" id="r_vibracion"></div></div>
 
-    <div class="row">
-      <div class="label">Nombre del usuario</div>
-      <input type="text" id="nombre">
-    </div>
+    <button class="secondary" onclick="editar()">Modificar datos</button>
+  </div>
 
-    <div class="row">
-      <div class="label">Fecha de nacimiento</div>
-      <input type="date" id="nacimiento">
-    </div>
-
-    <div class="row">
-      <div class="label">Nombre del cuidador</div>
-      <input type="text" id="cuidadorNombre">
-    </div>
-
-    <div class="row">
-      <div class="label">Teléfono del cuidador</div>
-      <input type="tel" id="cuidadorTel">
-    </div>
+  <!-- FORMULARIO -->
+  <div class="card hidden" id="formulario">
+    <div class="row"><div class="label">Nombre</div><input id="nombre"></div>
+    <div class="row"><div class="label">Fecha de nacimiento</div><input type="date" id="nacimiento"></div>
+    <div class="row"><div class="label">Cuidador</div><input id="cuidadorNombre"></div>
+    <div class="row"><div class="label">Teléfono cuidador</div><input id="cuidadorTel"></div>
 
     <div class="row toggle" onclick="voz.click()">
       <span>Aviso por voz</span>
-      <label>
-        <input type="checkbox" id="voz" checked>
-        <div class="switch"></div>
-      </label>
+      <label><input id="voz" type="checkbox"><div class="switch"></div></label>
     </div>
 
     <div class="row toggle" onclick="vibracion.click()">
       <span>Vibración</span>
-      <label>
-        <input type="checkbox" id="vibracion" checked>
-        <div class="switch"></div>
-      </label>
+      <label><input id="vibracion" type="checkbox"><div class="switch"></div></label>
     </div>
 
     <button onclick="guardar()">Guardar datos</button>
-
   </div>
 
 </div>
 
 <script>
-function limpiarTelefono(t){
-  return t.replace(/\D/g,'');
+let usuario = JSON.parse(localStorage.getItem("usuario")) || null;
+
+function render(){
+  if(usuario){
+    formulario.classList.add("hidden");
+    resumen.classList.remove("hidden");
+
+    r_nombre.innerText = usuario.nombre;
+    r_nacimiento.innerText = usuario.nacimiento;
+    r_cuidador.innerText = usuario.cuidadorNombre;
+    r_tel.innerText = usuario.cuidadorTel;
+    r_voz.innerText = usuario.voz ? "Activado" : "Desactivado";
+    r_vibracion.innerText = usuario.vibracion ? "Activada" : "Desactivada";
+  }else{
+    resumen.classList.add("hidden");
+    formulario.classList.remove("hidden");
+  }
 }
 
 function guardar(){
-  const tel = limpiarTelefono(cuidadorTel.value);
-
-  if(!nombre.value || !nacimiento.value || !cuidadorNombre.value || !tel){
-    alert("Por favor complete todos los campos");
-    return;
-  }
-
-  if(tel.length < 8 || tel.length > 15){
-    alert("El teléfono del cuidador debe tener entre 8 y 15 números");
-    return;
-  }
-
-  const usuario = {
+  usuario = {
     nombre: nombre.value,
     nacimiento: nacimiento.value,
     cuidadorNombre: cuidadorNombre.value,
-    cuidadorTel: tel,
+    cuidadorTel: cuidadorTel.value.replace(/\D/g,''),
     voz: voz.checked,
     vibracion: vibracion.checked
   };
 
   localStorage.setItem("usuario", JSON.stringify(usuario));
-  alert("Datos guardados correctamente");
+  render();
 }
+
+function editar(){
+  nombre.value = usuario.nombre;
+  nacimiento.value = usuario.nacimiento;
+  cuidadorNombre.value = usuario.cuidadorNombre;
+  cuidadorTel.value = usuario.cuidadorTel;
+  voz.checked = usuario.voz;
+  vibracion.checked = usuario.vibracion;
+
+  usuario = null;
+  render();
+}
+
+render();
 </script>
 
 </body>
