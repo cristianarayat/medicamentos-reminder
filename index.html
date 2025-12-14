@@ -1,143 +1,117 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Recordatorio de Medicamentos</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recordatorio de Medicamentos</title>
 
-  <style>
-    :root{
-      --azul:#2f80ed;
-      --fondo:#f2f4f7;
-      --blanco:#ffffff;
-      --texto:#333;
-      --borde:#e0e0e0;
-    }
+<style>
+:root{
+  --azul:#2f80ed;
+  --fondo:#f2f4f7;
+  --blanco:#ffffff;
+  --texto:#333;
+  --radio:14px;
+}
 
-    *{ box-sizing:border-box; font-family:Arial, sans-serif; }
+*{box-sizing:border-box;font-family:Arial, Helvetica, sans-serif;}
 
-    body{
-      margin:0;
-      background:var(--fondo);
-      color:var(--texto);
-    }
+body{
+  margin:0;
+  background:var(--fondo);
+  color:var(--texto);
+}
 
-    header{
-      text-align:center;
-      padding:20px 10px;
-      background:var(--blanco);
-      border-bottom:1px solid var(--borde);
-    }
+header{
+  background:var(--blanco);
+  padding:20px;
+  text-align:center;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+}
 
-    header h1{
-      margin:0;
-      font-size:26px;
-    }
+header h1{margin:0;font-size:24px;}
+header p{margin:5px 0 0;color:#777;}
 
-    header h2{
-      margin:5px 0 0;
-      font-size:16px;
-      font-weight:normal;
-      color:#666;
-    }
+.container{
+  max-width:420px;
+  margin:20px auto;
+  padding:10px;
+}
 
-    .container{
-      max-width:420px;
-      margin:20px auto;
-      padding:0 15px;
-    }
+.card{
+  background:var(--blanco);
+  border-radius:var(--radio);
+  padding:20px;
+  margin-bottom:20px;
+}
 
-    .card{
-      background:var(--blanco);
-      border-radius:14px;
-      padding:18px;
-      margin-bottom:16px;
-      box-shadow:0 4px 10px rgba(0,0,0,0.05);
-    }
+.btn{
+  width:100%;
+  padding:14px;
+  margin-top:12px;
+  border:none;
+  border-radius:var(--radio);
+  background:var(--azul);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+}
 
-    .center{text-align:center;}
+.btn.secondary{
+  background:#555;
+}
 
-    .menu-btn{
-      width:100%;
-      padding:14px;
-      margin:10px 0;
-      border:none;
-      border-radius:12px;
-      background:var(--azul);
-      color:white;
-      font-size:16px;
-      cursor:pointer;
-    }
+input,select{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  margin-bottom:14px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:15px;
+}
 
-    label{
-      display:block;
-      margin-top:12px;
-      font-size:14px;
-    }
+label{font-weight:bold;font-size:14px;}
 
-    input, select{
-      width:100%;
-      padding:12px;
-      margin-top:6px;
-      border-radius:10px;
-      border:1px solid var(--borde);
-      font-size:15px;
-    }
+.hidden{display:none;}
 
-    .switch{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-top:14px;
-      padding:10px;
-      background:#f7f7f7;
-      border-radius:10px;
-    }
+.image-box img{
+  width:100%;
+  border-radius:var(--radio);
+}
 
-    .hidden{ display:none; }
-
-    .img-box{
-      margin-top:20px;
-      text-align:center;
-    }
-
-    .img-box img{
-      max-width:100%;
-      border-radius:14px;
-    }
-
-    footer{
-      text-align:center;
-      font-size:13px;
-      color:#777;
-      margin:30px 0;
-    }
-  </style>
+footer{
+  text-align:center;
+  padding:20px;
+  color:#777;
+  font-size:14px;
+}
+</style>
 </head>
 
 <body>
 
 <header>
   <h1>💊 Recordatorio de Medicamentos</h1>
-  <h2>Menú principal</h2>
+  <p>Menú principal</p>
 </header>
 
 <div class="container">
 
   <!-- BIENVENIDA -->
-  <div class="card center" id="bienvenida"></div>
+  <div class="card" id="bienvenida"></div>
 
   <!-- MENÚ -->
-  <div class="card" id="menu">
-    <button class="menu-btn" onclick="mostrarDatos()">👤 Datos personales</button>
-    <button class="menu-btn" onclick="mostrarMedicamentos()">💊 Medicamentos</button>
+  <div class="card">
+    <button class="btn" onclick="mostrar('datos')">👤 Datos personales</button>
+    <button class="btn" onclick="mostrar('medicamentos')">💊 Medicamentos</button>
   </div>
 
   <!-- DATOS PERSONALES -->
   <div class="card hidden" id="datos">
     <h3>Datos personales</h3>
 
-    <label>Nombre del usuario</label>
+    <label>Nombre</label>
     <input id="nombre">
 
     <label>Fecha de nacimiento</label>
@@ -147,31 +121,42 @@
     <input id="cuidador">
 
     <label>Teléfono del cuidador</label>
-    <input id="telefono" type="tel">
+    <input id="telefono">
 
-    <div class="switch">
-      <span>Aviso por voz</span>
-      <input type="checkbox" id="voz">
-    </div>
+    <label>
+      <input type="checkbox" id="voz"> Aviso por voz
+    </label><br><br>
 
-    <div class="switch">
-      <span>Vibración</span>
-      <input type="checkbox" id="vibrar">
-    </div>
+    <label>
+      <input type="checkbox" id="vibracion"> Vibración
+    </label>
 
-    <button class="menu-btn" onclick="guardarDatos()">Guardar</button>
-    <button class="menu-btn" onclick="volverMenu()">Volver</button>
+    <button class="btn" onclick="guardarDatos()">Guardar</button>
+    <button class="btn secondary" onclick="volver()">Volver</button>
   </div>
 
   <!-- MEDICAMENTOS -->
   <div class="card hidden" id="medicamentos">
     <h3>Medicamentos</h3>
-    <p>(Formulario se mantiene para siguiente fase)</p>
-    <button class="menu-btn" onclick="volverMenu()">Volver</button>
+
+    <label>Nombre del medicamento</label>
+    <input id="med-nombre">
+
+    <label>Dosis</label>
+    <input id="med-dosis">
+
+    <label>
+      <input type="checkbox" id="med-permanente"> Tratamiento permanente
+    </label>
+
+    <button class="btn" onclick="guardarMedicamento()">Guardar medicamento</button>
+    <button class="btn secondary" onclick="volver()">Volver</button>
+
+    <div id="listaMed"></div>
   </div>
 
   <!-- IMAGEN -->
-  <div class="card img-box">
+  <div class="card image-box">
     <img src="personas-inclusivas.png" alt="Personas de distintas edades y capacidades">
   </div>
 
@@ -182,64 +167,76 @@
 </footer>
 
 <script>
-  function calcularEdad(fecha){
-    const nacimiento = new Date(fecha);
-    const hoy = new Date();
-    let años = hoy.getFullYear() - nacimiento.getFullYear();
-    let meses = hoy.getMonth() - nacimiento.getMonth();
-    if(meses < 0){ años--; meses += 12; }
-    return `${años} años y ${meses} meses`;
+function mostrar(id){
+  document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function volver(){
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('hidden'));
+  document.getElementById('datos').classList.add('hidden');
+  document.getElementById('medicamentos').classList.add('hidden');
+}
+
+function calcularEdad(fecha){
+  const f=new Date(fecha);
+  const hoy=new Date();
+  let años=hoy.getFullYear()-f.getFullYear();
+  let meses=hoy.getMonth()-f.getMonth();
+  if(meses<0){años--;meses+=12;}
+  return `${años} años y ${meses} meses`;
+}
+
+function guardarDatos(){
+  const data={
+    nombre:nombre.value,
+    fecha:fecha.value,
+    cuidador:cuidador.value,
+    telefono:telefono.value,
+    voz:voz.checked,
+    vibracion:vibracion.checked
+  };
+  localStorage.setItem('datos',JSON.stringify(data));
+  cargar();
+  volver();
+}
+
+function guardarMedicamento(){
+  let meds=JSON.parse(localStorage.getItem('meds')||'[]');
+  meds.push({
+    nombre:medNombre.value,
+    dosis:medDosis.value,
+    permanente:medPermanente.checked
+  });
+  localStorage.setItem('meds',JSON.stringify(meds));
+  cargar();
+}
+
+function cargar(){
+  const d=JSON.parse(localStorage.getItem('datos'));
+  if(d){
+    bienvenida.innerHTML=`<h2>Bienvenido ${d.nombre}</h2><p>Edad: ${calcularEdad(d.fecha)}</p>`;
+    nombre.value=d.nombre;
+    fecha.value=d.fecha;
+    cuidador.value=d.cuidador;
+    telefono.value=d.telefono;
+    voz.checked=d.voz;
+    vibracion.checked=d.vibracion;
   }
 
-  function guardarDatos(){
-    const data = {
-      nombre: nombre.value,
-      fecha: fecha.value,
-      cuidador: cuidador.value,
-      telefono: telefono.value,
-      voz: voz.checked,
-      vibrar: vibrar.checked
-    };
-    localStorage.setItem("datosUsuario", JSON.stringify(data));
-    cargarBienvenida();
-    volverMenu();
-  }
+  const lista=document.getElementById('listaMed');
+  const meds=JSON.parse(localStorage.getItem('meds')||'[]');
+  lista.innerHTML='<h4>Medicamentos guardados</h4>';
+  meds.forEach(m=>{
+    lista.innerHTML+=`<p>• ${m.nombre} (${m.dosis}) ${m.permanente?'[Permanente]':''}</p>`;
+  });
+}
 
-  function cargarBienvenida(){
-    const data = JSON.parse(localStorage.getItem("datosUsuario"));
-    if(!data) return;
-    bienvenida.innerHTML = `
-      <h2>Bienvenido ${data.nombre}</h2>
-      <p>Edad: ${calcularEdad(data.fecha)}</p>
-    `;
-  }
+const medNombre=document.getElementById('med-nombre');
+const medDosis=document.getElementById('med-dosis');
+const medPermanente=document.getElementById('med-permanente');
 
-  function mostrarDatos(){
-    menu.classList.add("hidden");
-    datos.classList.remove("hidden");
-    const data = JSON.parse(localStorage.getItem("datosUsuario"));
-    if(data){
-      nombre.value = data.nombre;
-      fecha.value = data.fecha;
-      cuidador.value = data.cuidador;
-      telefono.value = data.telefono;
-      voz.checked = data.voz;
-      vibrar.checked = data.vibrar;
-    }
-  }
-
-  function mostrarMedicamentos(){
-    menu.classList.add("hidden");
-    medicamentos.classList.remove("hidden");
-  }
-
-  function volverMenu(){
-    datos.classList.add("hidden");
-    medicamentos.classList.add("hidden");
-    menu.classList.remove("hidden");
-  }
-
-  cargarBienvenida();
+cargar();
 </script>
 
 </body>
