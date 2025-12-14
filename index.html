@@ -4,11 +4,121 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Recordatorio de Medicamentos</title>
+
+<style>
+body{
+  font-family: system-ui, Arial, sans-serif;
+  background:#f5f5f5;
+  margin:0;
+  padding:20px;
+}
+
+h1{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.card{
+  background:#ffffff;
+  padding:20px;
+  border-radius:12px;
+  max-width:420px;
+  margin:0 auto;
+  box-shadow:0 4px 12px rgba(0,0,0,.1);
+}
+
+label{
+  display:block;
+  margin-top:15px;
+  font-weight:600;
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  font-size:16px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+.toggle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+button{
+  margin-top:20px;
+  width:100%;
+  padding:14px;
+  font-size:16px;
+  border:none;
+  border-radius:10px;
+  background:#2f80ed;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.success{
+  text-align:center;
+  margin-top:15px;
+  color:#2d8f2d;
+  font-weight:600;
+}
+</style>
 </head>
+
 <body>
 
-<h1>💊 Recordatorio de Medicamentos</h1>
-<p>Configuración inicial del tratamiento</p>
+<h1>💊 Medicamentos</h1>
+
+<div class="card">
+
+  <label>Nombre del medicamento</label>
+  <input id="nombre" placeholder="Ej: Losartán">
+
+  <label>Dosis (según receta médica)</label>
+  <input id="dosis" placeholder="Ej: 1 comprimido">
+
+  <label>¿Por cuántos días?</label>
+  <input id="dias" type="number" placeholder="Ej: 30">
+
+  <label>Hora de la toma</label>
+  <input id="hora" type="time">
+
+  <div class="toggle">
+    <input id="voz" type="checkbox">
+    <label for="voz">Activar aviso por voz</label>
+  </div>
+
+  <button onclick="guardar()">Guardar tratamiento</button>
+
+  <div id="msg" class="success"></div>
+</div>
+
+<script>
+function guardar(){
+  const data = {
+    nombre: nombre.value,
+    dosis: dosis.value,
+    dias: dias.value,
+    hora: hora.value,
+    voz: voz.checked,
+    inicio: new Date().toISOString()
+  };
+
+  if(!data.nombre || !data.dosis || !data.dias || !data.hora){
+    alert("Por favor completa todos los campos");
+    return;
+  }
+
+  localStorage.setItem("tratamiento", JSON.stringify(data));
+  msg.innerText = "Tratamiento guardado correctamente ✅";
+}
+</script>
 
 </body>
 </html>
