@@ -8,41 +8,34 @@
 <style>
 :root{
   --azul:#2f80ed;
-  --gris:#f2f4f6;
+  --gris:#eef1f4;
   --card:#ffffff;
   --texto:#333;
-  --borde:#dcdcdc;
+  --borde:#d0d4d9;
+  --patron:#cfd4d9;
 }
 
-/* ===== BODY ===== */
+/* ===== FONDO CON PATRÓN MÉDICO ===== */
 body{
   margin:0;
   padding:20px;
   font-family: system-ui, Arial, sans-serif;
   color:var(--texto);
-  background:var(--gris);
-  position:relative;
-  overflow-x:hidden;
+  background-color:var(--gris);
+  background-image:
+    url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'>\
+<g fill='none' stroke='%23cfd4d9' stroke-width='4' opacity='0.9'>\
+<rect x='18' y='52' width='38' height='16' rx='8'/>\
+<line x1='37' y1='52' x2='37' y2='68'/>\
+<circle cx='86' cy='34' r='8'/>\
+<circle cx='86' cy='78' r='8'/>\
+</g>\
+</svg>");
+  background-repeat:repeat;
 }
 
-/* ===== FONDO MÉDICO REAL ===== */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:
-    linear-gradient(
-      rgba(242,244,246,0.80),
-      rgba(242,244,246,0.80)
-    ),
-    url("https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=1600&q=80");
-  background-size:cover;
-  background-position:center;
-  filter:grayscale(100%) contrast(1.15);
-  z-index:-1;
-}
-
-/* ===== TITULOS ===== */
+/* ===== TÍTULOS ===== */
 h1{
   text-align:center;
   margin-bottom:4px;
@@ -54,14 +47,14 @@ h1{
   margin-bottom:24px;
 }
 
-/* ===== CARD ===== */
+/* ===== TARJETA ===== */
 .card{
   max-width:420px;
   margin:0 auto;
   background:var(--card);
   padding:22px;
   border-radius:18px;
-  box-shadow:0 12px 28px rgba(0,0,0,.15);
+  box-shadow:0 14px 32px rgba(0,0,0,.15);
 }
 
 /* ===== FORM ===== */
@@ -95,9 +88,9 @@ input:focus{
   align-items:center;
   gap:12px;
   margin-top:16px;
-  padding:12px 14px;
+  padding:14px;
   border-radius:14px;
-  background:#f6f7f9;
+  background:#f3f5f7;
   cursor:pointer;
 }
 
@@ -107,7 +100,7 @@ input:focus{
   margin:0;
 }
 
-/* ===== BOTON ===== */
+/* ===== BOTÓN ===== */
 button{
   margin-top:28px;
   width:100%;
