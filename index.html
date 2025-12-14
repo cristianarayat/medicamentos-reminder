@@ -8,15 +8,15 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f2f4f8;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f2f4f7;
       color: #333;
     }
 
     header {
-      background: #ffffff;
-      padding: 20px;
       text-align: center;
+      padding: 20px 10px 10px;
+      background: #ffffff;
       border-bottom: 1px solid #ddd;
     }
 
@@ -31,138 +31,126 @@
     }
 
     .container {
-      padding: 20px;
-      max-width: 500px;
-      margin: auto;
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 16px;
     }
 
-    .welcome {
+    .welcome-card {
       background: #fff;
-      padding: 15px;
       border-radius: 12px;
+      padding: 16px;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
-    .menu-button {
+    .welcome-card h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .welcome-card p {
+      margin: 6px 0 0;
+      color: #555;
+    }
+
+    .menu-btn {
       width: 100%;
       padding: 16px;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
+      font-size: 16px;
       border: none;
-      border-radius: 14px;
-      font-size: 18px;
+      border-radius: 12px;
       background: #2f80ed;
       color: #fff;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
 
-    .menu-button:active {
-      background: #2567c7;
+    .menu-btn:active {
+      background: #2566c2;
     }
 
     .image-box {
+      margin-top: 20px;
       background: #fff;
-      border-radius: 16px;
+      border-radius: 12px;
       padding: 10px;
-      margin-top: 25px;
-      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
 
     .image-box img {
       width: 100%;
-      max-width: 100%;
-      border-radius: 14px;
+      height: auto;
+      border-radius: 8px;
+      display: block;
     }
 
     footer {
       text-align: center;
       font-size: 13px;
       color: #777;
-      margin: 30px 0 10px;
-    }
-
-    /* SECCIONES */
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    .back-btn {
-      margin-bottom: 15px;
-      background: #ccc;
-      color: #333;
+      margin: 20px 0 10px;
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>💊 Recordatorio de Medicamentos</h1>
-  <p>Menú principal</p>
-</header>
+  <header>
+    <h1>💊 Recordatorio de Medicamentos</h1>
+    <p>Menú principal</p>
+  </header>
 
-<div class="container">
+  <div class="container">
 
-  <!-- MENÚ PRINCIPAL -->
-  <div id="menu" class="section active">
-    <div class="welcome">
-      <strong>Bienvenido, María</strong><br/>
-      Edad: 72 años y 3 meses
+    <div class="welcome-card">
+      <h2>Bienvenido, María</h2>
+      <p>Edad: 72 años y 3 meses</p>
     </div>
 
-    <button class="menu-button" onclick="mostrarSeccion('datos')">👤 Datos personales</button>
-    <button class="menu-button" onclick="mostrarSeccion('medicamentos')">💊 Medicamentos</button>
-    <button class="menu-button" onclick="mostrarSeccion('seguimiento')">📋 Seguimiento</button>
+    <button class="menu-btn" onclick="irDatos()">
+      👤 Datos personales
+    </button>
+
+    <button class="menu-btn" onclick="irMedicamentos()">
+      💊 Medicamentos
+    </button>
+
+    <button class="menu-btn" onclick="irSeguimiento()">
+      📋 Seguimiento
+    </button>
 
     <div class="image-box">
-      <img src="activos/personas-inclusivas.png"
-           alt="Personas de distintas edades y capacidades">
+      <!-- RUTA CORREGIDA -->
+      <img 
+        src="activos/personas-inclusivas.png" 
+        alt="Personas de distintas edades y capacidades">
     </div>
+
+    <footer>
+      Desarrollado por CA Tecnología
+    </footer>
+
   </div>
 
-  <!-- DATOS PERSONALES -->
-  <div id="datos" class="section">
-    <button class="menu-button back-btn" onclick="volverMenu()">⬅ Volver</button>
-    <h3>Datos personales</h3>
-    <p>Aquí irá la edición de datos del usuario.</p>
-  </div>
+  <script>
+    function irDatos() {
+      alert("Aquí irán los datos personales");
+    }
 
-  <!-- MEDICAMENTOS -->
-  <div id="medicamentos" class="section">
-    <button class="menu-button back-btn" onclick="volverMenu()">⬅ Volver</button>
-    <h3>Medicamentos</h3>
-    <p>Aquí se agregan y modifican medicamentos.</p>
-  </div>
+    function irMedicamentos() {
+      alert("Aquí irán los medicamentos");
+    }
 
-  <!-- SEGUIMIENTO -->
-  <div id="seguimiento" class="section">
-    <button class="menu-button back-btn" onclick="volverMenu()">⬅ Volver</button>
-    <h3>Seguimiento</h3>
-    <p>Historial de medicamentos tomados.</p>
-  </div>
-
-</div>
-
-<footer>
-  Desarrollado por CA Tecnología
-</footer>
-
-<script>
-  function mostrarSeccion(id) {
-    document.querySelectorAll('.section').forEach(sec => {
-      sec.classList.remove('active');
-    });
-    document.getElementById(id).classList.add('active');
-  }
-
-  function volverMenu() {
-    mostrarSeccion('menu');
-  }
-</script>
+    function irSeguimiento() {
+      alert("Aquí irá el seguimiento");
+    }
+  </script>
 
 </body>
 </html>
