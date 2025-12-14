@@ -12,36 +12,24 @@
   --card:#ffffff;
   --texto:#333;
   --borde:#d0d4d9;
-  --patron:#c3c8ce;
 }
 
-/* ===== BODY GENERAL ===== */
+/* ===== BODY ===== */
 body{
   margin:0;
-  padding:0;
   font-family: system-ui, Arial, sans-serif;
-  color:var(--texto);
   background:var(--gris);
+  color:var(--texto);
 }
 
-/* ===== HEADER LIMPIO (SIN PATRÓN) ===== */
+/* ===== HEADER ===== */
 .header{
-  padding:24px 20px 12px 20px;
+  padding:24px 20px 12px;
   background:#f7f9fb;
-}
-
-h1{
   text-align:center;
-  margin:0;
 }
 
-.sub{
-  text-align:center;
-  color:#666;
-  margin-top:4px;
-}
-
-/* ===== ZONA CON PATRÓN MÉDICO ===== */
+/* ===== PATRÓN ===== */
 .pattern-area{
   padding:20px;
   background-color:var(--gris);
@@ -80,47 +68,31 @@ label{
   display:block;
   margin-top:16px;
   font-weight:600;
-  font-size:15px;
 }
 
 input{
   width:100%;
-  box-sizing:border-box;
   padding:14px;
   margin-top:6px;
-  font-size:16px;
   border-radius:14px;
   border:1px solid var(--borde);
-  background:#fafafa;
+  font-size:16px;
 }
 
-input:focus{
-  outline:none;
-  border-color:var(--azul);
-  background:#fff;
+/* ===== RESUMEN ===== */
+.summary{
+  line-height:1.8;
+  font-size:16px;
 }
 
-/* ===== OPCIONES ===== */
-.option{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-top:16px;
-  padding:14px;
-  border-radius:14px;
-  background:#f3f5f7;
-  cursor:pointer;
+.summary strong{
+  display:block;
+  color:#555;
+  font-size:14px;
 }
 
-.option input{
-  width:20px;
-  height:20px;
-  margin:0;
-}
-
-/* ===== BOTÓN ===== */
+/* ===== BOTONES ===== */
 button{
-  margin-top:28px;
   width:100%;
   padding:16px;
   font-size:17px;
@@ -130,19 +102,15 @@ button{
   background:var(--azul);
   color:white;
   cursor:pointer;
+  margin-top:22px;
 }
 
-button:active{
-  transform:scale(0.99);
+.secondary{
+  background:#6c757d;
 }
 
-.success{
-  text-align:center;
-  margin-top:18px;
-  color:#2d8f2d;
-  font-weight:700;
-  font-size:16px;
-}
+.hidden{ display:none; }
+
 </style>
 </head>
 
@@ -150,38 +118,33 @@ button:active{
 
 <div class="header">
   <h1>💊 Recordatorio de Medicamentos</h1>
-  <div class="sub">Datos del usuario</div>
+  <div>Perfil del usuario</div>
 </div>
 
 <div class="pattern-area">
 
-  <div class="card">
+  <!-- RESUMEN BLOQUEADO -->
+  <div class="card hidden" id="resumen">
+    <div class="summary" id="summaryText"></div>
+    <button class="secondary" onclick="editar()">Modificar datos</button>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="card" id="formulario">
 
     <label>Nombre del usuario</label>
-    <input id="nombre" placeholder="Ej: María González">
+    <input id="nombre">
 
-    <label>Edad</label>
-    <input id="edad" type="number" placeholder="Ej: 72">
+    <label>Fecha de nacimiento</label>
+    <input id="nacimiento" type="date">
 
     <label>Nombre del cuidador</label>
-    <input id="cuidadorNombre" placeholder="Ej: Juan Pérez">
+    <input id="cuidadorNombre">
 
     <label>Teléfono del cuidador</label>
-    <input id="cuidadorTel" type="tel" placeholder="Ej: +56 9 1234 5678">
+    <input id="cuidadorTel" type="tel">
 
-    <div class="option" onclick="voz.checked = !voz.checked">
-      <input id="voz" type="checkbox" checked>
-      <span>Usar aviso por voz</span>
-    </div>
-
-    <div class="option" onclick="vibracion.checked = !vibracion.checked">
-      <input id="vibracion" type="checkbox" checked>
-      <span>Usar vibración</span>
-    </div>
-
-    <button onclick="guardarUsuario()">Continuar</button>
-
-    <div id="msg" class="success"></div>
+    <button onclick="guardar()">Guardar datos</button>
 
   </div>
 
@@ -192,36 +155,50 @@ function limpiarTelefono(t){
   return t.replace(/\D/g,'');
 }
 
-function guardarUsuario(){
-  const telRaw = cuidadorTel.value.trim();
-  const telLimpio = limpiarTelefono(telRaw);
+function guardar(){
+  const tel = limpiarTelefono(cuidadorTel.value);
 
-  if(
-    !nombre.value.trim() ||
-    !edad.value ||
-    !cuidadorNombre.value.trim() ||
-    !telRaw
-  ){
+  if(!nombre.value || !nacimiento.value || !cuidadorNombre.value || !tel){
     alert("Por favor complete todos los campos");
     return;
   }
 
-  if(telLimpio.length < 8 || telLimpio.length > 15){
+  if(tel.length < 8 || tel.length > 15){
     alert("El teléfono del cuidador debe tener entre 8 y 15 números");
     return;
   }
 
   const usuario = {
-    nombre: nombre.value.trim(),
-    edad: edad.value,
-    cuidadorNombre: cuidadorNombre.value.trim(),
-    cuidadorTel: telLimpio,
-    voz: voz.checked,
-    vibracion: vibracion.checked
+    nombre: nombre.value,
+    nacimiento: nacimiento.value,
+    cuidadorNombre: cuidadorNombre.value,
+    cuidadorTel: tel
   };
 
   localStorage.setItem("usuario", JSON.stringify(usuario));
-  msg.innerText = "Datos guardados correctamente ✅";
+  mostrarResumen(usuario);
+}
+
+function mostrarResumen(u){
+  formulario.classList.add("hidden");
+  resumen.classList.remove("hidden");
+
+  summaryText.innerHTML = `
+    <strong>Usuario</strong>${u.nombre}
+    <strong>Fecha de nacimiento</strong>${u.nacimiento}
+    <strong>Cuidador</strong>${u.cuidadorNombre}
+    <strong>Teléfono</strong>${u.cuidadorTel}
+  `;
+}
+
+function editar(){
+  resumen.classList.add("hidden");
+  formulario.classList.remove("hidden");
+}
+
+const guardado = localStorage.getItem("usuario");
+if(guardado){
+  mostrarResumen(JSON.parse(guardado));
 }
 </script>
 
