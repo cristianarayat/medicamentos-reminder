@@ -55,26 +55,29 @@ button{
 
 .secondary{ background:#6c757d; }
 
-/* ===== ANIMACIÓN PERSONAS ===== */
+.row{ margin-top:14px; }
+.label{ font-size:14px; font-weight:600; margin-bottom:6px; }
+
+input{
+  width:100%;
+  height:52px;
+  padding:14px;
+  border-radius:14px;
+  border:1px solid var(--borde);
+  box-sizing:border-box;
+}
+
+/* PERSONAS FIJAS */
 .people-strip{
-  overflow:hidden;
-  margin-top:20px;
-}
-
-.people-track{
   display:flex;
-  gap:28px;
-  font-size:42px;
-  animation: scrollPeople 18s linear infinite;
+  justify-content:space-around;
+  align-items:flex-end;
+  margin-top:24px;
+  opacity:0.75;
 }
 
-@keyframes scrollPeople{
-  0%{ transform: translateX(-100%); }
-  100%{ transform: translateX(100%); }
-}
-
-.people{
-  opacity:0.7;
+.person{
+  font-size:46px; /* tamaño persona */
 }
 </style>
 </head>
@@ -95,20 +98,12 @@ button{
     <button onclick="mostrarSeccion('medicamentos')">💊 Medicamentos</button>
     <button onclick="mostrarSeccion('seguimiento')">📊 Seguimiento</button>
 
-    <!-- FRANJA ANIMADA -->
+    <!-- PERSONAS FIJAS -->
     <div class="people-strip">
-      <div class="people-track">
-        <div class="people">👵👴</div>
-        <div class="people">👩‍🦱</div>
-        <div class="people">🤱</div>
-        <div class="people">♿</div>
-
-        <!-- duplicado para loop suave -->
-        <div class="people">👵👴</div>
-        <div class="people">👩‍🦱</div>
-        <div class="people">🤱</div>
-        <div class="people">♿</div>
-      </div>
+      <div class="person">👵👴</div>
+      <div class="person">👩‍🦱</div>
+      <div class="person">🤱</div>
+      <div class="person">♿</div>
     </div>
   </div>
 
@@ -116,17 +111,34 @@ button{
   <div class="card hidden" id="perfil">
     <h3>Datos personales</h3>
     <div id="perfilResumen"></div>
+
     <button onclick="editarPerfil()">Modificar datos</button>
-    <button class="secondary" onclick="volverHome()">⬅ Volver</button>
+    <button class="secondary" onclick="volverHome()">⬅ Volver al menú</button>
   </div>
 
   <!-- FORM PERFIL -->
   <div class="card hidden" id="perfilForm">
     <h3>Editar datos personales</h3>
 
-    <input id="nombre" placeholder="Nombre del usuario">
-    <input id="cuidadorNombre" placeholder="Nombre del cuidador">
-    <input id="cuidadorTelefono" placeholder="Teléfono del cuidador">
+    <div class="row">
+      <div class="label">Nombre</div>
+      <input id="nombre">
+    </div>
+
+    <div class="row">
+      <div class="label">Edad</div>
+      <input id="edad" type="number" min="0">
+    </div>
+
+    <div class="row">
+      <div class="label">Nombre del cuidador</div>
+      <input id="cuidadorNombre">
+    </div>
+
+    <div class="row">
+      <div class="label">Teléfono del cuidador</div>
+      <input id="cuidadorTelefono">
+    </div>
 
     <button onclick="guardarPerfil()">Guardar</button>
     <button class="secondary" onclick="mostrarSeccion('perfil')">Cancelar</button>
@@ -135,14 +147,14 @@ button{
   <!-- MEDICAMENTOS -->
   <div class="card hidden" id="medicamentos">
     <h3>Medicamentos</h3>
-    <p>(se mantiene igual por ahora)</p>
+    <p>(sin cambios en esta corrección)</p>
     <button class="secondary" onclick="volverHome()">⬅ Volver</button>
   </div>
 
   <!-- SEGUIMIENTO -->
   <div class="card hidden" id="seguimiento">
     <h3>Seguimiento</h3>
-    <p>(se mantiene igual por ahora)</p>
+    <p>(sin cambios en esta corrección)</p>
     <button class="secondary" onclick="volverHome()">⬅ Volver</button>
   </div>
 
@@ -165,6 +177,7 @@ function volverHome(){
 // ===== PERFIL =====
 let usuario = JSON.parse(localStorage.getItem("usuario")) || {
   nombre:"",
+  edad:"",
   cuidadorNombre:"",
   cuidadorTelefono:""
 };
@@ -172,6 +185,7 @@ let usuario = JSON.parse(localStorage.getItem("usuario")) || {
 function renderPerfil(){
   perfilResumen.innerHTML = `
     <strong>Nombre:</strong> ${usuario.nombre || "-"}<br>
+    <strong>Edad:</strong> ${usuario.edad || "-"}<br>
     <strong>Cuidador:</strong> ${usuario.cuidadorNombre || "-"}<br>
     <strong>Teléfono:</strong> ${usuario.cuidadorTelefono || "-"}
   `;
@@ -179,6 +193,7 @@ function renderPerfil(){
 
 function editarPerfil(){
   nombre.value = usuario.nombre;
+  edad.value = usuario.edad;
   cuidadorNombre.value = usuario.cuidadorNombre;
   cuidadorTelefono.value = usuario.cuidadorTelefono;
   mostrarSeccion("perfilForm");
@@ -186,6 +201,7 @@ function editarPerfil(){
 
 function guardarPerfil(){
   usuario.nombre = nombre.value;
+  usuario.edad = edad.value;
   usuario.cuidadorNombre = cuidadorNombre.value;
   usuario.cuidadorTelefono = cuidadorTelefono.value;
   localStorage.setItem("usuario", JSON.stringify(usuario));
