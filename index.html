@@ -344,6 +344,62 @@ function guardarPerfil(){
 /* INIT */
 render();
 mostrar("home");
+  /* =========================
+   MEDICAMENTOS
+   ========================= */
+
+let medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
+
+function mostrarMedicamentos() {
+  mostrar("medicamentos");
+
+  const lista = document.getElementById("listaMedicamentos");
+  lista.innerHTML = "";
+
+  if (medicamentos.length === 0) {
+    lista.innerHTML = "<p>No hay medicamentos registrados.</p>";
+    return;
+  }
+
+  medicamentos.forEach((med, index) => {
+    const item = document.createElement("div");
+    item.className = "med-item";
+    item.innerHTML = `
+      <strong>${med.nombre}</strong><br>
+      Dosis: ${med.dosis}<br>
+      Horario: ${med.horario}<br>
+      Tipo: ${med.permanente ? "Permanente" : "Temporal"}
+    `;
+    lista.appendChild(item);
+  });
+}
+
+function agregarMedicamento() {
+  const nombre = document.getElementById("medNombre").value.trim();
+  const dosis = document.getElementById("medDosis").value.trim();
+  const horario = document.getElementById("medHorario").value;
+  const permanente = document.getElementById("medPermanente").checked;
+
+  if (!nombre || !dosis || !horario) {
+    tostada("Completa todos los campos");
+    return;
+  }
+
+  medicamentos.push({
+    nombre,
+    dosis,
+    horario,
+    permanente
+  });
+
+  localStorage.setItem("medicamentos", JSON.stringify(medicamentos));
+
+  document.getElementById("formMedicamentos").reset();
+
+  tostada("Medicamento guardado correctamente");
+  mostrarMedicamentos();
+}
+
 </script>
 
 </body>
