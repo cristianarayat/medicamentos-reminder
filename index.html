@@ -28,7 +28,9 @@ body{
   text-align:center;
 }
 
-.pattern-area{ padding:20px; }
+.pattern-area{
+  padding:20px;
+}
 
 .card{
   max-width:420px;
@@ -39,15 +41,33 @@ body{
   box-shadow:0 14px 32px rgba(0,0,0,.15);
 }
 
-.row{ margin-top:14px; }
-.label{ font-size:14px; font-weight:600; color:#555; margin-bottom:6px; }
+/* ===== FORM ===== */
+.row{
+  margin-top:14px;
+}
 
-input, button{
+.label{
+  font-size:14px;
+  font-weight:600;
+  color:#555;
+  margin-bottom:6px;
+}
+
+/* inputs y botones unificados */
+input,
+button{
   width:100%;
+  box-sizing:border-box;
   padding:14px;
   border-radius:14px;
   border:1px solid var(--borde);
   font-size:16px;
+  height:52px;
+}
+
+input[type="file"]{
+  padding:10px;
+  background:#fff;
 }
 
 button{
@@ -59,18 +79,35 @@ button{
   margin-top:18px;
 }
 
-.secondary{ background:#6c757d; }
-.ok{ background:var(--ok); }
-
-.hidden{ display:none; }
-
-.list-item{
-  border:1px solid var(--borde);
-  border-radius:14px;
-  padding:14px;
-  margin-top:12px;
+.secondary{
+  background:#6c757d;
 }
 
+.ok{
+  background:var(--ok);
+}
+
+.hidden{
+  display:none;
+}
+
+/* fila hora + botón */
+.row-inline{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.row-inline input{
+  flex:1;
+}
+
+.row-inline button{
+  width:140px;
+  margin-top:0;
+}
+
+/* badges horarios */
 .badge{
   display:inline-block;
   background:#eef3ff;
@@ -78,9 +115,10 @@ button{
   padding:6px 10px;
   border-radius:10px;
   font-size:13px;
-  margin:4px 4px 0 0;
+  margin:6px 6px 0 0;
 }
 
+/* toggle */
 .toggle{
   display:flex;
   align-items:center;
@@ -91,7 +129,9 @@ button{
   cursor:pointer;
 }
 
-.toggle input{ display:none; }
+.toggle input{
+  display:none;
+}
 
 .switch{
   width:48px;
@@ -120,6 +160,14 @@ input:checked + .switch{
 
 input:checked + .switch::after{
   transform:translateX(22px);
+}
+
+/* lista */
+.list-item{
+  border:1px solid var(--borde);
+  border-radius:14px;
+  padding:14px;
+  margin-top:12px;
 }
 
 img.med-img{
@@ -161,12 +209,12 @@ img.med-img{
 
     <div class="row">
       <div class="label">Dosis</div>
-      <input id="medDosis">
+      <input id="medDosis" placeholder="Ej: 1 comprimido">
     </div>
 
     <div class="row">
       <div class="label">Lugar donde se guarda</div>
-      <input id="medLugar">
+      <input id="medLugar" placeholder="Ej: Velador del dormitorio">
     </div>
 
     <div class="row">
@@ -189,8 +237,10 @@ img.med-img{
 
     <div class="row">
       <div class="label">Horarios</div>
-      <input type="time" id="horaInput">
-      <button class="secondary" onclick="agregarHora()">Agregar horario</button>
+      <div class="row-inline">
+        <input type="time" id="horaInput">
+        <button class="secondary" onclick="agregarHora()">Agregar</button>
+      </div>
       <div id="horas"></div>
     </div>
 
@@ -244,7 +294,10 @@ function renderLista(){
   });
 }
 
-function mostrarForm(){ formMed.classList.remove("hidden"); }
+function mostrarForm(){
+  formMed.classList.remove("hidden");
+}
+
 function ocultarForm(){
   formMed.classList.add("hidden");
   horasTemp = [];
@@ -285,6 +338,7 @@ function guardarMed(){
   });
 
   localStorage.setItem("tratamientos", JSON.stringify(tratamientos));
+
   medNombre.value = medDosis.value = medLugar.value = medDias.value = "";
   ocultarForm();
   renderLista();
