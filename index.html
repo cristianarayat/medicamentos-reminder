@@ -6,179 +6,138 @@
 <title>Recordatorio de Medicamentos</title>
 
 <style>
+:root{
+  --azul:#2f80ed;
+  --gris:#f4f6f8;
+  --texto:#333;
+  --card:#ffffff;
+}
+
 body{
-  font-family: system-ui, Arial, sans-serif;
-  background:#f4f6f8;
   margin:0;
   padding:20px;
+  font-family: system-ui, Arial, sans-serif;
+  background:var(--gris);
+  color:var(--texto);
 }
-h1{text-align:center;margin-bottom:6px}
-.subtitle{text-align:center;color:#666;margin-bottom:20px}
+
+h1{
+  text-align:center;
+  margin-bottom:6px;
+}
+
+.sub{
+  text-align:center;
+  color:#666;
+  margin-bottom:22px;
+}
+
 .card{
-  background:#fff;
-  padding:20px;
-  border-radius:14px;
   max-width:420px;
   margin:0 auto;
-  box-shadow:0 6px 18px rgba(0,0,0,.12);
+  background:var(--card);
+  padding:22px;
+  border-radius:16px;
+  box-shadow:0 8px 22px rgba(0,0,0,.12);
 }
-label{display:block;margin-top:16px;font-weight:600}
+
+label{
+  display:block;
+  margin-top:16px;
+  font-weight:600;
+  font-size:15px;
+}
+
 input{
   width:100%;
-  padding:12px;
+  padding:14px;
   margin-top:6px;
   font-size:16px;
-  border-radius:10px;
+  border-radius:12px;
   border:1px solid #ccc;
 }
-.toggle{display:flex;align-items:center;gap:10px;margin-top:14px}
+
+.toggle{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:14px;
+  font-size:15px;
+}
+
 button{
-  margin-top:16px;width:100%;padding:14px;font-size:16px;
-  border:none;border-radius:12px;background:#2f80ed;
-  color:white;font-weight:700;cursor:pointer
+  margin-top:26px;
+  width:100%;
+  padding:16px;
+  font-size:17px;
+  font-weight:700;
+  border:none;
+  border-radius:14px;
+  background:var(--azul);
+  color:white;
+  cursor:pointer;
 }
-.secondary{background:#6c757d}
-.success{text-align:center;margin-top:16px;color:#2d8f2d;font-weight:600}
-.hidden{display:none}
-.status{
-  text-align:center;margin:14px 0;font-weight:700;font-size:18px
+
+.success{
+  text-align:center;
+  margin-top:18px;
+  color:#2d8f2d;
+  font-weight:700;
+  font-size:16px;
 }
-footer{text-align:center;margin-top:30px;color:#888;font-size:12px}
 </style>
 </head>
 
 <body>
 
 <h1>💊 Recordatorio de Medicamentos</h1>
-<div class="subtitle">Configuración y seguimiento</div>
+<div class="sub">Datos del usuario</div>
 
-<div class="card" id="config">
-  <label>Nombre del medicamento</label>
-  <input id="nombre" placeholder="Ej: Losartán">
+<div class="card">
 
-  <label>Dosis (según receta médica)</label>
-  <input id="dosis" placeholder="Ej: 1 comprimido">
+  <label>Nombre del usuario</label>
+  <input id="nombre" placeholder="Ej: María González">
 
-  <label>¿Por cuántos días?</label>
-  <input id="dias" type="number" placeholder="Ej: 30">
+  <label>Edad (opcional)</label>
+  <input id="edad" type="number" placeholder="Ej: 72">
 
-  <label>Hora de la toma</label>
-  <input id="hora" type="time">
+  <label>Teléfono del cuidador</label>
+  <input id="cuidador" type="tel" placeholder="Ej: +56 9 1234 5678">
 
   <div class="toggle">
-    <input id="voz" type="checkbox">
-    <label for="voz">Activar aviso por voz</label>
+    <input id="voz" type="checkbox" checked>
+    <label for="voz">Usar aviso por voz</label>
   </div>
 
-  <button onclick="guardar()">Guardar tratamiento</button>
+  <div class="toggle">
+    <input id="vibracion" type="checkbox" checked>
+    <label for="vibracion">Usar vibración</label>
+  </div>
+
+  <button onclick="guardarUsuario()">Continuar</button>
+
   <div id="msg" class="success"></div>
+
 </div>
-
-<div class="card hidden" id="seguimiento">
-  <div class="status" id="estado">⏳ Pendiente</div>
-
-  <p><strong>Medicamento:</strong> <span id="s_nombre"></span></p>
-  <p><strong>Dosis:</strong> <span id="s_dosis"></span></p>
-  <p><strong>Hora:</strong> <span id="s_hora"></span></p>
-  <p><strong>Días restantes:</strong> <span id="s_dias"></span></p>
-
-  <button onclick="tomado()">✅ Tomado</button>
-  <button class="secondary" onclick="posponer()">⏰ Recordar en 10 min</button>
-</div>
-
-<footer>Desarrollado por CA Tecnología</footer>
 
 <script>
-let tratamiento = JSON.parse(localStorage.getItem("tratamiento"));
-let timer = null;
-
-function guardar(){
-  const data = {
+function guardarUsuario(){
+  const usuario = {
     nombre: nombre.value.trim(),
-    dosis: dosis.value.trim(),
-    dias: parseInt(dias.value),
-    hora: hora.value,
+    edad: edad.value,
+    cuidador: cuidador.value.trim(),
     voz: voz.checked,
-    inicio: new Date().toISOString(),
-    tomadoHoy: false
+    vibracion: vibracion.checked
   };
 
-  if(!data.nombre || !data.dosis || !data.dias || !data.hora){
-    alert("Por favor completa todos los campos");
+  if(!usuario.nombre){
+    alert("Por favor ingrese el nombre del usuario");
     return;
   }
 
-  localStorage.setItem("tratamiento", JSON.stringify(data));
-  msg.innerText = "Tratamiento guardado correctamente ✅";
-  cargarSeguimiento();
+  localStorage.setItem("usuario", JSON.stringify(usuario));
+  msg.innerText = "Datos guardados correctamente ✅";
 }
-
-function cargarSeguimiento(){
-  tratamiento = JSON.parse(localStorage.getItem("tratamiento"));
-  if(!tratamiento) return;
-
-  config.classList.add("hidden");
-  seguimiento.classList.remove("hidden");
-
-  s_nombre.innerText = tratamiento.nombre;
-  s_dosis.innerText = tratamiento.dosis;
-  s_hora.innerText = tratamiento.hora;
-  s_dias.innerText = tratamiento.dias;
-
-  programarAlarma();
-}
-
-function programarAlarma(minExtra = 0){
-  if(timer) clearTimeout(timer);
-
-  const ahora = new Date();
-  const [h,m] = tratamiento.hora.split(":");
-  let alarma = new Date();
-  alarma.setHours(h, m, 0, 0);
-  alarma.setMinutes(alarma.getMinutes() + minExtra);
-
-  if(alarma < ahora) alarma.setDate(alarma.getDate() + 1);
-
-  const delay = alarma - ahora;
-  timer = setTimeout(dispararAlarma, delay);
-}
-
-function dispararAlarma(){
-  estado.innerText = "🔔 Hora de tomar el medicamento";
-  navigator.vibrate?.([300,200,300]);
-
-  if(Notification.permission === "granted"){
-    new Notification("Recordatorio de Medicamentos", {
-      body: `Hora de tomar ${tratamiento.nombre} (${tratamiento.dosis})`
-    });
-  }
-
-  if(tratamiento.voz){
-    const msg = new SpeechSynthesisUtterance(
-      `Es hora de tomar ${tratamiento.nombre}. Dosis: ${tratamiento.dosis}`
-    );
-    speechSynthesis.speak(msg);
-  }
-}
-
-function tomado(){
-  estado.innerText = "✅ Medicamento tomado";
-  tratamiento.dias -= 1;
-  tratamiento.tomadoHoy = true;
-  localStorage.setItem("tratamiento", JSON.stringify(tratamiento));
-  s_dias.innerText = tratamiento.dias;
-}
-
-function posponer(){
-  estado.innerText = "⏰ Recordatorio pospuesto";
-  programarAlarma(10);
-}
-
-if("Notification" in window){
-  Notification.requestPermission();
-}
-
-cargarSeguimiento();
 </script>
 
 </body>
