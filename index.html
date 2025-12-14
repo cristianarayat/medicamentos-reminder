@@ -12,9 +12,9 @@
   --card:#ffffff;
   --texto:#333;
   --borde:#d0d4d9;
+  --ok:#27ae60;
 }
 
-/* ===== BASE ===== */
 body{
   margin:0;
   font-family: system-ui, Arial, sans-serif;
@@ -22,121 +22,65 @@ body{
   color:var(--texto);
 }
 
-/* ===== HEADER ===== */
 .header{
-  padding:24px 20px 12px;
+  padding:20px;
   background:#f7f9fb;
   text-align:center;
 }
 
-/* ===== FONDO ===== */
-.pattern-area{
-  padding:20px;
-}
+.pattern-area{ padding:20px; }
 
-/* ===== CARD ===== */
 .card{
   max-width:420px;
-  margin:0 auto;
+  margin:0 auto 16px;
   background:var(--card);
   padding:22px;
   border-radius:18px;
   box-shadow:0 14px 32px rgba(0,0,0,.15);
 }
 
-/* ===== FILAS ===== */
-.row{
-  margin-top:16px;
-}
+.row{ margin-top:14px; }
+.label{ font-size:14px; font-weight:600; color:#555; margin-bottom:6px; }
+.value{ font-size:16px; }
 
-.label{
-  font-size:14px;
-  font-weight:600;
-  color:#555;
-  margin-bottom:6px;
-}
-
-.value{
-  font-size:16px;
-}
-
-/* ===== INPUT ===== */
-input{
+input, button{
   width:100%;
-  box-sizing:border-box;
   padding:14px;
   border-radius:14px;
   border:1px solid var(--borde);
   font-size:16px;
 }
 
-/* ===== TOGGLES ===== */
-.toggle{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:16px;
-  border-radius:14px;
-  background:#f3f5f7;
-  cursor:pointer;
-}
-
-.toggle span{
-  font-size:16px;
-}
-
-.toggle input{
-  display:none;
-}
-
-.switch{
-  width:48px;
-  height:26px;
-  background:#ccc;
-  border-radius:13px;
-  position:relative;
-  transition:.2s;
-}
-
-.switch::after{
-  content:"";
-  width:22px;
-  height:22px;
-  background:#fff;
-  border-radius:50%;
-  position:absolute;
-  top:2px;
-  left:2px;
-  transition:.2s;
-}
-
-input:checked + .switch{
-  background:var(--azul);
-}
-
-input:checked + .switch::after{
-  transform:translateX(22px);
-}
-
-/* ===== BOTONES ===== */
 button{
-  width:100%;
-  padding:16px;
-  font-size:17px;
-  font-weight:700;
-  border:none;
-  border-radius:16px;
   background:var(--azul);
   color:white;
+  font-weight:700;
+  border:none;
   cursor:pointer;
-  margin-top:26px;
+  margin-top:18px;
 }
 
-.secondary{
-  background:#6c757d;
-}
+.secondary{ background:#6c757d; }
+.ok{ background:var(--ok); }
 
 .hidden{ display:none; }
+
+.list-item{
+  border:1px solid var(--borde);
+  border-radius:14px;
+  padding:14px;
+  margin-top:12px;
+}
+
+.badge{
+  display:inline-block;
+  background:#eef3ff;
+  color:#2f80ed;
+  padding:6px 10px;
+  border-radius:10px;
+  font-size:13px;
+  margin:4px 4px 0 0;
+}
 </style>
 </head>
 
@@ -144,92 +88,124 @@ button{
 
 <div class="header">
   <h1>💊 Recordatorio de Medicamentos</h1>
-  <div>Perfil del usuario</div>
+  <div>Tratamientos</div>
 </div>
 
 <div class="pattern-area">
 
-  <!-- RESUMEN -->
-  <div class="card hidden" id="resumen">
-    <div class="row"><div class="label">Usuario</div><div class="value" id="r_nombre"></div></div>
-    <div class="row"><div class="label">Nacimiento</div><div class="value" id="r_nacimiento"></div></div>
-    <div class="row"><div class="label">Cuidador</div><div class="value" id="r_cuidador"></div></div>
-    <div class="row"><div class="label">Teléfono</div><div class="value" id="r_tel"></div></div>
-    <div class="row"><div class="label">Aviso por voz</div><div class="value" id="r_voz"></div></div>
-    <div class="row"><div class="label">Vibración</div><div class="value" id="r_vibracion"></div></div>
+  <!-- PERFIL (RESUMEN) -->
+  <div class="card" id="perfilResumen"></div>
 
-    <button class="secondary" onclick="editar()">Modificar datos</button>
+  <!-- LISTA TRATAMIENTOS -->
+  <div class="card">
+    <h3>Tratamientos activos</h3>
+    <div id="lista"></div>
+    <button onclick="mostrarForm()">Agregar medicamento</button>
   </div>
 
-  <!-- FORMULARIO -->
-  <div class="card hidden" id="formulario">
-    <div class="row"><div class="label">Nombre</div><input id="nombre"></div>
-    <div class="row"><div class="label">Fecha de nacimiento</div><input type="date" id="nacimiento"></div>
-    <div class="row"><div class="label">Cuidador</div><input id="cuidadorNombre"></div>
-    <div class="row"><div class="label">Teléfono cuidador</div><input id="cuidadorTel"></div>
-
-    <div class="row toggle" onclick="voz.click()">
-      <span>Aviso por voz</span>
-      <label><input id="voz" type="checkbox"><div class="switch"></div></label>
+  <!-- FORMULARIO MEDICAMENTO -->
+  <div class="card hidden" id="formMed">
+    <div class="row">
+      <div class="label">Nombre del medicamento</div>
+      <input id="medNombre">
     </div>
 
-    <div class="row toggle" onclick="vibracion.click()">
-      <span>Vibración</span>
-      <label><input id="vibracion" type="checkbox"><div class="switch"></div></label>
+    <div class="row">
+      <div class="label">Dosis</div>
+      <input id="medDosis" placeholder="Ej: 1 comprimido">
     </div>
 
-    <button onclick="guardar()">Guardar datos</button>
+    <div class="row">
+      <div class="label">Horarios</div>
+      <input type="time" id="horaInput">
+      <button class="secondary" onclick="agregarHora()">Agregar horario</button>
+      <div id="horas"></div>
+    </div>
+
+    <div class="row">
+      <div class="label">Días de duración</div>
+      <input type="number" id="medDias" min="1">
+    </div>
+
+    <button class="ok" onclick="guardarMed()">Guardar medicamento</button>
+    <button class="secondary" onclick="ocultarForm()">Cancelar</button>
   </div>
 
 </div>
 
 <script>
-let usuario = JSON.parse(localStorage.getItem("usuario")) || null;
+// ===== PERFIL =====
+const usuario = JSON.parse(localStorage.getItem("usuario"));
+perfilResumen.innerHTML = `
+  <strong>${usuario.nombre}</strong><br>
+  Cuidador: ${usuario.cuidadorNombre}<br>
+  Voz: ${usuario.voz ? "Sí" : "No"} · Vibración: ${usuario.vibracion ? "Sí" : "No"}
+`;
 
-function render(){
-  if(usuario){
-    formulario.classList.add("hidden");
-    resumen.classList.remove("hidden");
+// ===== TRATAMIENTOS =====
+let tratamientos = JSON.parse(localStorage.getItem("tratamientos")) || [];
+let horasTemp = [];
 
-    r_nombre.innerText = usuario.nombre;
-    r_nacimiento.innerText = usuario.nacimiento;
-    r_cuidador.innerText = usuario.cuidadorNombre;
-    r_tel.innerText = usuario.cuidadorTel;
-    r_voz.innerText = usuario.voz ? "Activado" : "Desactivado";
-    r_vibracion.innerText = usuario.vibracion ? "Activada" : "Desactivada";
-  }else{
-    resumen.classList.add("hidden");
-    formulario.classList.remove("hidden");
+function renderLista(){
+  lista.innerHTML = "";
+  tratamientos.forEach((t,i)=>{
+    lista.innerHTML += `
+      <div class="list-item">
+        <strong>${t.nombre}</strong><br>
+        Dosis: ${t.dosis}<br>
+        Horarios: ${t.horarios.join(", ")}<br>
+        Duración: ${t.dias} días
+        <button class="secondary" onclick="eliminar(${i})">Eliminar</button>
+      </div>
+    `;
+  });
+}
+
+function mostrarForm(){
+  formMed.classList.remove("hidden");
+}
+
+function ocultarForm(){
+  formMed.classList.add("hidden");
+  horasTemp = [];
+  horas.innerHTML = "";
+}
+
+function agregarHora(){
+  if(!horaInput.value) return;
+  horasTemp.push(horaInput.value);
+  horaInput.value="";
+  horas.innerHTML = horasTemp.map(h=>`<span class="badge">${h}</span>`).join("");
+}
+
+function guardarMed(){
+  if(!medNombre.value || !medDosis.value || !medDias.value || horasTemp.length===0){
+    alert("Complete todos los campos");
+    return;
   }
+
+  tratamientos.push({
+    nombre: medNombre.value,
+    dosis: medDosis.value,
+    horarios: horasTemp,
+    dias: medDias.value,
+    inicio: new Date().toISOString().slice(0,10),
+    activo:true
+  });
+
+  localStorage.setItem("tratamientos", JSON.stringify(tratamientos));
+  medNombre.value = medDosis.value = medDias.value = "";
+  ocultarForm();
+  renderLista();
 }
 
-function guardar(){
-  usuario = {
-    nombre: nombre.value,
-    nacimiento: nacimiento.value,
-    cuidadorNombre: cuidadorNombre.value,
-    cuidadorTel: cuidadorTel.value.replace(/\D/g,''),
-    voz: voz.checked,
-    vibracion: vibracion.checked
-  };
-
-  localStorage.setItem("usuario", JSON.stringify(usuario));
-  render();
+function eliminar(i){
+  tratamientos.splice(i,1);
+  localStorage.setItem("tratamientos", JSON.stringify(tratamientos));
+  renderLista();
 }
 
-function editar(){
-  nombre.value = usuario.nombre;
-  nacimiento.value = usuario.nacimiento;
-  cuidadorNombre.value = usuario.cuidadorNombre;
-  cuidadorTel.value = usuario.cuidadorTel;
-  voz.checked = usuario.voz;
-  vibracion.checked = usuario.vibracion;
-
-  usuario = null;
-  render();
-}
-
-render();
+renderLista();
 </script>
 
 </body>
