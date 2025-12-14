@@ -27,7 +27,9 @@ body{
   text-align:center;
 }
 
-.pattern-area{ padding:20px; }
+.pattern-area{
+  padding:20px;
+}
 
 .card{
   max-width:460px;
@@ -53,10 +55,19 @@ button{
   color:white;
 }
 
-.secondary{ background:#6c757d; }
+.secondary{
+  background:#6c757d;
+}
 
-.row{ margin-top:14px; }
-.label{ font-size:14px; font-weight:600; margin-bottom:6px; }
+.row{
+  margin-top:14px;
+}
+
+.label{
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:6px;
+}
 
 input{
   width:100%;
@@ -67,18 +78,17 @@ input{
   box-sizing:border-box;
 }
 
-/* ===== PERSONAS GRANDES ===== */
-.people-strip{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  margin-top:30px;
-  gap:8px;
+.bienvenida{
+  margin-bottom:12px;
 }
 
-.person{
-  width:90px;
-  height:160px;
+.bienvenida strong{
+  font-size:18px;
+}
+
+.bienvenida span{
+  font-size:14px;
+  color:#555;
 }
 </style>
 </head>
@@ -94,7 +104,7 @@ input{
   <!-- HOME -->
   <div class="card" id="home">
 
-    <div id="bienvenida" style="margin-bottom:10px;"></div>
+    <div class="bienvenida" id="bienvenida"></div>
 
     <h2>Menú principal</h2>
 
@@ -102,45 +112,22 @@ input{
     <button onclick="mostrarSeccion('medicamentos')">💊 Medicamentos</button>
     <button onclick="mostrarSeccion('seguimiento')">📊 Seguimiento</button>
 
-    <!-- PERSONAS -->
-    <div class="people-strip">
-
-      <!-- Pareja de abuelos -->
-      <svg class="person" viewBox="0 0 100 200">
-        <circle cx="35" cy="30" r="18" fill="#f2c9ac"/>
-        <circle cx="65" cy="30" r="18" fill="#f2c9ac"/>
-        <rect x="20" y="60" width="30" height="100" rx="20" fill="#c7d7e8"/>
-        <rect x="50" y="60" width="30" height="100" rx="20" fill="#d6c7e8"/>
-      </svg>
-
-      <!-- Mujer con bebé -->
-      <svg class="person" viewBox="0 0 100 200">
-        <circle cx="50" cy="30" r="18" fill="#f2c9ac"/>
-        <circle cx="70" cy="70" r="10" fill="#f7d7c4"/>
-        <rect x="35" y="60" width="30" height="110" rx="22" fill="#d5e8d4"/>
-      </svg>
-
-      <!-- Joven tez morena -->
-      <svg class="person" viewBox="0 0 100 200">
-        <circle cx="50" cy="28" r="18" fill="#c68642"/>
-        <rect x="35" y="60" width="30" height="115" rx="22" fill="#f4b6c2"/>
-      </svg>
-
-      <!-- Niño en silla de ruedas -->
-      <svg class="person" viewBox="0 0 100 200">
-        <circle cx="50" cy="28" r="16" fill="#f2c9ac"/>
-        <circle cx="40" cy="130" r="26" stroke="#999" stroke-width="4" fill="none"/>
-        <rect x="45" y="55" width="25" height="75" rx="18" fill="#cfe2f3"/>
-        <line x1="55" y1="90" x2="80" y2="110" stroke="#999" stroke-width="4"/>
-      </svg>
-
+    <!-- IMAGEN INCLUSIVA -->
+    <div style="margin-top:28px; display:flex; justify-content:center;">
+      <img 
+        src="assets/personas-inclusivas.png"
+        alt="Personas de distintas edades y capacidades"
+        style="width:100%; max-width:420px; height:auto; opacity:0.95;"
+      >
     </div>
+
   </div>
 
   <!-- PERFIL -->
   <div class="card hidden" id="perfil">
     <h3>Datos personales</h3>
     <div id="perfilResumen"></div>
+
     <button onclick="editarPerfil()">Modificar datos</button>
     <button class="secondary" onclick="volverHome()">⬅ Volver</button>
   </div>
@@ -150,7 +137,7 @@ input{
     <h3>Editar datos personales</h3>
 
     <div class="row">
-      <div class="label">Nombre</div>
+      <div class="label">Nombre del usuario</div>
       <input id="nombre">
     </div>
 
@@ -173,10 +160,23 @@ input{
     <button class="secondary" onclick="mostrarSeccion('perfil')">Cancelar</button>
   </div>
 
+  <!-- PLACEHOLDERS -->
+  <div class="card hidden" id="medicamentos">
+    <h3>Medicamentos</h3>
+    <p>Próxima fase.</p>
+    <button class="secondary" onclick="volverHome()">⬅ Volver</button>
+  </div>
+
+  <div class="card hidden" id="seguimiento">
+    <h3>Seguimiento</h3>
+    <p>Próxima fase.</p>
+    <button class="secondary" onclick="volverHome()">⬅ Volver</button>
+  </div>
+
 </div>
 
 <script>
-// ===== UTILIDAD EDAD =====
+// ===== CALCULAR EDAD =====
 function calcularEdad(fecha){
   if(!fecha) return "";
   const hoy = new Date();
@@ -186,21 +186,25 @@ function calcularEdad(fecha){
   let meses = hoy.getMonth() - nac.getMonth();
 
   if(hoy.getDate() < nac.getDate()) meses--;
-  if(meses < 0){ años--; meses += 12; }
-
+  if(meses < 0){
+    años--;
+    meses += 12;
+  }
   return `${años} años y ${meses} meses`;
 }
 
 // ===== NAVEGACIÓN =====
 function mostrarSeccion(id){
-  ["home","perfil","perfilForm"].forEach(s=>{
+  ["home","perfil","perfilForm","medicamentos","seguimiento"].forEach(s=>{
     const el = document.getElementById(s);
     if(el) el.classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
 }
 
-function volverHome(){ mostrarSeccion("home"); }
+function volverHome(){
+  mostrarSeccion("home");
+}
 
 // ===== PERFIL =====
 let usuario = JSON.parse(localStorage.getItem("usuario")) || {
@@ -214,7 +218,7 @@ function renderPerfil(){
   perfilResumen.innerHTML = `
     <strong>Nombre:</strong> ${usuario.nombre || "-"}<br>
     <strong>Fecha de nacimiento:</strong> ${usuario.fechaNacimiento || "-"}<br>
-    <strong>Edad:</strong> ${calcularEdad(usuario.fechaNacimiento) || "-"}<br>
+    <strong>Edad:</strong> ${usuario.fechaNacimiento ? calcularEdad(usuario.fechaNacimiento) : "-"}<br>
     <strong>Cuidador:</strong> ${usuario.cuidadorNombre || "-"}<br>
     <strong>Teléfono:</strong> ${usuario.cuidadorTelefono || "-"}
   `;
@@ -238,6 +242,7 @@ function guardarPerfil(){
   usuario.fechaNacimiento = fechaNacimiento.value;
   usuario.cuidadorNombre = cuidadorNombre.value;
   usuario.cuidadorTelefono = cuidadorTelefono.value;
+
   localStorage.setItem("usuario", JSON.stringify(usuario));
   renderPerfil();
   mostrarSeccion("perfil");
