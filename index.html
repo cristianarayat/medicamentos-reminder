@@ -6,315 +6,409 @@
 <title>Recordatorio de Medicamentos</title>
 
 <style>
+/* =====================
+   VARIABLES
+===================== */
 :root{
-  --azul:#2f80ed;
-  --fondo:#f2f4f7;
-  --blanco:#ffffff;
-  --texto:#333;
+  --bg:#eef1f4;
+  --card:#ffffff;
+  --primary:#2f80ed;
+  --text:#333;
+  --muted:#666;
+  --border:#d0d4d9;
 }
 
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-
+/* =====================
+   BASE
+===================== */
 body{
   margin:0;
-  background:var(--fondo);
-  color:var(--texto);
+  font-family:system-ui, Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
+
+h1,h2,h3{ margin-top:0; }
+
+.hidden{ display:none; }
 
 .container{
   max-width:420px;
-  margin:0 auto;
-  padding:20px;
-}
-
-.card{
-  background:white;
-  border-radius:16px;
-  padding:20px;
-  margin-bottom:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-h1,h2{margin:0 0 10px}
-h1{font-size:26px}
-h2{font-size:20px}
-
-.center{text-align:center}
-
-.menu-btn{
-  width:100%;
+  margin:auto;
   padding:16px;
+}
+
+/* =====================
+   HEADER
+===================== */
+header{
+  text-align:center;
+  padding:16px 0;
+}
+
+header img{
+  width:64px;
+  margin-bottom:8px;
+}
+
+/* =====================
+   CARD
+===================== */
+.card{
+  background:var(--card);
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:16px;
+  box-shadow:0 12px 30px rgba(0,0,0,.15);
+}
+
+/* =====================
+   BUTTONS
+===================== */
+button{
+  width:100%;
+  height:52px;
   border:none;
   border-radius:14px;
-  background:var(--azul);
-  color:white;
+  background:var(--primary);
+  color:#fff;
   font-size:16px;
-  margin:10px 0;
+  font-weight:600;
+  margin-top:12px;
   cursor:pointer;
 }
 
-.menu-btn.gray{
+button.secondary{
   background:#6c757d;
 }
 
-.footer{
-  text-align:center;
-  font-size:13px;
-  opacity:.6;
-  margin-top:20px;
+/* =====================
+   FORM
+===================== */
+.field{
+  margin-bottom:14px;
 }
 
-/* switches */
+label{
+  font-size:14px;
+  font-weight:600;
+  display:block;
+  margin-bottom:6px;
+}
+
+input, select{
+  width:100%;
+  height:48px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  padding:10px;
+  font-size:15px;
+  box-sizing:border-box;
+}
+
+/* =====================
+   SWITCH
+===================== */
+.switch-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
 .switch{
   position:relative;
-  display:inline-block;
   width:46px;
   height:24px;
 }
-.switch input{display:none}
+
+.switch input{ display:none; }
+
 .slider{
   position:absolute;
-  cursor:pointer;
-  top:0;left:0;right:0;bottom:0;
+  inset:0;
   background:#ccc;
-  transition:.4s;
   border-radius:24px;
+  cursor:pointer;
 }
+
 .slider:before{
-  position:absolute;
   content:"";
-  height:18px;width:18px;
-  left:3px;bottom:3px;
-  background:white;
-  transition:.4s;
+  position:absolute;
+  width:20px;
+  height:20px;
+  left:2px;
+  top:2px;
+  background:#fff;
   border-radius:50%;
-}
-input:checked + .slider{background:var(--azul)}
-input:checked + .slider:before{transform:translateX(22px)}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:10px 0;
+  transition:.3s;
 }
 
-input,select{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #ccc;
-  margin-bottom:12px;
-  font-size:14px;
+input:checked + .slider{
+  background:var(--primary);
 }
 
-/* días */
+input:checked + .slider:before{
+  transform:translateX(22px);
+}
+
+/* =====================
+   DAYS
+===================== */
 .days{
   display:flex;
-  justify-content:space-between;
-}
-.days label{
-  font-size:12px;
-}
-
-/* medicamentos */
-.med-item{
-  border:1px solid #ddd;
-  border-radius:12px;
-  padding:10px;
-  margin-top:10px;
-}
-.med-item img{
-  width:100%;
-  border-radius:10px;
+  gap:6px;
   margin-top:6px;
 }
 
-.hidden{display:none}
+.days label{
+  font-weight:normal;
+}
+
+/* =====================
+   MED LIST
+===================== */
+.med-card{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px;
+  margin-top:12px;
+}
+
+.med-card img{
+  width:100%;
+  border-radius:12px;
+  margin-top:8px;
+}
+
+/* =====================
+   FOOTER
+===================== */
+footer{
+  text-align:center;
+  font-size:12px;
+  color:#666;
+  margin-top:12px;
+}
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
+<header>
+  <img src="personas-inclusivas.png">
+  <h2 id="welcome">Bienvenido</h2>
+</header>
+
 <!-- HOME -->
-<div id="home" class="card center">
-  <h1>💊 Recordatorio de Medicamentos</h1>
-
-  <div id="bienvenida"></div>
-
-  <img src="personas-inclusivas.png" style="width:100%;border-radius:16px;margin:15px 0">
-
-  <button class="menu-btn" onclick="mostrar('perfil')">👤 Datos personales</button>
-  <button class="menu-btn" onclick="mostrar('medicamentos')">💊 Medicamentos</button>
-
-  <div class="footer">Desarrollado por CA Tecnología</div>
+<div class="card" id="home">
+  <button onclick="show('personal')">Datos personales</button>
+  <button onclick="show('meds')">Medicamentos</button>
 </div>
 
-<!-- PERFIL -->
-<div id="perfil" class="card hidden">
-<h2>Datos personales</h2>
+<!-- DATOS PERSONALES -->
+<div class="card hidden" id="personal">
 
-<input id="nombre" placeholder="Nombre">
-<input id="fechaNacimiento" type="date">
-<input id="cuidadorNombre" placeholder="Nombre del cuidador">
-<input id="cuidadorTelefono" placeholder="Teléfono del cuidador">
+<h3>Datos personales</h3>
 
-<div class="row">
-  <span>📳 Vibración</span>
-  <label class="switch">
-    <input type="checkbox" id="vibracion">
-    <span class="slider"></span>
-  </label>
+<div class="field">
+  <label>Nombre</label>
+  <input id="nombre">
 </div>
 
-<div class="row">
-  <span>🔊 Voz</span>
+<div class="field">
+  <label>Fecha de nacimiento</label>
+  <input type="date" id="nacimiento">
+</div>
+
+<div class="field">
+  <label>Nombre cuidador</label>
+  <input id="cuidador">
+</div>
+
+<div class="field">
+  <label>Teléfono cuidador</label>
+  <input id="telefono">
+</div>
+
+<div class="field switch-row">
+  🔊 Voz
   <label class="switch">
     <input type="checkbox" id="voz">
     <span class="slider"></span>
   </label>
 </div>
 
-<button class="menu-btn" onclick="guardarPerfil()">Guardar</button>
-<button class="menu-btn gray" onclick="mostrar('home')">← Volver</button>
-
-<div id="msgPerfil"></div>
-
-<div class="footer">Desarrollado por CA Tecnología</div>
-</div>
-
-<!-- MEDICAMENTOS -->
-<div id="medicamentos" class="card hidden">
-<h2>Medicamentos</h2>
-
-<input id="medNombre" placeholder="Nombre del medicamento">
-<input id="medDosis" type="number" min="1" placeholder="Cantidad de dosis por día">
-
-<div id="horarios"></div>
-
-<div class="days">
-<label><input type="checkbox" value="L">L</label>
-<label><input type="checkbox" value="M">M</label>
-<label><input type="checkbox" value="X">X</label>
-<label><input type="checkbox" value="J">J</label>
-<label><input type="checkbox" value="V">V</label>
-<label><input type="checkbox" value="S">S</label>
-<label><input type="checkbox" value="D">D</label>
-</div>
-
-<input id="medDias" type="number" placeholder="Cantidad de días">
-
-<div class="row">
-  <span>Permanente</span>
+<div class="field switch-row">
+  📳 Vibración
   <label class="switch">
-    <input type="checkbox" id="medPermanente">
+    <input type="checkbox" id="vibracion">
     <span class="slider"></span>
   </label>
 </div>
 
-<input type="file" id="medFoto" accept="image/*">
+<div id="msgPersonal" style="color:green;font-size:14px;"></div>
 
-<button class="menu-btn" onclick="guardarMedicamento()">Guardar medicamento</button>
-<button class="menu-btn gray" onclick="mostrar('home')">← Volver</button>
+<button onclick="savePersonal()">Guardar</button>
+<button class="secondary" onclick="show('home')">Volver</button>
 
-<div id="listaMedicamentos"></div>
-
-<div class="footer">Desarrollado por CA Tecnología</div>
 </div>
+
+<!-- MEDICAMENTOS -->
+<div class="card hidden" id="meds">
+
+<h3>Medicamentos</h3>
+
+<div class="field">
+  <label>Nombre</label>
+  <input id="mNombre">
+</div>
+
+<div class="field">
+  <label>Dosis</label>
+  <input id="mDosis">
+</div>
+
+<div class="field">
+  <label>Tomas por día</label>
+  <input type="number" id="mVeces" min="1" value="1">
+</div>
+
+<div class="field">
+  <label>Horario</label>
+  <input type="time" id="mHora">
+</div>
+
+<div class="field">
+  <label>Días</label>
+  <div class="days">
+    <label><input type="checkbox" value="L">L</label>
+    <label><input type="checkbox" value="M">M</label>
+    <label><input type="checkbox" value="X">X</label>
+    <label><input type="checkbox" value="J">J</label>
+    <label><input type="checkbox" value="V">V</label>
+    <label><input type="checkbox" value="S">S</label>
+    <label><input type="checkbox" value="D">D</label>
+  </div>
+</div>
+
+<div class="field switch-row">
+  Permanente
+  <label class="switch">
+    <input type="checkbox" id="mPerm" onchange="toggleDays()">
+    <span class="slider"></span>
+  </label>
+</div>
+
+<div class="field">
+  <label>Cantidad de días</label>
+  <input type="number" id="mDias">
+</div>
+
+<div class="field">
+  <label>Foto (opcional)</label>
+  <input type="file" id="mFoto">
+</div>
+
+<div class="field">
+  <label>Lugar donde se guarda</label>
+  <input id="mLugar">
+</div>
+
+<button onclick="saveMed()">Guardar medicamento</button>
+
+<div id="listaMeds"></div>
+
+<button class="secondary" onclick="show('home')">Volver</button>
+
+</div>
+
+<footer>CA Tecnología</footer>
 
 </div>
 
 <script>
-let usuario = JSON.parse(localStorage.getItem("usuario")) || {};
-let medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
-
-function mostrar(id){
-  document.querySelectorAll(".card").forEach(c=>c.classList.add("hidden"));
+/* =====================
+   NAVEGACIÓN
+===================== */
+function show(id){
+  ["home","personal","meds"].forEach(s=>{
+    document.getElementById(s).classList.add("hidden");
+  });
   document.getElementById(id).classList.remove("hidden");
 }
 
-function calcularEdad(fecha){
-  if(!fecha) return "";
-  const f = new Date(fecha);
-  const hoy = new Date();
-  let años = hoy.getFullYear()-f.getFullYear();
-  let meses = hoy.getMonth()-f.getMonth();
-  if(meses<0){años--;meses+=12}
-  return `${años} años y ${meses} meses`;
-}
-
-function renderHome(){
-  if(usuario.nombre){
-    document.getElementById("bienvenida").innerHTML =
-      `<h2>Bienvenido ${usuario.nombre}</h2>
-       <p>Edad: ${calcularEdad(usuario.fechaNacimiento)}</p>`;
-  }
-}
-
-function guardarPerfil(){
-  const tel = document.getElementById("cuidadorTelefono").value.trim();
+/* =====================
+   PERSONAL
+===================== */
+function savePersonal(){
+  const tel = telefono.value.replace(/\D/g,"");
   if(tel.length < 8){
     alert("Teléfono inválido");
     return;
   }
-  usuario={
+  localStorage.setItem("personal", JSON.stringify({
     nombre:nombre.value,
-    fechaNacimiento:fechaNacimiento.value,
-    cuidadorNombre:cuidadorNombre.value,
-    cuidadorTelefono:tel,
-    vibracion:vibracion.checked,
-    voz:voz.checked
+    nacimiento:nacimiento.value,
+    cuidador:cuidador.value,
+    telefono:tel,
+    voz:voz.checked,
+    vibracion:vibracion.checked
+  }));
+  msgPersonal.innerText="Datos guardados correctamente";
+  updateWelcome();
+}
+
+function updateWelcome(){
+  const p = JSON.parse(localStorage.getItem("personal"));
+  if(!p) return;
+  const n = new Date(p.nacimiento);
+  const h = new Date();
+  let y = h.getFullYear()-n.getFullYear();
+  let m = h.getMonth()-n.getMonth();
+  if(m<0){y--;m+=12;}
+  welcome.innerText=`Bienvenido ${p.nombre} · ${y} años ${m} meses`;
+}
+updateWelcome();
+
+/* =====================
+   MEDICAMENTOS
+===================== */
+let meds = JSON.parse(localStorage.getItem("meds")) || [];
+
+function toggleDays(){
+  mDias.disabled = mPerm.checked;
+}
+
+function saveMed(){
+  const med = {
+    nombre:mNombre.value,
+    dosis:mDosis.value,
+    hora:mHora.value,
+    lugar:mLugar.value
   };
-  localStorage.setItem("usuario",JSON.stringify(usuario));
-  document.getElementById("msgPerfil").innerHTML="✅ Datos guardados correctamente";
-  renderHome();
+  meds.push(med);
+  localStorage.setItem("meds",JSON.stringify(meds));
+  renderMeds();
 }
 
-medDosis.oninput=()=>{
-  horarios.innerHTML="";
-  for(let i=0;i<medDosis.value;i++){
-    horarios.innerHTML+=`<input type="time">`;
-  }
-}
-
-function guardarMedicamento(){
-  const tiempos=[...horarios.querySelectorAll("input")].map(i=>i.value);
-  const dias=[...document.querySelectorAll(".days input:checked")].map(d=>d.value);
-
-  const reader=new FileReader();
-  reader.onload=()=>{
-    medicamentos.push({
-      nombre:medNombre.value,
-      dosis:medDosis.value,
-      horarios:tiempos,
-      dias,
-      diasCantidad:medDias.value,
-      permanente:medPermanente.checked,
-      foto:reader.result
-    });
-    localStorage.setItem("medicamentos",JSON.stringify(medicamentos));
-    listarMedicamentos();
-  };
-  if(medFoto.files[0]) reader.readAsDataURL(medFoto.files[0]);
-  else reader.onload();
-}
-
-function listarMedicamentos(){
-  listaMedicamentos.innerHTML="";
-  medicamentos.forEach(m=>{
-    listaMedicamentos.innerHTML+=`
-    <div class="med-item">
-      <strong>${m.nombre}</strong><br>
-      Dosis: ${m.dosis}<br>
-      Horarios: ${m.horarios.join(", ")}<br>
-      Días: ${m.dias.join(" ")}<br>
-      ${m.foto?`<img src="${m.foto}">`:""}
-    </div>`;
+function renderMeds(){
+  listaMeds.innerHTML="";
+  meds.forEach(m=>{
+    listaMeds.innerHTML+=`
+      <div class="med-card">
+        <strong>${m.nombre}</strong><br>
+        ${m.dosis}<br>
+        ${m.hora}<br>
+        ${m.lugar}
+      </div>
+    `;
   });
 }
-
-renderHome();
+renderMeds();
 </script>
+
 </body>
 </html>
