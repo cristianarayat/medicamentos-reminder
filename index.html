@@ -120,18 +120,16 @@ button{
   </div>
 </div>
 
+
 <!-- =====================================================
-     PANTALLA DATOS PERSONALES – BLOQUE ÚNICO
+     PANTALLA DATOS PERSONALES – VERSIÓN CORREGIDA
      PEGAR JUSTO ANTES DE </body>
      ===================================================== -->
 
 <style>
-/* =========================
-   ESTILOS DATOS PERSONALES
-   ========================= */
+.hidden{display:none}
 
-.hidden{ display:none; }
-
+/* ----- CONTENEDOR ----- */
 .container-datos{
   max-width:480px;
   margin:16px auto;
@@ -146,21 +144,17 @@ button{
 }
 
 .card-datos h2{
-  margin-top:0;
   text-align:center;
+  margin-top:0;
 }
 
 /* ----- CAMPOS ----- */
-.field{
-  margin-top:14px;
-}
-
+.field{margin-top:14px}
 .field label{
   font-weight:600;
   display:block;
   margin-bottom:6px;
 }
-
 .field input{
   width:100%;
   height:52px;
@@ -187,50 +181,41 @@ button{
   font-size:16px;
 }
 
+/* ICONOS MEJORADOS */
 .icon{
-  width:30px;
-  height:30px;
+  width:32px;
+  height:32px;
   fill:#2f80ed;
 }
 
-/* ----- SWITCH DESLIZANTE GRANDE ----- */
+/* ----- SWITCH GRANDE ----- */
 .switch{
   position:relative;
-  width:56px;
-  height:30px;
+  width:58px;
+  height:32px;
 }
-
-.switch input{
-  opacity:0;
-  width:0;
-  height:0;
-}
-
+.switch input{display:none}
 .slider{
   position:absolute;
-  cursor:pointer;
   inset:0;
   background:#ccc;
   border-radius:40px;
   transition:.3s;
 }
-
 .slider:before{
-  position:absolute;
   content:"";
-  height:24px;
-  width:24px;
+  position:absolute;
+  width:26px;
+  height:26px;
   left:3px;
-  bottom:3px;
-  background:white;
+  top:3px;
+  background:#fff;
   border-radius:50%;
   transition:.3s;
 }
-
 .switch input:checked + .slider{
   background:#2f80ed;
 }
-
 .switch input:checked + .slider:before{
   transform:translateX(26px);
 }
@@ -246,15 +231,19 @@ button{
   margin-top:16px;
   cursor:pointer;
 }
+.btn-primary{background:#2f80ed;color:#fff}
+.btn-secondary{background:#6c757d;color:#fff}
 
-.btn-primary{
-  background:#2f80ed;
-  color:#fff;
-}
-
-.btn-secondary{
-  background:#6c757d;
-  color:#fff;
+/* ----- MENSAJE GUARDADO ----- */
+.msg-ok{
+  margin-top:14px;
+  padding:12px;
+  border-radius:10px;
+  background:#e8f5e9;
+  color:#2e7d32;
+  font-weight:600;
+  text-align:center;
+  display:none;
 }
 
 /* ----- FOOTER ----- */
@@ -266,18 +255,14 @@ button{
 }
 </style>
 
-<!-- =========================
-     HTML DATOS PERSONALES
-     ========================= -->
 <div class="container-datos hidden" id="pantalla-datos">
   <div class="card-datos">
 
     <h2>Datos personales</h2>
 
-    <!-- USUARIO -->
     <div class="field">
       <label>Nombre del usuario</label>
-      <input type="text" id="dp_nombre" placeholder="Ej: Juan Pérez">
+      <input id="dp_nombre" placeholder="Ej: Juan Pérez">
     </div>
 
     <div class="field">
@@ -285,27 +270,22 @@ button{
       <input type="date" id="dp_nacimiento">
     </div>
 
-    <!-- CUIDADOR -->
     <div class="field">
       <label>Nombre del cuidador</label>
-      <input type="text" id="dp_cuidador" placeholder="Ej: María Pérez">
+      <input id="dp_cuidador" placeholder="Ej: María Pérez">
     </div>
 
     <div class="field">
       <label>Teléfono del cuidador</label>
-      <input 
-        type="tel"
-        id="dp_telefono"
-        placeholder="+56 9 1234 5678"
-        value="+56 "
-      >
+      <input id="dp_telefono" value="+56 " placeholder="+56 9 1234 5678">
     </div>
 
     <!-- VIBRACIÓN -->
     <div class="switch-line">
       <div class="switch-info">
+        <!-- ÍCONO VIBRACIÓN (MEJORADO) -->
         <svg class="icon" viewBox="0 0 24 24">
-          <path d="M7 4v16h10V4H7zm12 3v10h2V7h-2zM3 7v10h2V7H3z"/>
+          <path d="M12 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2s2-.9 2-2V4c0-1.1-.9-2-2-2zm6 4v12h2V6h-2zM4 6v12h2V6H4z"/>
         </svg>
         <span>Vibración</span>
       </div>
@@ -318,8 +298,9 @@ button{
     <!-- SONIDO -->
     <div class="switch-line">
       <div class="switch-info">
+        <!-- ÍCONO SONIDO (MEJORADO) -->
         <svg class="icon" viewBox="0 0 24 24">
-          <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-2.5-1.5-4.7-3.5-5.6v11.2c2-.9 3.5-3.1 3.5-5.6z"/>
         </svg>
         <span>Sonido</span>
       </div>
@@ -329,11 +310,14 @@ button{
       </label>
     </div>
 
-    <!-- BOTONES -->
+    <!-- MENSAJE -->
+    <div class="msg-ok" id="msgGuardado">
+      ✔ Datos guardados correctamente
+    </div>
+
     <button class="btn btn-primary" onclick="guardarDatosPersonales()">Guardar</button>
     <button class="btn btn-secondary" onclick="volverHome()">Volver</button>
 
-    <!-- FOOTER -->
     <div class="footer-app">
       Desarrollado por <strong>CA Tecnología</strong>
     </div>
@@ -342,38 +326,36 @@ button{
 </div>
 
 <script>
-/* =========================
-   SCRIPT DATOS PERSONALES
-   ========================= */
-
-/* Mostrar pantalla Datos personales (desde Home) */
+/* ===== MOSTRAR PANTALLA DATOS ===== */
 function irADatosPersonales(){
-  document.querySelectorAll(".container").forEach(c => c.style.display="none");
   document.getElementById("pantalla-datos").classList.remove("hidden");
 }
 
-/* Volver al Home */
+/* ===== VOLVER HOME ===== */
 function volverHome(){
-  document.querySelectorAll(".container").forEach(c => c.style.display="block");
   document.getElementById("pantalla-datos").classList.add("hidden");
 }
 
-/* Guardar datos en localStorage */
+/* ===== GUARDAR DATOS (CORREGIDO) ===== */
 function guardarDatosPersonales(){
   const datos = {
-    nombre: document.getElementById("dp_nombre").value.trim(),
-    nacimiento: document.getElementById("dp_nacimiento").value,
-    cuidador: document.getElementById("dp_cuidador").value.trim(),
-    telefono: document.getElementById("dp_telefono").value.trim(),
-    vibracion: document.getElementById("dp_vibracion").checked,
-    sonido: document.getElementById("dp_sonido").checked
+    nombre: dp_nombre.value.trim(),
+    nacimiento: dp_nacimiento.value,
+    cuidador: dp_cuidador.value.trim(),
+    telefono: dp_telefono.value.trim(),
+    vibracion: dp_vibracion.checked,
+    sonido: dp_sonido.checked
   };
 
   localStorage.setItem("usuario", JSON.stringify(datos));
-  alert("Datos guardados correctamente");
+
+  const msg = document.getElementById("msgGuardado");
+  msg.style.display = "block";
+
+  setTimeout(()=> msg.style.display="none", 3000);
 }
 
-/* Conectar automáticamente el botón del Home */
+/* ===== CONECTAR BOTÓN HOME ===== */
 document.addEventListener("DOMContentLoaded", ()=>{
   document.querySelectorAll("button").forEach(b=>{
     if(b.textContent.trim()==="Datos personales"){
@@ -382,7 +364,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
   });
 });
 </script>
-
 
      
 </body>
