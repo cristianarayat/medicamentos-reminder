@@ -6,9 +6,6 @@
 <title>Recordatorio de Medicamentos</title>
 
 <style>
-/* =========================
-   ESTILOS GENERALES
-   ========================= */
 body{
   margin:0;
   font-family: system-ui, Arial, sans-serif;
@@ -44,13 +41,8 @@ header img{
 
 .hidden{ display:none; }
 
-h2,h3{
-  margin-top:0;
-}
+h2,h3{ margin-top:0; }
 
-/* =========================
-   BOTONES
-   ========================= */
 button{
   width:100%;
   height:52px;
@@ -67,12 +59,7 @@ button{
 button.secondary{ background:#6c757d; }
 button.danger{ background:#c0392b; }
 
-/* =========================
-   INPUTS
-   ========================= */
-.field{
-  margin-top:14px;
-}
+.field{ margin-top:14px; }
 
 .field label{
   font-size:14px;
@@ -81,7 +68,7 @@ button.danger{ background:#c0392b; }
   margin-bottom:6px;
 }
 
-input:not([type=checkbox]):not([type=time]):not([type=file]){
+input, select{
   width:100%;
   height:52px;
   border-radius:12px;
@@ -91,15 +78,6 @@ input:not([type=checkbox]):not([type=time]):not([type=file]){
   font-size:15px;
 }
 
-input[type=time],
-input[type=file]{
-  width:100%;
-  height:42px;
-}
-
-/* =========================
-   SWITCHES
-   ========================= */
 .switch{
   display:flex;
   align-items:center;
@@ -107,25 +85,12 @@ input[type=file]{
   margin-top:14px;
 }
 
-.switch-left{
+.days{
   display:flex;
-  align-items:center;
-  gap:8px;
+  justify-content:space-between;
+  margin-top:16px;
 }
 
-.switch img{
-  width:24px;
-  height:24px;
-}
-
-.switch input{
-  width:44px;
-  height:24px;
-}
-
-/* =========================
-   MEDICAMENTOS LISTA
-   ========================= */
 .med-item{
   border:1px solid #ddd;
   border-radius:14px;
@@ -139,6 +104,11 @@ input[type=file]{
   object-fit:contain;
   margin-top:8px;
 }
+
+#msgPerfil{
+  margin-top:10px;
+  font-weight:600;
+}
 </style>
 </head>
 
@@ -151,20 +121,15 @@ input[type=file]{
 
 <div class="container">
 
-<!-- =========================
-     MENÚ PRINCIPAL
-     ========================= -->
+<!-- MENÚ -->
 <div class="card" id="menu">
   <div id="bienvenida"></div>
-
   <button onclick="mostrar('perfil')">Datos personales</button>
   <button onclick="mostrar('medicamentos')">Medicamentos</button>
   <button onclick="mostrar('seguimiento')">Seguimiento</button>
 </div>
 
-<!-- =========================
-     DATOS PERSONALES
-     ========================= -->
+<!-- PERFIL -->
 <div class="card hidden" id="perfil">
   <h3>Datos personales</h3>
 
@@ -189,18 +154,12 @@ input[type=file]{
   </div>
 
   <div class="switch">
-    <div class="switch-left">
-      <img src="https://img.icons8.com/ios-filled/50/vibration.png">
-      <span>Vibración</span>
-    </div>
+    <span>Vibración</span>
     <input type="checkbox" id="vibracion">
   </div>
 
   <div class="switch">
-    <div class="switch-left">
-      <img src="https://img.icons8.com/ios-filled/50/voice.png">
-      <span>Mensaje por voz</span>
-    </div>
+    <span>Mensaje por voz</span>
     <input type="checkbox" id="voz">
   </div>
 
@@ -209,9 +168,7 @@ input[type=file]{
   <button class="secondary" onclick="mostrar('menu')">Volver</button>
 </div>
 
-<!-- =========================
-     MEDICAMENTOS
-     ========================= -->
+<!-- MEDICAMENTOS -->
 <div class="card hidden" id="medicamentos">
   <h3>Medicamentos</h3>
 
@@ -222,17 +179,17 @@ input[type=file]{
 
   <div class="field">
     <label>Dosis por día</label>
-    <input type="number" id="medDosis" min="1" value="1">
+    <input type="number" id="medDosis" min="1" value="1" onchange="generarHorarios()">
   </div>
 
   <div class="field">
-    <label>Horario</label>
-    <input type="time" id="medHorario">
+    <label>Horarios</label>
+    <div id="horariosContainer"></div>
   </div>
 
   <div class="switch">
     <span>Permanente</span>
-    <input type="checkbox" id="medPermanente">
+    <input type="checkbox" id="medPermanente" onchange="toggleDias()">
   </div>
 
   <div class="field">
@@ -253,16 +210,13 @@ input[type=file]{
   <button onclick="guardarMedicamento()">Guardar medicamento</button>
 
   <div id="listaMedicamentos"></div>
-
   <button class="secondary" onclick="mostrar('menu')">Volver</button>
 </div>
 
-<!-- =========================
-     SEGUIMIENTO
-     ========================= -->
+<!-- SEGUIMIENTO -->
 <div class="card hidden" id="seguimiento">
   <h3>Seguimiento</h3>
-  <p>Próxima fase.</p>
+  <p>Próxima fase</p>
   <button class="secondary" onclick="mostrar('menu')">Volver</button>
 </div>
 
@@ -276,24 +230,14 @@ function mostrar(id){
   document.getElementById(id).classList.remove("hidden");
 }
 
-/* ===== EDAD ===== */
-function calcularEdad(fecha){
-  if(!fecha) return "";
-  const hoy = new Date();
-  const nac = new Date(fecha);
-  let años = hoy.getFullYear() - nac.getFullYear();
-  let meses = hoy.getMonth() - nac.getMonth();
-  if(hoy.getDate() < nac.getDate()) meses--;
-  if(meses < 0){ años--; meses+=12; }
-  return `${años} años y ${meses} meses`;
-}
-
-/* ===== PERFIL ===== */
+/* PERFIL */
 let usuario = JSON.parse(localStorage.getItem("usuario")) || {};
 
 function guardarPerfil(){
-  if(cuidadorTelefono.value.trim().length < 8){
-    msgPerfil.innerHTML = "Teléfono inválido";
+  const tel = cuidadorTelefono.value.trim();
+  if(tel.length < 8){
+    msgPerfil.innerText = "Teléfono inválido (mínimo 8 dígitos)";
+    msgPerfil.style.color = "red";
     return;
   }
 
@@ -301,39 +245,54 @@ function guardarPerfil(){
     nombre:nombre.value,
     fechaNacimiento:fechaNacimiento.value,
     cuidadorNombre:cuidadorNombre.value,
-    cuidadorTelefono:cuidadorTelefono.value,
+    cuidadorTelefono:tel,
     vibracion:vibracion.checked,
     voz:voz.checked
   };
 
   localStorage.setItem("usuario", JSON.stringify(usuario));
-  msgPerfil.innerHTML = "Datos guardados correctamente";
-
-  bienvenida.innerHTML = `
-    <strong>Bienvenido ${usuario.nombre}</strong><br>
-    <small>${calcularEdad(usuario.fechaNacimiento)}</small>
-  `;
+  msgPerfil.innerText = "Datos guardados correctamente";
+  msgPerfil.style.color = "green";
+  bienvenida.innerHTML = `<strong>Bienvenido ${usuario.nombre}</strong>`;
 }
 
-/* ===== MEDICAMENTOS ===== */
+/* MEDICAMENTOS */
 let meds = JSON.parse(localStorage.getItem("meds")) || [];
 
-function guardarMedicamento(){
-  if(!medNombre.value) return;
+function generarHorarios(){
+  const cont = document.getElementById("horariosContainer");
+  cont.innerHTML="";
+  const dosis = parseInt(medDosis.value);
+  for(let i=0;i<dosis;i++){
+    cont.innerHTML += `<input type="time" class="horario">`;
+  }
+}
 
-  const reader = new FileReader();
+function toggleDias(){
+  medDias.disabled = medPermanente.checked;
+}
+
+function guardarMedicamento(){
+  const horarios = [...document.querySelectorAll(".horario")].map(h=>h.value);
+  if(!medNombre.value || horarios.includes("")){
+    alert("Completa nombre y horarios");
+    return;
+  }
+
   const file = medFoto.files[0];
+  const reader = new FileReader();
 
   reader.onload = () => {
     meds.push({
       nombre:medNombre.value,
       dosis:medDosis.value,
-      horario:medHorario.value,
+      horarios,
       permanente:medPermanente.checked,
       dias:medDias.value,
       lugar:medLugar.value,
-      foto:reader.result || null
+      foto:file ? reader.result : null
     });
+
     localStorage.setItem("meds", JSON.stringify(meds));
     renderMeds();
   };
@@ -355,7 +314,7 @@ function renderMeds(){
       <div class="med-item">
         <strong>${m.nombre}</strong><br>
         Dosis: ${m.dosis}<br>
-        Horario: ${m.horario}<br>
+        Horarios: ${m.horarios.join(", ")}<br>
         Lugar: ${m.lugar}<br>
         ${m.foto ? `<img src="${m.foto}">` : ""}
         <button class="danger" onclick="eliminarMed(${i})">Eliminar</button>
@@ -363,15 +322,9 @@ function renderMeds(){
     `;
   });
 }
-renderMeds();
 
-/* INIT */
-if(usuario.nombre){
-  bienvenida.innerHTML = `
-    <strong>Bienvenido ${usuario.nombre}</strong><br>
-    <small>${calcularEdad(usuario.fechaNacimiento)}</small>
-  `;
-}
+generarHorarios();
+renderMeds();
 </script>
 
 </body>
