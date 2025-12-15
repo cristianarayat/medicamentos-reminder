@@ -338,13 +338,12 @@ mostrarBienvenida();
 </script>
 
 
+
 <!-- =====================================================
-     PANTALLA MEDICAMENTOS
+     PANTALLA MEDICAMENTOS (DEFINITIVA)
      ===================================================== -->
+
 <style>
-/* =========================
-   MEDICAMENTOS – ESTILOS
-   ========================= */
 .med-card{
   border-radius:16px;
   padding:14px;
@@ -357,8 +356,8 @@ mostrarBienvenida();
   border-left:6px solid #2f80ed;
 }
 
-.med-expirado{
-  background:#f0f0f0;
+.med-finalizado{
+  background:#f2f2f2;
   color:#777;
   border-left:6px solid #bbb;
 }
@@ -379,26 +378,18 @@ mostrarBienvenida();
   margin-bottom:6px;
 }
 
-.badge-activo{
-  background:#2f80ed;
-  color:#fff;
-}
+.badge-activo{background:#2f80ed;color:#fff}
+.badge-finalizado{background:#999;color:#fff}
 
-.badge-expirado{
-  background:#999;
-  color:#fff;
-}
-
-.horas-dia{
-  font-size:14px;
-  margin-top:4px;
-}
-
-.dias-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
+.dias-box{
   margin-top:10px;
+}
+
+.dia-item{
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:10px;
+  margin-top:8px;
 }
 </style>
 
@@ -409,41 +400,47 @@ mostrarBienvenida();
 
     <div class="field">
       <label>Nombre del medicamento</label>
-      <input id="med_nombre">
+      <input id="m_nombre">
     </div>
 
     <div class="field">
       <label>Periodicidad</label>
-      <select id="med_periodicidad">
+      <select id="m_periodicidad">
         <option value="1">Todos los días</option>
         <option value="2">Cada 2 días</option>
         <option value="7">Cada 7 días</option>
         <option value="14">Cada 14 días</option>
+        <option value="30">Cada 30 días</option>
       </select>
     </div>
 
     <div class="field">
       <label>Dosis por día</label>
-      <input type="number" id="med_dosis" min="1" value="1" onchange="generarHoras()">
+      <input type="number" id="m_dosis" min="1" value="1">
     </div>
 
     <div class="field">
-      <label>Días y horarios</label>
-      <div class="dias-grid" id="diasContainer"></div>
+      <label>Fecha de término</label>
+      <input type="date" id="m_fin">
+    </div>
+
+    <div class="field">
+      <label>Días de la semana y horarios</label>
+      <div class="dias-box" id="diasSemanaBox"></div>
     </div>
 
     <div class="field">
       <label>Lugar donde se guarda</label>
-      <input id="med_lugar">
+      <input id="m_lugar">
     </div>
 
     <div class="field">
       <label>Foto del medicamento</label>
-      <input type="file" id="med_foto" accept="image/*">
+      <input type="file" id="m_foto" accept="image/*">
     </div>
 
     <button onclick="guardarMedicamento()">Guardar medicamento</button>
-    <button class="secondary" onclick="volver()">Volver</button>
+    <button class="secondary" onclick="volverMedicamentos()">Volver</button>
 
     <hr>
 
@@ -458,73 +455,86 @@ mostrarBienvenida();
    MEDICAMENTOS – LÓGICA
    ========================= */
 
-const diasSemana = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
-let medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
+const dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+let meds = JSON.parse(localStorage.getItem("medicamentos")) || [];
 
 /* ----- CONECTAR BOTÓN HOME ----- */
 document.querySelectorAll("button").forEach(b=>{
   if(b.textContent.trim()==="Medicamentos"){
-    b.onclick = ()=>{
-      home.style.display = "none";
-
-      const pantalla = document.getElementById("pantalla-medicamentos");
-      if(pantalla){
-        pantalla.classList.remove("hidden");
-        pantalla.style.display = "block";
-      }
-
-      renderMedicamentos();
-      generarHoras();
-    };
+    b.onclick = irAMedicamentos;
   }
 });
 
+function irAMedicamentos(){
+  home.style.display="none";
+  document.getElementById("pantalla-medicamentos").classList.remove("hidden");
+  generarDias();
+  renderMedicamentos();
+}
 
-/* ----- GENERAR HORAS POR DÍA ----- */
-function generarHoras(){
-  const cont = document.getElementById("diasContainer");
+function volverMedicamentos(){
+  document.getElementById("pantalla-medicamentos").classList.add("hidden");
+  home.style.display="block";
+}
+
+/* ----- GENERAR DÍAS Y HORAS ----- */
+function generarDias(){
+  const cont = document.getElementById("diasSemanaBox");
   cont.innerHTML="";
-  const dosis = parseInt(med_dosis.value);
-
-  diasSemana.forEach((dia,i)=>{
-    let html = `<div>
-      <strong>${dia}</strong>`;
-    for(let d=0; d<dosis; d++){
-      html += `<input type="time" class="hora" data-dia="${i}" style="margin-top:4px">`;
-    }
-    html += `</div>`;
-    cont.innerHTML += html;
+  dias.forEach((d,i)=>{
+    cont.innerHTML+=`
+      <div class="dia-item">
+        <label>
+          <input type="checkbox" onchange="toggleHoras(${i})" id="dia_${i}">
+          ${d}
+        </label>
+        <div id="horas_${i}" style="display:none;margin-top:6px"></div>
+      </div>
+    `;
   });
 }
 
-/* ----- GUARDAR MEDICAMENTO ----- */
+function toggleHoras(i){
+  const box=document.getElementById("horas_"+i);
+  box.innerHTML="";
+  if(!document.getElementById("dia_"+i).checked){
+    box.style.display="none";
+    return;
+  }
+  const dosis=parseInt(m_dosis.value);
+  for(let d=0;d<dosis;d++){
+    box.innerHTML+=`<input type="time" class="hora" data-dia="${i}" style="margin-top:4px">`;
+  }
+  box.style.display="block";
+}
+
+/* ----- GUARDAR ----- */
 function guardarMedicamento(){
-  if(!med_nombre.value || !med_lugar.value){
+  if(!m_nombre.value||!m_fin.value||!m_lugar.value){
     alert("Completa todos los datos");
     return;
   }
 
-  const horas = {};
+  const horarios={};
   document.querySelectorAll(".hora").forEach(h=>{
-    if(!horas[h.dataset.dia]) horas[h.dataset.dia]=[];
-    if(h.value) horas[h.dataset.dia].push(h.value);
+    if(!horarios[h.dataset.dia]) horarios[h.dataset.dia]=[];
+    if(h.value) horarios[h.dataset.dia].push(h.value);
   });
 
-  const file = med_foto.files[0];
-  const reader = new FileReader();
+  const file=m_foto.files[0];
+  const reader=new FileReader();
 
-  reader.onload = ()=>{
-    medicamentos.push({
-      nombre: med_nombre.value,
-      periodicidad: parseInt(med_periodicidad.value),
-      dosis: parseInt(med_dosis.value),
-      horas,
-      lugar: med_lugar.value,
-      inicio: new Date().toISOString(),
-      foto: file ? reader.result : null
+  reader.onload=()=>{
+    meds.push({
+      nombre:m_nombre.value,
+      periodicidad:parseInt(m_periodicidad.value),
+      dosis:parseInt(m_dosis.value),
+      horarios,
+      lugar:m_lugar.value,
+      fin:m_fin.value,
+      foto:file?reader.result:null
     });
-
-    localStorage.setItem("medicamentos", JSON.stringify(medicamentos));
+    localStorage.setItem("medicamentos",JSON.stringify(meds));
     renderMedicamentos();
   };
 
@@ -532,26 +542,24 @@ function guardarMedicamento(){
   else reader.onload();
 }
 
-/* ----- RENDER LISTA ----- */
+/* ----- LISTAR ----- */
 function renderMedicamentos(){
-  const cont = document.getElementById("listaMedicamentos");
+  const cont=document.getElementById("listaMedicamentos");
   cont.innerHTML="";
+  const hoy=new Date();
 
-  medicamentos.forEach((m,i)=>{
-    const diasUso = Math.floor((new Date() - new Date(m.inicio))/(1000*60*60*24));
-    const activo = diasUso % m.periodicidad === 0;
-
-    cont.innerHTML += `
-      <div class="med-card ${activo?'med-activo':'med-expirado'}">
-        <span class="badge ${activo?'badge-activo':'badge-expirado'}">
-          ${activo?'EN USO':'EXPIRADO'}
+  meds.forEach((m,i)=>{
+    const activo=hoy<=new Date(m.fin);
+    cont.innerHTML+=`
+      <div class="med-card ${activo?"med-activo":"med-finalizado"}">
+        <span class="badge ${activo?"badge-activo":"badge-finalizado"}">
+          ${activo?"EN USO":"FINALIZADO"}
         </span><br>
         <strong>${m.nombre}</strong><br>
         Lugar: ${m.lugar}<br>
-        ${Object.keys(m.horas).map(d=>`
-          <div class="horas-dia">
-            ${diasSemana[d]}: ${m.horas[d].join(", ")}
-          </div>`).join("")}
+        ${Object.keys(m.horarios).map(d=>`
+          <div>${dias[d]}: ${m.horarios[d].join(", ")}</div>
+        `).join("")}
         ${m.foto?`<img src="${m.foto}">`:""}
         <button class="secondary" onclick="eliminarMedicamento(${i})">Eliminar</button>
       </div>
@@ -559,14 +567,12 @@ function renderMedicamentos(){
   });
 }
 
-/* ----- ELIMINAR ----- */
 function eliminarMedicamento(i){
-  medicamentos.splice(i,1);
-  localStorage.setItem("medicamentos", JSON.stringify(medicamentos));
+  meds.splice(i,1);
+  localStorage.setItem("medicamentos",JSON.stringify(meds));
   renderMedicamentos();
 }
 </script>
-
 
    
 </body>
