@@ -465,13 +465,20 @@ let medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
 document.querySelectorAll("button").forEach(b=>{
   if(b.textContent.trim()==="Medicamentos"){
     b.onclick = ()=>{
-      home.style.display="none";
-      pantalla_medicamentos.classList.remove("hidden");
+      home.style.display = "none";
+
+      const pantalla = document.getElementById("pantalla-medicamentos");
+      if(pantalla){
+        pantalla.classList.remove("hidden");
+        pantalla.style.display = "block";
+      }
+
       renderMedicamentos();
       generarHoras();
     };
   }
 });
+
 
 /* ----- GENERAR HORAS POR DÍA ----- */
 function generarHoras(){
