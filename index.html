@@ -295,9 +295,16 @@ function edad(fecha){
 }
 
 function mostrarBienvenida(){
-  const d=JSON.parse(localStorage.getItem("usuario"));
+  const d = JSON.parse(localStorage.getItem("usuario"));
   if(d && d.nombre && d.nacimiento){
-    bienvenida.innerText=`Bienvenido ${d.nombre} — ${edad(d.nacimiento)}`;
+    bienvenida.innerHTML = `
+      <div style="text-align:center;font-weight:700;font-size:18px;">
+        Bienvenido ${d.nombre}
+      </div>
+      <div style="text-align:center;font-size:15px;margin-top:4px;">
+        ${edad(d.nacimiento)}
+      </div>
+    `;
   }
 }
 
