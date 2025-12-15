@@ -410,6 +410,121 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
+<script>
+/* =====================================================
+   SCRIPT ÚNICO – BIENVENIDA + DATOS PERSONALES
+   ===================================================== */
+
+/* ===== AL CARGAR LA APP ===== */
+document.addEventListener("DOMContentLoaded", () => {
+  conectarBotonDatos();
+  cargarDatos();
+  mostrarBienvenida();
+});
+
+/* ===== CONECTAR BOTÓN HOME ===== */
+function conectarBotonDatos(){
+  document.querySelectorAll("button").forEach(b=>{
+    if(b.textContent.trim()==="Datos personales"){
+      b.onclick = irADatosPersonales;
+    }
+  });
+}
+
+/* ===== MOSTRAR DATOS PERSONALES ===== */
+function irADatosPersonales(){
+  document.querySelectorAll(".container").forEach(c=>{
+    c.style.display="none";
+  });
+
+  const datos = document.getElementById("pantalla-datos");
+  if(datos){
+    datos.classList.remove("hidden");
+    datos.style.display="block";
+  }
+
+  cargarDatos();
+}
+
+/* ===== VOLVER AL HOME ===== */
+function volverHome(){
+  const datos = document.getElementById("pantalla-datos");
+  if(datos){
+    datos.classList.add("hidden");
+    datos.style.display="none";
+  }
+
+  document.querySelectorAll(".container").forEach(c=>{
+    c.style.display="block";
+  });
+}
+
+/* ===== GUARDAR DATOS ===== */
+function guardarDatosPersonales(){
+  const datos = {
+    nombre: dp_nombre.value.trim(),
+    nacimiento: dp_nacimiento.value,
+    cuidador: dp_cuidador.value.trim(),
+    telefono: dp_telefono.value.trim(),
+    vibracion: dp_vibracion.checked,
+    sonido: dp_sonido.checked
+  };
+
+  localStorage.setItem("usuario", JSON.stringify(datos));
+
+  mostrarBienvenida();
+
+  const msg = document.getElementById("msgGuardado");
+  if(msg){
+    msg.style.display="block";
+    setTimeout(()=>msg.style.display="none",3000);
+  }
+}
+
+/* ===== CARGAR DATOS EN FORMULARIO ===== */
+function cargarDatos(){
+  const datos = JSON.parse(localStorage.getItem("usuario"));
+  if(!datos) return;
+
+  dp_nombre.value = datos.nombre || "";
+  dp_nacimiento.value = datos.nacimiento || "";
+  dp_cuidador.value = datos.cuidador || "";
+  dp_telefono.value = datos.telefono || "+56 ";
+  dp_vibracion.checked = !!datos.vibracion;
+  dp_sonido.checked = !!datos.sonido;
+}
+
+/* ===== CALCULAR EDAD ===== */
+function calcularEdad(fecha){
+  if(!fecha) return "";
+  const hoy = new Date();
+  const nac = new Date(fecha);
+
+  let años = hoy.getFullYear() - nac.getFullYear();
+  let meses = hoy.getMonth() - nac.getMonth();
+
+  if(hoy.getDate() < nac.getDate()) meses--;
+  if(meses < 0){ años--; meses += 12; }
+
+  if(años < 1) return `${meses} meses`;
+  if(meses === 0) return `${años} años`;
+  return `${años} años y ${meses} meses`;
+}
+
+/* ===== MOSTRAR BIENVENIDA ===== */
+function mostrarBienvenida(){
+  const datos = JSON.parse(localStorage.getItem("usuario"));
+  if(!datos || !datos.nombre || !datos.nacimiento) return;
+
+  const bienvenida = document.getElementById("bienvenida");
+  if(bienvenida){
+    bienvenida.innerText =
+      `Bienvenido ${datos.nombre} — ${calcularEdad(datos.nacimiento)}`;
+  }
+}
+</script>
+
      
 </body>
 </html>
