@@ -431,6 +431,15 @@ mostrarBienvenida();
 .switch input:checked + .slider:before{
   transform:translateX(24px);
 }
+
+/* ===== FIX MÓVIL: mostrar medicamentos guardados ===== */
+#pantalla-medicamentos,
+#pantalla-medicamentos .card{
+  height: auto !important;
+  min-height: auto !important;
+  overflow: visible !important;
+}
+
 </style>
 
 <div class="container hidden" id="pantalla-medicamentos">
