@@ -5,34 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Recordatorio de Medicamentos</title>
 
-<!-- =====================================================
-     ESTILOS (COLORES, TAMAÑOS, DISTRIBUCIÓN)
-     ===================================================== -->
 <style>
-
-/* ----- ESTILO GENERAL ----- */
 body{
   margin:0;
-  font-family: system-ui, Arial, sans-serif;
+  font-family:system-ui, Arial, sans-serif;
   background:#eef1f4;
   color:#333;
 }
 
-/* ----- ENCABEZADO SUPERIOR ----- */
+.hidden{display:none}
+
 header{
   text-align:center;
   padding:16px;
-  background:#f7f9fb;
 }
 
-/* ----- CONTENEDOR CENTRAL ----- */
 .container{
   max-width:480px;
   margin:auto;
   padding:16px;
 }
 
-/* ----- TARJETA PRINCIPAL ----- */
 .card{
   background:#fff;
   border-radius:18px;
@@ -40,511 +33,99 @@ header{
   box-shadow:0 12px 28px rgba(0,0,0,.12);
 }
 
-/* ----- BIENVENIDA (SE COMPLETARÁ MÁS ADELANTE) ----- */
-#bienvenida{
-  font-size:18px;
-  font-weight:700;
-  text-align:center;
-  margin-bottom:16px;
-}
-
-/* ----- BOTONES DEL MENÚ ----- */
 button{
   width:100%;
   height:52px;
   border:none;
   border-radius:14px;
   background:#2f80ed;
-  color:white;
+  color:#fff;
   font-size:16px;
   font-weight:700;
   margin-top:12px;
-  cursor:pointer;
 }
 
-/* ----- IMAGEN INFERIOR ----- */
-.imagen-home{
-  width:100%;
-  max-width:420px;
-  display:block;
-  margin:20px auto 0 auto;
-}
-
-/* ----- TEXTO FINAL / CRÉDITOS ----- */
-.footer-app{
-  margin-top:24px;
+.footer{
   text-align:center;
+  margin-top:16px;
   font-size:13px;
   color:#777;
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- =====================================================
-     HEADER (TÍTULO DE LA APP)
-     ===================================================== -->
 <header>
   <h1>💊 Recordatorio de Medicamentos</h1>
 </header>
 
-<!-- =====================================================
-     PANTALLA 1 : HOME / MENÚ PRINCIPAL
-     ===================================================== -->
-<div class="container">
+<div class="container" id="home">
   <div class="card">
-
-    <!-- BIENVENIDA
-         (queda vacía hasta que tengamos datos del usuario) -->
     <div id="bienvenida"></div>
 
-    <!-- BOTONES (más adelante los conectaremos) -->
-    <button>Datos personales</button>
+    <button onclick="irADatosPersonales()">Datos personales</button>
     <button>Medicamentos</button>
     <button>Seguimiento</button>
 
-    <!-- IMAGEN (archivo debe estar junto a index.html) -->
-    <img
-      src="personas-inclusivas.png"
-      alt="Personas inclusivas"
-      class="imagen-home"
-    >
+    <img src="personas-inclusivas.png" style="width:100%;margin-top:16px">
 
-    <!-- CRÉDITO FINAL -->
-    <div class="footer-app">
+    <div class="footer">
       Desarrollado por <strong>CA Tecnología</strong>
     </div>
-
   </div>
 </div>
 
-
-<!-- =====================================================
-     PANTALLA DATOS PERSONALES – VERSIÓN CORREGIDA
-     PEGAR JUSTO ANTES DE </body>
-     ===================================================== -->
-
-<style>
-.hidden{display:none}
-
-/* ----- CONTENEDOR ----- */
-.container-datos{
-  max-width:480px;
-  margin:16px auto;
-  padding:16px;
-}
-
-.card-datos{
-  background:#fff;
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 12px 28px rgba(0,0,0,.12);
-}
-
-.card-datos h2{
-  text-align:center;
-  margin-top:0;
-}
-
-/* ----- CAMPOS ----- */
-.field{margin-top:14px}
-.field label{
-  font-weight:600;
-  display:block;
-  margin-bottom:6px;
-}
-.field input{
-  width:100%;
-  height:52px;
-  border-radius:12px;
-  border:1px solid #ccc;
-  padding:12px;
-  font-size:16px;
-  box-sizing:border-box;
-}
-
-/* ----- SWITCH + ICONO ----- */
-.switch-line{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-top:20px;
-}
-
-.switch-info{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  font-weight:600;
-  font-size:16px;
-}
-
-/* ICONOS MEJORADOS */
-.icon{
-  width:32px;
-  height:32px;
-  fill:#2f80ed;
-}
-
-/* ----- SWITCH GRANDE ----- */
-.switch{
-  position:relative;
-  width:58px;
-  height:32px;
-}
-.switch input{display:none}
-.slider{
-  position:absolute;
-  inset:0;
-  background:#ccc;
-  border-radius:40px;
-  transition:.3s;
-}
-.slider:before{
-  content:"";
-  position:absolute;
-  width:26px;
-  height:26px;
-  left:3px;
-  top:3px;
-  background:#fff;
-  border-radius:50%;
-  transition:.3s;
-}
-.switch input:checked + .slider{
-  background:#2f80ed;
-}
-.switch input:checked + .slider:before{
-  transform:translateX(26px);
-}
-
-/* ----- BOTONES ----- */
-.btn{
-  width:100%;
-  height:54px;
-  border:none;
-  border-radius:14px;
-  font-size:16px;
-  font-weight:700;
-  margin-top:16px;
-  cursor:pointer;
-}
-.btn-primary{background:#2f80ed;color:#fff}
-.btn-secondary{background:#6c757d;color:#fff}
-
-/* ----- MENSAJE GUARDADO ----- */
-.msg-ok{
-  margin-top:14px;
-  padding:12px;
-  border-radius:10px;
-  background:#e8f5e9;
-  color:#2e7d32;
-  font-weight:600;
-  text-align:center;
-  display:none;
-}
-
-/* ----- FOOTER ----- */
-.footer-app{
-  margin-top:24px;
-  text-align:center;
-  font-size:13px;
-  color:#777;
-}
-</style>
-
-<div class="container-datos hidden" id="pantalla-datos">
-  <div class="card-datos">
-
+<div class="container hidden" id="pantalla-datos">
+  <div class="card">
     <h2>Datos personales</h2>
 
-    <div class="field">
-      <label>Nombre del usuario</label>
-      <input id="dp_nombre" placeholder="Ej: Juan Pérez">
-    </div>
+    <input id="dp_nombre" placeholder="Nombre"><br><br>
+    <input id="dp_nacimiento" type="date"><br><br>
+    <input id="dp_cuidador" placeholder="Cuidador"><br><br>
+    <input id="dp_telefono" value="+56 "><br><br>
 
-    <div class="field">
-      <label>Fecha de nacimiento</label>
-      <input type="date" id="dp_nacimiento">
-    </div>
+    <button onclick="guardarDatos()">Guardar</button>
+    <button onclick="volverHome()">Volver</button>
 
-    <div class="field">
-      <label>Nombre del cuidador</label>
-      <input id="dp_cuidador" placeholder="Ej: María Pérez">
-    </div>
+    <div id="msgGuardado" class="hidden">✔ Datos guardados</div>
 
-    <div class="field">
-      <label>Teléfono del cuidador</label>
-      <input id="dp_telefono" value="+56 " placeholder="+56 9 1234 5678">
-    </div>
-
-    <!-- VIBRACIÓN -->
-    <div class="switch-line">
-      <div class="switch-info">
-        <!-- ÍCONO VIBRACIÓN (MEJORADO) -->
-        <svg class="icon" viewBox="0 0 24 24">
-          <path d="M12 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2s2-.9 2-2V4c0-1.1-.9-2-2-2zm6 4v12h2V6h-2zM4 6v12h2V6H4z"/>
-        </svg>
-        <span>Vibración</span>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="dp_vibracion">
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <!-- SONIDO -->
-    <div class="switch-line">
-      <div class="switch-info">
-        <!-- ÍCONO SONIDO (MEJORADO) -->
-        <svg class="icon" viewBox="0 0 24 24">
-          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-2.5-1.5-4.7-3.5-5.6v11.2c2-.9 3.5-3.1 3.5-5.6z"/>
-        </svg>
-        <span>Sonido</span>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="dp_sonido">
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <!-- MENSAJE -->
-    <div class="msg-ok" id="msgGuardado">
-      ✔ Datos guardados correctamente
-    </div>
-
-    <button class="btn btn-primary" onclick="guardarDatosPersonales()">Guardar</button>
-    <button class="btn btn-secondary" onclick="volverHome()">Volver</button>
-
-    <div class="footer-app">
+    <div class="footer">
       Desarrollado por <strong>CA Tecnología</strong>
     </div>
-
   </div>
 </div>
 
-
-/* ===== MOSTRAR PANTALLA DATOS ===== */
+<script>
 function irADatosPersonales(){
+  document.getElementById("home").style.display="none";
   document.getElementById("pantalla-datos").classList.remove("hidden");
 }
 
-/* ===== VOLVER HOME ===== */
-
 function volverHome(){
-
-  // Ocultar pantalla Datos personales
-  const datos = document.getElementById("pantalla-datos");
-  if(datos){
-    datos.classList.add("hidden");
-    datos.style.display = "none";
-  }
-
-  // Mostrar nuevamente el Home
-  document.querySelectorAll(".container").forEach(c => {
-    c.style.display = "block";
-  });
-
+  document.getElementById("pantalla-datos").classList.add("hidden");
+  document.getElementById("home").style.display="block";
 }
 
-
-
-
-/* ===== GUARDAR DATOS (CORREGIDO) ===== */
-function guardarDatosPersonales(){
+function guardarDatos(){
   const datos = {
-    nombre: dp_nombre.value.trim(),
-    nacimiento: dp_nacimiento.value,
-    cuidador: dp_cuidador.value.trim(),
-    telefono: dp_telefono.value.trim(),
-    vibracion: dp_vibracion.checked,
-    sonido: dp_sonido.checked
+    nombre: dp_nombre.value,
+    nacimiento: dp_nacimiento.value
   };
-
-  localStorage.setItem("usuario", JSON.stringify(datos));
-
-  const msg = document.getElementById("msgGuardado");
-  msg.style.display = "block";
-
-  setTimeout(()=> msg.style.display="none", 3000);
-}
-
-/* ===== CONECTAR BOTÓN HOME ===== */
-document.addEventListener("DOMContentLoaded", ()=>{
-  document.querySelectorAll("button").forEach(b=>{
-    if(b.textContent.trim()==="Datos personales"){
-      b.onclick = irADatosPersonales;
-    }
-  });
-});
-
-
-<!-- =====================================================
-     FIX CONEXIÓN BOTÓN "DATOS PERSONALES"
-     ===================================================== -->
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  // Detectar botón "Datos personales" del Home
-  const botones = document.querySelectorAll("button");
-  botones.forEach(btn => {
-    if (btn.textContent.trim() === "Datos personales") {
-      btn.onclick = () => {
-        // Oculta TODOS los contenedores del home
-        document.querySelectorAll(".container").forEach(c => {
-          c.style.display = "none";
-        });
-
-        // Muestra pantalla Datos personales
-        const datos = document.getElementById("pantalla-datos");
-        if (datos) {
-          datos.classList.remove("hidden");
-          datos.style.display = "block";
-        }
-      };
-    }
-  });
-
-});
-
-
-
-<script>
-/* =====================================================
-   SCRIPT ÚNICO – BIENVENIDA + DATOS PERSONALES
-   ===================================================== */
-
-/* ===== AL CARGAR LA APP ===== */
-document.addEventListener("DOMContentLoaded", () => {
-  conectarBotonDatos();
-  cargarDatos();
-  mostrarBienvenida();
-});
-
-/* ===== CONECTAR BOTÓN HOME ===== */
-function conectarBotonDatos(){
-  document.querySelectorAll("button").forEach(b=>{
-    if(b.textContent.trim()==="Datos personales"){
-      b.onclick = irADatosPersonales;
-    }
-  });
-}
-
-<script>
-/* =====================================================
-   SCRIPT ÚNICO DEFINITIVO
-   Datos personales + bienvenida + navegación
-   ===================================================== */
-
-document.addEventListener("DOMContentLoaded", () => {
-  conectarBotonDatos();
-  cargarDatos();
-  mostrarBienvenida();
-});
-
-/* ---------- CONECTAR BOTÓN HOME ---------- */
-function conectarBotonDatos(){
-  document.querySelectorAll("button").forEach(btn=>{
-    if(btn.textContent.trim() === "Datos personales"){
-      btn.onclick = irADatosPersonales;
-    }
-  });
-}
-
-/* ---------- IR A DATOS PERSONALES ---------- */
-function irADatosPersonales(){
-  document.querySelectorAll(".container").forEach(c=>{
-    c.style.display = "none";
-  });
-
-  const pantalla = document.getElementById("pantalla-datos");
-  if(pantalla){
-    pantalla.classList.remove("hidden");
-    pantalla.style.display = "block";
-  }
-
-  cargarDatos();
-}
-
-/* ---------- VOLVER AL HOME ---------- */
-function volverHome(){
-  const pantalla = document.getElementById("pantalla-datos");
-  if(pantalla){
-    pantalla.classList.add("hidden");
-    pantalla.style.display = "none";
-  }
-
-  document.querySelectorAll(".container").forEach(c=>{
-    c.style.display = "block";
-  });
-}
-
-/* ---------- GUARDAR DATOS ---------- */
-function guardarDatosPersonales(){
-  const datos = {
-    nombre: dp_nombre.value.trim(),
-    nacimiento: dp_nacimiento.value,
-    cuidador: dp_cuidador.value.trim(),
-    telefono: dp_telefono.value.trim(),
-    vibracion: dp_vibracion.checked,
-    sonido: dp_sonido.checked
-  };
-
   localStorage.setItem("usuario", JSON.stringify(datos));
   mostrarBienvenida();
-
-  const msg = document.getElementById("msgGuardado");
-  if(msg){
-    msg.style.display = "block";
-    setTimeout(() => msg.style.display = "none", 3000);
-  }
+  msgGuardado.classList.remove("hidden");
 }
 
-/* ---------- CARGAR DATOS ---------- */
-function cargarDatos(){
-  const datos = JSON.parse(localStorage.getItem("usuario"));
-  if(!datos) return;
-
-  dp_nombre.value = datos.nombre || "";
-  dp_nacimiento.value = datos.nacimiento || "";
-  dp_cuidador.value = datos.cuidador || "";
-  dp_telefono.value = datos.telefono || "+56 ";
-  dp_vibracion.checked = !!datos.vibracion;
-  dp_sonido.checked = !!datos.sonido;
-}
-
-/* ---------- EDAD ---------- */
-function calcularEdad(fecha){
-  if(!fecha) return "";
-  const hoy = new Date();
-  const nac = new Date(fecha);
-
-  let años = hoy.getFullYear() - nac.getFullYear();
-  let meses = hoy.getMonth() - nac.getMonth();
-
-  if(hoy.getDate() < nac.getDate()) meses--;
-  if(meses < 0){ años--; meses += 12; }
-
-  if(años < 1) return `${meses} meses`;
-  if(meses === 0) return `${años} años`;
-  return `${años} años y ${meses} meses`;
-}
-
-/* ---------- BIENVENIDA ---------- */
 function mostrarBienvenida(){
   const datos = JSON.parse(localStorage.getItem("usuario"));
-  if(!datos || !datos.nombre || !datos.nacimiento) return;
-
-  const bienvenida = document.getElementById("bienvenida");
-  if(bienvenida){
-    bienvenida.innerText =
-      `Bienvenido ${datos.nombre} — ${calcularEdad(datos.nacimiento)}`;
+  if(datos){
+    bienvenida.innerText = `Bienvenido ${datos.nombre}`;
   }
 }
-<script>
 
-     
+mostrarBienvenida();
+</script>
+
 </body>
 </html>
