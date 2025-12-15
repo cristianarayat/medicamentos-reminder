@@ -121,8 +121,8 @@ button{
 </div>
 
 <!-- =====================================================
-     PANTALLA DATOS PERSONALES + CONEXIÓN BOTÓN HOME
-     BLOQUE ÚNICO – PEGAR ANTES DE </body>
+     PANTALLA DATOS PERSONALES – BLOQUE ÚNICO
+     PEGAR JUSTO ANTES DE </body>
      ===================================================== -->
 
 <style>
@@ -132,6 +132,25 @@ button{
 
 .hidden{ display:none; }
 
+.container-datos{
+  max-width:480px;
+  margin:16px auto;
+  padding:16px;
+}
+
+.card-datos{
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+
+.card-datos h2{
+  margin-top:0;
+  text-align:center;
+}
+
+/* ----- CAMPOS ----- */
 .field{
   margin-top:14px;
 }
@@ -144,11 +163,12 @@ button{
 
 .field input{
   width:100%;
-  height:50px;
+  height:52px;
   border-radius:12px;
   border:1px solid #ccc;
-  padding:10px;
-  font-size:15px;
+  padding:12px;
+  font-size:16px;
+  box-sizing:border-box;
 }
 
 /* ----- SWITCH + ICONO ----- */
@@ -156,27 +176,28 @@ button{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-top:18px;
+  margin-top:20px;
 }
 
 .switch-info{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
   font-weight:600;
+  font-size:16px;
 }
 
 .icon{
-  width:28px;
-  height:28px;
+  width:30px;
+  height:30px;
   fill:#2f80ed;
 }
 
-/* ----- SWITCH DESLIZANTE ----- */
+/* ----- SWITCH DESLIZANTE GRANDE ----- */
 .switch{
   position:relative;
-  width:52px;
-  height:28px;
+  width:56px;
+  height:30px;
 }
 
 .switch input{
@@ -188,17 +209,17 @@ button{
 .slider{
   position:absolute;
   cursor:pointer;
-  top:0; left:0; right:0; bottom:0;
+  inset:0;
   background:#ccc;
-  border-radius:34px;
+  border-radius:40px;
   transition:.3s;
 }
 
 .slider:before{
   position:absolute;
   content:"";
-  height:22px;
-  width:22px;
+  height:24px;
+  width:24px;
   left:3px;
   bottom:3px;
   background:white;
@@ -211,26 +232,73 @@ button{
 }
 
 .switch input:checked + .slider:before{
-  transform:translateX(24px);
+  transform:translateX(26px);
+}
+
+/* ----- BOTONES ----- */
+.btn{
+  width:100%;
+  height:54px;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:700;
+  margin-top:16px;
+  cursor:pointer;
+}
+
+.btn-primary{
+  background:#2f80ed;
+  color:#fff;
+}
+
+.btn-secondary{
+  background:#6c757d;
+  color:#fff;
+}
+
+/* ----- FOOTER ----- */
+.footer-app{
+  margin-top:24px;
+  text-align:center;
+  font-size:13px;
+  color:#777;
 }
 </style>
 
 <!-- =========================
-     HTML PANTALLA DATOS
+     HTML DATOS PERSONALES
      ========================= -->
-<div class="container hidden" id="pantalla-datos">
-  <div class="card">
+<div class="container-datos hidden" id="pantalla-datos">
+  <div class="card-datos">
 
     <h2>Datos personales</h2>
 
+    <!-- USUARIO -->
     <div class="field">
-      <label>Nombre</label>
-      <input type="text" id="nombreUsuario" placeholder="Ej: Juan Pérez">
+      <label>Nombre del usuario</label>
+      <input type="text" id="dp_nombre" placeholder="Ej: Juan Pérez">
     </div>
 
     <div class="field">
       <label>Fecha de nacimiento</label>
-      <input type="date" id="fechaNacimiento">
+      <input type="date" id="dp_nacimiento">
+    </div>
+
+    <!-- CUIDADOR -->
+    <div class="field">
+      <label>Nombre del cuidador</label>
+      <input type="text" id="dp_cuidador" placeholder="Ej: María Pérez">
+    </div>
+
+    <div class="field">
+      <label>Teléfono del cuidador</label>
+      <input 
+        type="tel"
+        id="dp_telefono"
+        placeholder="+56 9 1234 5678"
+        value="+56 "
+      >
     </div>
 
     <!-- VIBRACIÓN -->
@@ -242,7 +310,7 @@ button{
         <span>Vibración</span>
       </div>
       <label class="switch">
-        <input type="checkbox" id="vibracion">
+        <input type="checkbox" id="dp_vibracion">
         <span class="slider"></span>
       </label>
     </div>
@@ -256,60 +324,63 @@ button{
         <span>Sonido</span>
       </div>
       <label class="switch">
-        <input type="checkbox" id="sonido">
+        <input type="checkbox" id="dp_sonido">
         <span class="slider"></span>
       </label>
     </div>
 
-    <button onclick="guardarDatos()">Guardar</button>
-    <button onclick="volverHome()">Volver</button>
+    <!-- BOTONES -->
+    <button class="btn btn-primary" onclick="guardarDatosPersonales()">Guardar</button>
+    <button class="btn btn-secondary" onclick="volverHome()">Volver</button>
+
+    <!-- FOOTER -->
+    <div class="footer-app">
+      Desarrollado por <strong>CA Tecnología</strong>
+    </div>
 
   </div>
 </div>
 
 <script>
-/* =====================================================
-   SCRIPT – CONEXIÓN Y LÓGICA BÁSICA
-   ===================================================== */
+/* =========================
+   SCRIPT DATOS PERSONALES
+   ========================= */
 
-/* Conectar automáticamente el botón "Datos personales" del Home */
-document.addEventListener("DOMContentLoaded", function(){
-  const botones = document.querySelectorAll("button");
-  botones.forEach(btn => {
-    if(btn.textContent.trim() === "Datos personales"){
-      btn.addEventListener("click", irADatosPersonales);
-    }
-  });
-});
-
-/* Mostrar pantalla Datos personales */
+/* Mostrar pantalla Datos personales (desde Home) */
 function irADatosPersonales(){
-  const containers = document.querySelectorAll(".container");
-  containers.forEach(c => c.style.display = "none");
-
+  document.querySelectorAll(".container").forEach(c => c.style.display="none");
   document.getElementById("pantalla-datos").classList.remove("hidden");
-  document.getElementById("pantalla-datos").style.display = "block";
 }
 
 /* Volver al Home */
 function volverHome(){
-  const containers = document.querySelectorAll(".container");
-  containers.forEach(c => c.style.display = "block");
-
+  document.querySelectorAll(".container").forEach(c => c.style.display="block");
   document.getElementById("pantalla-datos").classList.add("hidden");
 }
 
-/* Guardar datos (base) */
-function guardarDatos(){
+/* Guardar datos en localStorage */
+function guardarDatosPersonales(){
   const datos = {
-    nombre: document.getElementById("nombreUsuario").value,
-    nacimiento: document.getElementById("fechaNacimiento").value,
-    vibracion: document.getElementById("vibracion").checked,
-    sonido: document.getElementById("sonido").checked
+    nombre: document.getElementById("dp_nombre").value.trim(),
+    nacimiento: document.getElementById("dp_nacimiento").value,
+    cuidador: document.getElementById("dp_cuidador").value.trim(),
+    telefono: document.getElementById("dp_telefono").value.trim(),
+    vibracion: document.getElementById("dp_vibracion").checked,
+    sonido: document.getElementById("dp_sonido").checked
   };
+
   localStorage.setItem("usuario", JSON.stringify(datos));
   alert("Datos guardados correctamente");
 }
+
+/* Conectar automáticamente el botón del Home */
+document.addEventListener("DOMContentLoaded", ()=>{
+  document.querySelectorAll("button").forEach(b=>{
+    if(b.textContent.trim()==="Datos personales"){
+      b.onclick = irADatosPersonales;
+    }
+  });
+});
 </script>
 
 
