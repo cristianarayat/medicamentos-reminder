@@ -259,19 +259,45 @@ function volver(){
 }
 
 function guardar(){
-  const data={
-    nombre:nombre.value,
-    nacimiento:nacimiento.value,
-    cuidador:cuidador.value,
-    telefono:telefono.value,
-    vibracion:vibracion.checked,
-    sonido:sonido.checked
+
+  // Validación campos obligatorios
+  if(
+    nombre.value.trim() === "" ||
+    nacimiento.value === "" ||
+    cuidador.value.trim() === "" ||
+    telefono.value.trim() === "" ||
+    telefono.value.trim() === "+56"
+  ){
+    msg.innerText = "⚠️ Debes completar todos los datos";
+    msg.style.display = "block";
+    msg.style.background = "#fff3cd";
+    msg.style.color = "#856404";
+
+    setTimeout(()=>msg.style.display="none",3000);
+    return;
+  }
+
+  const data = {
+    nombre: nombre.value.trim(),
+    nacimiento: nacimiento.value,
+    cuidador: cuidador.value.trim(),
+    telefono: telefono.value.trim(),
+    vibracion: vibracion.checked,
+    sonido: sonido.checked
   };
-  localStorage.setItem("usuario",JSON.stringify(data));
-  msg.style.display="block";
+
+  localStorage.setItem("usuario", JSON.stringify(data));
+
+  msg.innerText = "✔ Datos guardados correctamente";
+  msg.style.background = "#e8f5e9";
+  msg.style.color = "#2e7d32";
+  msg.style.display = "block";
+
   setTimeout(()=>msg.style.display="none",2500);
+
   mostrarBienvenida();
 }
+
 
 function cargar(){
   const d=JSON.parse(localStorage.getItem("usuario"));
