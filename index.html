@@ -616,27 +616,39 @@ function guardarMedicamento(){
 
 /* LISTAR */
 function renderMedicamentos(){
-  listaMedicamentos.innerHTML="";
-  const hoy=new Date();
 
-  medicamentos.forEach((m,i)=>{
+  // 🔑 SIEMPRE sincronizar desde localStorage (clave móvil)
+  medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
+
+  listaMedicamentos.innerHTML = "";
+  const hoy = new Date();
+
+  medicamentos.forEach((m, i) => {
+
     const activo = m.permanente || hoy <= new Date(m.fin);
-    listaMedicamentos.innerHTML+=`
-      <div class="med-card ${activo?"med-activo":"med-finalizado"}">
-        <span class="badge ${activo?"badge-activo":"badge-finalizado"}">
-          ${activo?"EN USO":"FINALIZADO"}
+
+    listaMedicamentos.innerHTML += `
+      <div class="med-card ${activo ? "med-activo" : "med-finalizado"}">
+        <span class="badge ${activo ? "badge-activo" : "badge-finalizado"}">
+          ${activo ? "EN USO" : "FINALIZADO"}
         </span><br>
         <strong>${m.nombre}</strong><br>
         Lugar: ${m.lugar}<br>
-        ${Object.keys(m.horarios).map(d=>`
+
+        ${Object.keys(m.horarios).map(d => `
           <div>${diasSemana[d]}: ${m.horarios[d].join(", ")}</div>
         `).join("")}
-        ${m.foto?`<img src="${m.foto}">`:""}
-        <button class="secondary" onclick="eliminarMedicamento(${i})">Eliminar</button>
+
+        ${m.foto ? `<img src="${m.foto}">` : ""}
+
+        <button class="secondary" onclick="eliminarMedicamento(${i})">
+          Eliminar
+        </button>
       </div>
     `;
   });
 }
+
 
 function eliminarMedicamento(i){
   medicamentos.splice(i,1);
