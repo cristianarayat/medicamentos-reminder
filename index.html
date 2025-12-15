@@ -120,5 +120,181 @@ button{
   </div>
 </div>
 
+<!-- =====================================================
+     PANTALLA 2 : DATOS PERSONALES
+     BLOQUE ÚNICO – PEGAR ANTES DE </cuerpo>
+     ===================================================== -->
+
+<style>
+/* ===== ESTILOS DATOS PERSONALES ===== */
+
+.hidden{ display:none; }
+
+.field{
+  margin-top:14px;
+}
+
+.field label{
+  font-weight:600;
+  display:block;
+  margin-bottom:6px;
+}
+
+.field input{
+  width:100%;
+  height:50px;
+  border-radius:12px;
+  border:1px solid #ccc;
+  padding:10px;
+  font-size:15px;
+}
+
+/* ----- LÍNEA SWITCH ----- */
+.switch-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-top:18px;
+}
+
+.switch-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:600;
+}
+
+/* ----- ICONOS SVG ----- */
+.icon{
+  width:28px;
+  height:28px;
+  fill:#2f80ed;
+}
+
+/* ----- SWITCH DESLIZANTE ----- */
+.switch{
+  position:relative;
+  width:52px;
+  height:28px;
+}
+
+.switch input{
+  opacity:0;
+  width:0;
+  height:0;
+}
+
+.slider{
+  position:absolute;
+  cursor:pointer;
+  top:0; left:0; right:0; bottom:0;
+  background:#ccc;
+  border-radius:34px;
+  transition:.3s;
+}
+
+.slider:before{
+  position:absolute;
+  content:"";
+  height:22px;
+  width:22px;
+  left:3px;
+  bottom:3px;
+  background:white;
+  border-radius:50%;
+  transition:.3s;
+}
+
+.switch input:checked + .slider{
+  background:#2f80ed;
+}
+
+.switch input:checked + .slider:before{
+  transform:translateX(24px);
+}
+
+/* ----- BOTÓN SECUNDARIO ----- */
+button.secondary{
+  background:#6c757d;
+}
+</style>
+
+<div class="container hidden" id="pantalla-datos">
+  <div class="card">
+
+    <h2>Datos personales</h2>
+
+    <!-- NOMBRE -->
+    <div class="field">
+      <label>Nombre</label>
+      <input type="text" id="nombreUsuario" placeholder="Ej: Juan Pérez">
+    </div>
+
+    <!-- FECHA NACIMIENTO -->
+    <div class="field">
+      <label>Fecha de nacimiento</label>
+      <input type="date" id="fechaNacimiento">
+    </div>
+
+    <!-- VIBRACIÓN -->
+    <div class="switch-line">
+      <div class="switch-info">
+        <!-- ICONO VIBRACIÓN -->
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M7 4v16h10V4H7zm12 3v10h2V7h-2zM3 7v10h2V7H3z"/>
+        </svg>
+        <span>Vibración</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="vibracion">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- SONIDO -->
+    <div class="switch-line">
+      <div class="switch-info">
+        <!-- ICONO SONIDO -->
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+        </svg>
+        <span>Sonido</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="sonido">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <!-- BOTONES -->
+    <button onclick="guardarDatos()">Guardar</button>
+    <button class="secondary" onclick="volverHome()">Volver</button>
+
+  </div>
+</div>
+
+<script>
+/* ===== SCRIPT DATOS PERSONALES ===== */
+
+/* Guardar datos */
+function guardarDatos(){
+  const datos = {
+    nombre: document.getElementById("nombreUsuario").value,
+    nacimiento: document.getElementById("fechaNacimiento").value,
+    vibracion: document.getElementById("vibracion").checked,
+    sonido: document.getElementById("sonido").checked
+  };
+  localStorage.setItem("usuario", JSON.stringify(datos));
+  alert("Datos guardados correctamente");
+}
+
+/* Volver al home (por ahora solo oculta esta pantalla) */
+function volverHome(){
+  document.getElementById("pantalla-datos").classList.add("hidden");
+}
+</script>
+
+
+     
 </body>
 </html>
