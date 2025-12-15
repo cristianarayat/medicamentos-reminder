@@ -512,11 +512,16 @@ document.querySelectorAll("button").forEach(b=>{
 });
 
 function irAMedicamentos(){
-  home.style.display="none";
+  home.style.display = "none";
   document.getElementById("pantalla-medicamentos").classList.remove("hidden");
+
+  // 🔑 RELEER SIEMPRE DESDE localStorage (clave para móvil)
+  medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
+
   generarDias();
   renderMedicamentos();
 }
+
 
 function volverMedicamentos(){
   document.getElementById("pantalla-medicamentos").classList.add("hidden");
