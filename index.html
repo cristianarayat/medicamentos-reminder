@@ -365,6 +365,35 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 </script>
 
+<!-- =====================================================
+     FIX CONEXIÓN BOTÓN "DATOS PERSONALES"
+     ===================================================== -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // Detectar botón "Datos personales" del Home
+  const botones = document.querySelectorAll("button");
+  botones.forEach(btn => {
+    if (btn.textContent.trim() === "Datos personales") {
+      btn.onclick = () => {
+        // Oculta TODOS los contenedores del home
+        document.querySelectorAll(".container").forEach(c => {
+          c.style.display = "none";
+        });
+
+        // Muestra pantalla Datos personales
+        const datos = document.getElementById("pantalla-datos");
+        if (datos) {
+          datos.classList.remove("hidden");
+          datos.style.display = "block";
+        }
+      };
+    }
+  });
+
+});
+</script>
+
      
 </body>
 </html>
