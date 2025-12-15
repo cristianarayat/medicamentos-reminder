@@ -332,9 +332,25 @@ function irADatosPersonales(){
 }
 
 /* ===== VOLVER HOME ===== */
+
 function volverHome(){
-  document.getElementById("pantalla-datos").classList.add("hidden");
+
+  // Ocultar pantalla Datos personales
+  const datos = document.getElementById("pantalla-datos");
+  if(datos){
+    datos.classList.add("hidden");
+    datos.style.display = "none";
+  }
+
+  // Mostrar nuevamente el Home
+  document.querySelectorAll(".container").forEach(c => {
+    c.style.display = "block";
+  });
+
 }
+
+
+
 
 /* ===== GUARDAR DATOS (CORREGIDO) ===== */
 function guardarDatosPersonales(){
