@@ -8,305 +8,288 @@
 <style>
 /* =========================
    VARIABLES Y BASE
-   ========================= */
+========================= */
 :root{
   --azul:#2f80ed;
-  --gris:#eef1f4;
-  --card:#ffffff;
+  --gris:#f2f4f7;
   --texto:#333;
-  --borde:#d0d4d9;
-  --verde:#27ae60;
+  --blanco:#fff;
 }
 
-*{ box-sizing:border-box; }
+*{
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
+}
 
 body{
   margin:0;
-  font-family: system-ui, Arial, sans-serif;
   background:var(--gris);
   color:var(--texto);
 }
 
-header{
-  text-align:center;
-  padding:16px;
-  background:#f7f9fb;
-}
-
-h1{ margin:6px 0; }
-
-.container{
-  max-width:480px;
+/* =========================
+   CONTENEDOR
+========================= */
+.app{
+  max-width:420px;
   margin:auto;
-  padding:16px;
+  padding:15px;
 }
 
 /* =========================
-   CARDS
-   ========================= */
-.card{
-  background:var(--card);
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:16px;
-  box-shadow:0 10px 26px rgba(0,0,0,.15);
+   HEADER
+========================= */
+header{
+  text-align:center;
+  margin-bottom:15px;
 }
 
-.hidden{ display:none; }
+header h1{
+  margin:5px 0;
+}
+
+header img{
+  width:26px;
+  vertical-align:middle;
+}
+
+/* =========================
+   TARJETAS
+========================= */
+.card{
+  background:var(--blanco);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:15px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.08);
+}
 
 /* =========================
    BOTONES
-   ========================= */
-button{
+========================= */
+.btn{
   width:100%;
   padding:14px;
-  border-radius:14px;
   border:none;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-  margin-top:12px;
+  border-radius:14px;
   background:var(--azul);
-  color:white;
+  color:#fff;
+  font-size:16px;
+  margin-top:10px;
+  cursor:pointer;
 }
 
-.secondary{ background:#6c757d; }
+.btn.sec{
+  background:#6c757d;
+}
 
 /* =========================
-   FORMULARIOS
-   ========================= */
-.row{ margin-top:14px; }
-
+   INPUTS
+========================= */
 label{
-  font-size:14px;
-  font-weight:600;
   display:block;
-  margin-bottom:6px;
+  margin-top:12px;
+  font-weight:bold;
 }
 
 input, select{
   width:100%;
   padding:12px;
-  border-radius:12px;
-  border:1px solid var(--borde);
-  font-size:15px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  margin-top:5px;
 }
 
 /* =========================
    SWITCH
-   ========================= */
+========================= */
 .switch{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
-  margin-top:12px;
+  margin-top:15px;
 }
 
 .switch input{
-  width:46px;
-  height:24px;
-  appearance:none;
-  background:#ccc;
-  border-radius:20px;
-  position:relative;
-  outline:none;
-  cursor:pointer;
-}
-
-.switch input:checked{
-  background:var(--azul);
-}
-
-.switch input::before{
-  content:"";
-  width:20px;
-  height:20px;
-  background:white;
-  border-radius:50%;
-  position:absolute;
-  top:2px;
-  left:2px;
-  transition:.2s;
-}
-
-.switch input:checked::before{
-  left:24px;
+  width:50px;
+  height:25px;
 }
 
 /* =========================
-   MENÚ
-   ========================= */
-.menu-img{
-  width:100%;
-  margin-top:20px;
-}
-
-/* =========================
-   DÍAS
-   ========================= */
-.days{
+   DIAS
+========================= */
+.dias{
   display:grid;
   grid-template-columns:repeat(7,1fr);
   gap:6px;
-  margin-top:18px;
+  margin-top:15px;
 }
 
-.days label{
+.dias label{
+  font-size:12px;
   text-align:center;
-  font-size:13px;
-  background:#f1f1f1;
-  padding:8px 0;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.days input{ display:none; }
-
-.days input:checked + label{
-  background:var(--azul);
-  color:white;
 }
 
 /* =========================
-   MEDICAMENTO CARD
-   ========================= */
-.med-card{
-  border:1px solid var(--borde);
+   IMAGEN PRINCIPAL
+========================= */
+.imagen-principal img{
+  width:100%;
   border-radius:14px;
-  padding:14px;
-  margin-top:14px;
+  margin-top:15px;
 }
 
-.med-card img{
-  width:100%;
+/* =========================
+   MEDICAMENTOS LISTA
+========================= */
+.med-item{
+  margin-top:15px;
+  padding:12px;
   border-radius:12px;
+  background:#f8f9fb;
+}
+
+.med-item img{
+  width:100%;
+  border-radius:10px;
   margin-top:8px;
 }
 
 /* =========================
    FOOTER
-   ========================= */
+========================= */
 footer{
   text-align:center;
   font-size:13px;
-  opacity:.7;
-  margin:24px 0 12px;
+  color:#777;
+  margin-top:15px;
+}
+
+/* =========================
+   OCULTAR
+========================= */
+.pantalla{
+  display:none;
+}
+.pantalla.activa{
+  display:block;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>💊 Recordatorio de Medicamentos</h1>
-</header>
+<div class="app">
 
-<div class="container">
+<header>
+  <h1><img src="https://emojiapi.dev/api/v1/pill/32.png"> Recordatorio de Medicamentos</h1>
+</header>
 
 <!-- =========================
      HOME
-     ========================= -->
-<div class="card" id="home">
-  <div id="bienvenida"></div>
+========================= -->
+<div id="home" class="pantalla activa">
 
-  <button onclick="mostrar('perfil')">👤 Datos personales</button>
-  <button onclick="mostrar('medicamentos')">💊 Medicamentos</button>
+  <div class="card">
+    <h2 id="bienvenida">Bienvenido</h2>
+    <p id="edadTexto"></p>
 
-  <img src="activos/personas-inclusivas.png" class="menu-img">
+    <button class="btn" onclick="mostrarPantalla('datos')">👤 Datos personales</button>
+    <button class="btn" onclick="mostrarPantalla('medicamentos')">💊 Medicamentos</button>
+    <button class="btn" onclick="alert('Seguimiento próximamente')">📊 Seguimiento</button>
+  </div>
+
+  <div class="card imagen-principal">
+    <img src="personas-inclusivas.png" alt="Personas de distintas edades y capacidades">
+  </div>
 
 </div>
 
 <!-- =========================
-     PERFIL
-     ========================= -->
-<div class="card hidden" id="perfil">
-  <h2>Datos personales</h2>
+     DATOS PERSONALES
+========================= -->
+<div id="datos" class="pantalla">
 
-  <div class="row">
-    <label>Nombre</label>
-    <input id="nombre">
-  </div>
+<div class="card">
+<h2>Datos personales</h2>
 
-  <div class="row">
-    <label>Fecha de nacimiento</label>
-    <input type="date" id="fechaNacimiento">
-  </div>
+<label>Nombre</label>
+<input id="nombre">
 
-  <div class="row">
-    <label>Nombre del cuidador</label>
-    <input id="cuidadorNombre">
-  </div>
+<label>Fecha de nacimiento</label>
+<input type="date" id="fecha">
 
-  <div class="row">
-    <label>Teléfono del cuidador</label>
-    <input id="cuidadorTelefono">
-  </div>
+<label>Nombre del cuidador</label>
+<input id="cuidador">
 
-  <div class="switch">
-    <span>📳 Vibración</span>
-    <input type="checkbox" id="vibrar">
-  </div>
+<label>Teléfono del cuidador</label>
+<input id="telefono">
 
-  <div class="switch">
-    <span>🔊 Aviso por voz</span>
-    <input type="checkbox" id="voz">
-  </div>
+<div class="switch">
+  <span>📳 Vibración</span>
+  <input type="checkbox" id="vibracion">
+</div>
 
-  <button onclick="guardarPerfil()">Guardar</button>
-  <div id="perfilMsg"></div>
+<div class="switch">
+  <span>🔊 Voz</span>
+  <input type="checkbox" id="voz">
+</div>
 
-  <button class="secondary" onclick="mostrar('home')">Volver</button>
+<button class="btn" onclick="guardarDatos()">Guardar</button>
+<button class="btn sec" onclick="mostrarPantalla('home')">← Volver</button>
+
+<p id="msgDatos" style="color:green;margin-top:10px;"></p>
+</div>
+
 </div>
 
 <!-- =========================
      MEDICAMENTOS
-     ========================= -->
-<div class="card hidden" id="medicamentos">
-  <h2>Medicamentos</h2>
+========================= -->
+<div id="medicamentos" class="pantalla">
 
-  <div class="row">
-    <label>Nombre</label>
-    <input id="medNombre">
-  </div>
+<div class="card">
+<h2>Medicamentos</h2>
 
-  <div class="row">
-    <label>Dosis (número)</label>
-    <input type="number" id="medDosis" min="1" value="1" onchange="actualizarHorarios()">
-  </div>
+<label>Nombre</label>
+<input id="medNombre">
 
-  <div id="horarios"></div>
+<label>Dosis</label>
+<input id="medDosis">
 
-  <div class="switch">
-    <span>Permanente</span>
-    <input type="checkbox" id="medPermanente" onchange="toggleDias()">
-  </div>
+<label>Horario</label>
+<input type="time" id="medHora">
 
-  <div class="row">
-    <label>Cantidad de días</label>
-    <input type="number" id="medDias" min="1">
-  </div>
+<div class="switch">
+  <span>Permanente</span>
+  <input type="checkbox" id="medPermanente" onchange="bloquearDias()">
+</div>
 
-  <div class="days" id="dias">
-    <input id="d1" type="checkbox"><label for="d1">L</label>
-    <input id="d2" type="checkbox"><label for="d2">M</label>
-    <input id="d3" type="checkbox"><label for="d3">X</label>
-    <input id="d4" type="checkbox"><label for="d4">J</label>
-    <input id="d5" type="checkbox"><label for="d5">V</label>
-    <input id="d6" type="checkbox"><label for="d6">S</label>
-    <input id="d7" type="checkbox"><label for="d7">D</label>
-  </div>
+<label>Cantidad de días</label>
+<input type="number" id="medDias">
 
-  <div class="row">
-    <label>Foto (opcional)</label>
-    <input type="file" id="medFoto" accept="image/*">
-  </div>
+<div class="dias">
+<label><input type="checkbox" value="L">L</label>
+<label><input type="checkbox" value="M">M</label>
+<label><input type="checkbox" value="X">X</label>
+<label><input type="checkbox" value="J">J</label>
+<label><input type="checkbox" value="V">V</label>
+<label><input type="checkbox" value="S">S</label>
+<label><input type="checkbox" value="D">D</label>
+</div>
 
-  <button onclick="guardarMedicamento()">Guardar medicamento</button>
+<label>Lugar donde se guarda</label>
+<input id="medLugar">
 
-  <div id="listaMedicamentos"></div>
+<label>Foto (opcional)</label>
+<input type="file" id="medFoto">
 
-  <button class="secondary" onclick="mostrar('home')">Volver</button>
+<button class="btn" onclick="guardarMedicamento()">Guardar medicamento</button>
+<button class="btn sec" onclick="mostrarPantalla('home')">← Volver</button>
+
+<div id="listaMedicamentos"></div>
+</div>
+
 </div>
 
 <footer>Desarrollado por CA Tecnología</footer>
@@ -315,102 +298,93 @@ footer{
 
 <script>
 /* =========================
-   UTILIDADES
-   ========================= */
-function mostrar(id){
-  document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
+   NAVEGACIÓN
+========================= */
+function mostrarPantalla(id){
+  document.querySelectorAll('.pantalla').forEach(p=>p.classList.remove('activa'));
+  document.getElementById(id).classList.add('activa');
 }
 
 /* =========================
-   PERFIL
-   ========================= */
-let perfil = JSON.parse(localStorage.getItem("perfil")) || {};
-
-function guardarPerfil(){
-  const tel = cuidadorTelefono.value.replace(/\D/g,'');
+   DATOS PERSONALES
+========================= */
+function guardarDatos(){
+  const tel = document.getElementById('telefono').value;
   if(tel.length < 8){
-    perfilMsg.innerHTML = "❌ Teléfono inválido";
+    alert("Teléfono inválido");
     return;
   }
 
-  perfil = {
+  localStorage.setItem("usuario", JSON.stringify({
     nombre:nombre.value,
-    fecha:fechaNacimiento.value,
-    cuidador:cuidadorNombre.value,
-    tel,
-    vibrar:vibrar.checked,
+    fecha:fecha.value,
+    cuidador:cuidador.value,
+    telefono:telefono.value,
+    vibracion:vibracion.checked,
     voz:voz.checked
-  };
-  localStorage.setItem("perfil", JSON.stringify(perfil));
-  perfilMsg.innerHTML = "✅ Datos guardados correctamente";
-  actualizarBienvenida();
+  }));
+
+  document.getElementById('msgDatos').innerText = "Datos guardados correctamente";
+  cargarHome();
 }
 
-function actualizarBienvenida(){
-  if(!perfil.fecha) return;
-  const nac = new Date(perfil.fecha);
-  const hoy = new Date();
-  let años = hoy.getFullYear()-nac.getFullYear();
-  let meses = hoy.getMonth()-nac.getMonth();
-  if(meses<0){ años--; meses+=12; }
-  bienvenida.innerHTML = `<strong>Bienvenido ${perfil.nombre}</strong><br>Edad: ${años} años y ${meses} meses`;
+/* =========================
+   HOME
+========================= */
+function cargarHome(){
+  const u = JSON.parse(localStorage.getItem("usuario"));
+  if(!u) return;
+  bienvenida.innerText = "Bienvenido " + u.nombre;
 }
-actualizarBienvenida();
 
 /* =========================
    MEDICAMENTOS
-   ========================= */
+========================= */
 let meds = JSON.parse(localStorage.getItem("meds")) || [];
 
-function actualizarHorarios(){
-  horarios.innerHTML="";
-  for(let i=0;i<medDosis.value;i++){
-    horarios.innerHTML += `<div class="row"><label>Horario ${i+1}</label><input type="time"></div>`;
-  }
-}
-
-function toggleDias(){
+function bloquearDias(){
   medDias.disabled = medPermanente.checked;
 }
 
 function guardarMedicamento(){
-  const horariosInputs = horarios.querySelectorAll("input");
-  const hs = [...horariosInputs].map(h=>h.value);
-
-  const dias = [...dias.querySelectorAll("input")]
-    .map((d,i)=>d.checked?i:null).filter(d=>d!==null);
-
+  const dias = [...document.querySelectorAll('.dias input:checked')].map(d=>d.value);
   const reader = new FileReader();
-  reader.onload = ()=>{
+  const file = medFoto.files[0];
+
+  reader.onload = function(){
     meds.push({
       nombre:medNombre.value,
       dosis:medDosis.value,
-      horarios:hs,
+      hora:medHora.value,
       permanente:medPermanente.checked,
       dias,
+      lugar:medLugar.value,
       foto:reader.result
     });
-    localStorage.setItem("meds",JSON.stringify(meds));
-    renderMeds();
+
+    localStorage.setItem("meds", JSON.stringify(meds));
+    mostrarLista();
   };
-  if(medFoto.files[0]) reader.readAsDataURL(medFoto.files[0]);
-  else{
-    meds.push({nombre:medNombre.value});
-    renderMeds();
-  }
+
+  if(file) reader.readAsDataURL(file);
+  else reader.onload();
 }
 
-function renderMeds(){
+function mostrarLista(){
   listaMedicamentos.innerHTML="";
   meds.forEach(m=>{
-    const d=document.createElement("div");
-    d.className="med-card";
-    d.innerHTML=`<strong>${m.nombre}</strong>`;
-    if(m.foto) d.innerHTML+=`<img src="${m.foto}">`;
-    listaMedicamentos.appendChild(d);
+    listaMedicamentos.innerHTML+=`
+    <div class="med-item">
+      <b>${m.nombre}</b><br>
+      ${m.dosis} - ${m.hora}<br>
+      ${m.lugar}
+      ${m.foto ? `<img src="${m.foto}">`:""}
+    </div>`;
   });
 }
+
+cargarHome();
+mostrarLista();
 </script>
 
 </body>
