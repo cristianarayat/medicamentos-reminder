@@ -6,6 +6,9 @@
 <title>Recordatorio de Medicamentos</title>
 
 <style>
+/* =========================
+   ESTILOS GENERALES
+   ========================= */
 body{
   margin:0;
   font-family:system-ui, Arial, sans-serif;
@@ -33,23 +36,129 @@ header{
   box-shadow:0 12px 28px rgba(0,0,0,.12);
 }
 
+/* =========================
+   BOTONES
+   ========================= */
 button{
   width:100%;
-  height:52px;
+  height:54px;
   border:none;
   border-radius:14px;
   background:#2f80ed;
   color:#fff;
   font-size:16px;
   font-weight:700;
-  margin-top:12px;
+  margin-top:14px;
+  cursor:pointer;
 }
 
+button.secondary{
+  background:#6c757d;
+}
+
+/* =========================
+   CAMPOS FORMULARIO
+   ========================= */
+.field{
+  margin-top:14px;
+}
+
+.field label{
+  display:block;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.field input{
+  width:100%;
+  height:52px;
+  border-radius:12px;
+  border:1px solid #ccc;
+  padding:12px;
+  font-size:16px;
+  box-sizing:border-box;
+}
+
+/* =========================
+   SWITCH DESLIZABLE
+   ========================= */
+.switch-line{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:18px;
+}
+
+.switch-label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:600;
+}
+
+.switch{
+  position:relative;
+  width:56px;
+  height:30px;
+}
+
+.switch input{
+  display:none;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:#ccc;
+  border-radius:30px;
+  transition:.3s;
+}
+
+.slider::before{
+  content:"";
+  position:absolute;
+  width:24px;
+  height:24px;
+  left:3px;
+  top:3px;
+  background:#fff;
+  border-radius:50%;
+  transition:.3s;
+}
+
+.switch input:checked + .slider{
+  background:#2f80ed;
+}
+
+.switch input:checked + .slider::before{
+  transform:translateX(26px);
+}
+
+/* =========================
+   FOOTER
+   ========================= */
 .footer{
+  margin-top:20px;
   text-align:center;
-  margin-top:16px;
   font-size:13px;
   color:#777;
+}
+
+#bienvenida{
+  font-size:18px;
+  font-weight:700;
+  text-align:center;
+  margin-bottom:12px;
+}
+
+.msg-ok{
+  background:#e8f5e9;
+  color:#2e7d32;
+  padding:10px;
+  border-radius:10px;
+  margin-top:14px;
+  text-align:center;
+  display:none;
 }
 </style>
 </head>
@@ -60,11 +169,15 @@ button{
   <h1>💊 Recordatorio de Medicamentos</h1>
 </header>
 
+<!-- =========================
+     HOME
+     ========================= -->
 <div class="container" id="home">
   <div class="card">
+
     <div id="bienvenida"></div>
 
-    <button onclick="irADatosPersonales()">Datos personales</button>
+    <button onclick="irADatos()">Datos personales</button>
     <button>Medicamentos</button>
     <button>Seguimiento</button>
 
@@ -73,54 +186,118 @@ button{
     <div class="footer">
       Desarrollado por <strong>CA Tecnología</strong>
     </div>
+
   </div>
 </div>
 
-<div class="container hidden" id="pantalla-datos">
+<!-- =========================
+     DATOS PERSONALES
+     ========================= -->
+<div class="container hidden" id="datos">
   <div class="card">
+
     <h2>Datos personales</h2>
 
-    <input id="dp_nombre" placeholder="Nombre"><br><br>
-    <input id="dp_nacimiento" type="date"><br><br>
-    <input id="dp_cuidador" placeholder="Cuidador"><br><br>
-    <input id="dp_telefono" value="+56 "><br><br>
+    <div class="field">
+      <label>Nombre del usuario</label>
+      <input id="nombre">
+    </div>
 
-    <button onclick="guardarDatos()">Guardar</button>
-    <button onclick="volverHome()">Volver</button>
+    <div class="field">
+      <label>Fecha de nacimiento</label>
+      <input type="date" id="nacimiento">
+    </div>
 
-    <div id="msgGuardado" class="hidden">✔ Datos guardados</div>
+    <div class="field">
+      <label>Nombre del cuidador</label>
+      <input id="cuidador">
+    </div>
+
+    <div class="field">
+      <label>Teléfono del cuidador</label>
+      <input id="telefono" value="+56 ">
+    </div>
+
+    <div class="switch-line">
+      <div class="switch-label">📳 Vibración</div>
+      <label class="switch">
+        <input type="checkbox" id="vibracion">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="switch-line">
+      <div class="switch-label">🔊 Sonido</div>
+      <label class="switch">
+        <input type="checkbox" id="sonido">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="msg-ok" id="msg">✔ Datos guardados</div>
+
+    <button onclick="guardar()">Guardar</button>
+    <button class="secondary" onclick="volver()">Volver</button>
 
     <div class="footer">
       Desarrollado por <strong>CA Tecnología</strong>
     </div>
+
   </div>
 </div>
 
 <script>
-function irADatosPersonales(){
-  document.getElementById("home").style.display="none";
-  document.getElementById("pantalla-datos").classList.remove("hidden");
+function irADatos(){
+  home.style.display="none";
+  datos.classList.remove("hidden");
+  cargar();
 }
 
-function volverHome(){
-  document.getElementById("pantalla-datos").classList.add("hidden");
-  document.getElementById("home").style.display="block";
+function volver(){
+  datos.classList.add("hidden");
+  home.style.display="block";
 }
 
-function guardarDatos(){
-  const datos = {
-    nombre: dp_nombre.value,
-    nacimiento: dp_nacimiento.value
+function guardar(){
+  const data={
+    nombre:nombre.value,
+    nacimiento:nacimiento.value,
+    cuidador:cuidador.value,
+    telefono:telefono.value,
+    vibracion:vibracion.checked,
+    sonido:sonido.checked
   };
-  localStorage.setItem("usuario", JSON.stringify(datos));
+  localStorage.setItem("usuario",JSON.stringify(data));
+  msg.style.display="block";
+  setTimeout(()=>msg.style.display="none",2500);
   mostrarBienvenida();
-  msgGuardado.classList.remove("hidden");
+}
+
+function cargar(){
+  const d=JSON.parse(localStorage.getItem("usuario"));
+  if(!d) return;
+  nombre.value=d.nombre||"";
+  nacimiento.value=d.nacimiento||"";
+  cuidador.value=d.cuidador||"";
+  telefono.value=d.telefono||"+56 ";
+  vibracion.checked=!!d.vibracion;
+  sonido.checked=!!d.sonido;
+}
+
+function edad(fecha){
+  if(!fecha) return "";
+  const h=new Date(), n=new Date(fecha);
+  let a=h.getFullYear()-n.getFullYear();
+  let m=h.getMonth()-n.getMonth();
+  if(h.getDate()<n.getDate()) m--;
+  if(m<0){a--;m+=12;}
+  return m===0?`${a} años`:`${a} años y ${m} meses`;
 }
 
 function mostrarBienvenida(){
-  const datos = JSON.parse(localStorage.getItem("usuario"));
-  if(datos){
-    bienvenida.innerText = `Bienvenido ${datos.nombre}`;
+  const d=JSON.parse(localStorage.getItem("usuario"));
+  if(d && d.nombre && d.nacimiento){
+    bienvenida.innerText=`Bienvenido ${d.nombre} — ${edad(d.nacimiento)}`;
   }
 }
 
