@@ -121,12 +121,14 @@ button{
 </div>
 
 <!-- =====================================================
-     PANTALLA 2 : DATOS PERSONALES
-     BLOQUE ÚNICO – PEGAR ANTES DE </cuerpo>
+     PANTALLA DATOS PERSONALES + CONEXIÓN BOTÓN HOME
+     BLOQUE ÚNICO – PEGAR ANTES DE </body>
      ===================================================== -->
 
 <style>
-/* ===== ESTILOS DATOS PERSONALES ===== */
+/* =========================
+   ESTILOS DATOS PERSONALES
+   ========================= */
 
 .hidden{ display:none; }
 
@@ -149,7 +151,7 @@ button{
   font-size:15px;
 }
 
-/* ----- LÍNEA SWITCH ----- */
+/* ----- SWITCH + ICONO ----- */
 .switch-line{
   display:flex;
   align-items:center;
@@ -164,7 +166,6 @@ button{
   font-weight:600;
 }
 
-/* ----- ICONOS SVG ----- */
 .icon{
   width:28px;
   height:28px;
@@ -212,25 +213,21 @@ button{
 .switch input:checked + .slider:before{
   transform:translateX(24px);
 }
-
-/* ----- BOTÓN SECUNDARIO ----- */
-button.secondary{
-  background:#6c757d;
-}
 </style>
 
+<!-- =========================
+     HTML PANTALLA DATOS
+     ========================= -->
 <div class="container hidden" id="pantalla-datos">
   <div class="card">
 
     <h2>Datos personales</h2>
 
-    <!-- NOMBRE -->
     <div class="field">
       <label>Nombre</label>
       <input type="text" id="nombreUsuario" placeholder="Ej: Juan Pérez">
     </div>
 
-    <!-- FECHA NACIMIENTO -->
     <div class="field">
       <label>Fecha de nacimiento</label>
       <input type="date" id="fechaNacimiento">
@@ -239,7 +236,6 @@ button.secondary{
     <!-- VIBRACIÓN -->
     <div class="switch-line">
       <div class="switch-info">
-        <!-- ICONO VIBRACIÓN -->
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M7 4v16h10V4H7zm12 3v10h2V7h-2zM3 7v10h2V7H3z"/>
         </svg>
@@ -254,7 +250,6 @@ button.secondary{
     <!-- SONIDO -->
     <div class="switch-line">
       <div class="switch-info">
-        <!-- ICONO SONIDO -->
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
         </svg>
@@ -266,17 +261,45 @@ button.secondary{
       </label>
     </div>
 
-    <!-- BOTONES -->
     <button onclick="guardarDatos()">Guardar</button>
-    <button class="secondary" onclick="volverHome()">Volver</button>
+    <button onclick="volverHome()">Volver</button>
 
   </div>
 </div>
 
 <script>
-/* ===== SCRIPT DATOS PERSONALES ===== */
+/* =====================================================
+   SCRIPT – CONEXIÓN Y LÓGICA BÁSICA
+   ===================================================== */
 
-/* Guardar datos */
+/* Conectar automáticamente el botón "Datos personales" del Home */
+document.addEventListener("DOMContentLoaded", function(){
+  const botones = document.querySelectorAll("button");
+  botones.forEach(btn => {
+    if(btn.textContent.trim() === "Datos personales"){
+      btn.addEventListener("click", irADatosPersonales);
+    }
+  });
+});
+
+/* Mostrar pantalla Datos personales */
+function irADatosPersonales(){
+  const containers = document.querySelectorAll(".container");
+  containers.forEach(c => c.style.display = "none");
+
+  document.getElementById("pantalla-datos").classList.remove("hidden");
+  document.getElementById("pantalla-datos").style.display = "block";
+}
+
+/* Volver al Home */
+function volverHome(){
+  const containers = document.querySelectorAll(".container");
+  containers.forEach(c => c.style.display = "block");
+
+  document.getElementById("pantalla-datos").classList.add("hidden");
+}
+
+/* Guardar datos (base) */
 function guardarDatos(){
   const datos = {
     nombre: document.getElementById("nombreUsuario").value,
@@ -286,11 +309,6 @@ function guardarDatos(){
   };
   localStorage.setItem("usuario", JSON.stringify(datos));
   alert("Datos guardados correctamente");
-}
-
-/* Volver al home (por ahora solo oculta esta pantalla) */
-function volverHome(){
-  document.getElementById("pantalla-datos").classList.add("hidden");
 }
 </script>
 
