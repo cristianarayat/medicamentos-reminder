@@ -432,35 +432,56 @@ function conectarBotonDatos(){
   });
 }
 
-/* ===== MOSTRAR DATOS PERSONALES ===== */
+<script>
+/* =====================================================
+   SCRIPT ÚNICO DEFINITIVO
+   Datos personales + bienvenida + navegación
+   ===================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+  conectarBotonDatos();
+  cargarDatos();
+  mostrarBienvenida();
+});
+
+/* ---------- CONECTAR BOTÓN HOME ---------- */
+function conectarBotonDatos(){
+  document.querySelectorAll("button").forEach(btn=>{
+    if(btn.textContent.trim() === "Datos personales"){
+      btn.onclick = irADatosPersonales;
+    }
+  });
+}
+
+/* ---------- IR A DATOS PERSONALES ---------- */
 function irADatosPersonales(){
   document.querySelectorAll(".container").forEach(c=>{
-    c.style.display="none";
+    c.style.display = "none";
   });
 
-  const datos = document.getElementById("pantalla-datos");
-  if(datos){
-    datos.classList.remove("hidden");
-    datos.style.display="block";
+  const pantalla = document.getElementById("pantalla-datos");
+  if(pantalla){
+    pantalla.classList.remove("hidden");
+    pantalla.style.display = "block";
   }
 
   cargarDatos();
 }
 
-/* ===== VOLVER AL HOME ===== */
+/* ---------- VOLVER AL HOME ---------- */
 function volverHome(){
-  const datos = document.getElementById("pantalla-datos");
-  if(datos){
-    datos.classList.add("hidden");
-    datos.style.display="none";
+  const pantalla = document.getElementById("pantalla-datos");
+  if(pantalla){
+    pantalla.classList.add("hidden");
+    pantalla.style.display = "none";
   }
 
   document.querySelectorAll(".container").forEach(c=>{
-    c.style.display="block";
+    c.style.display = "block";
   });
 }
 
-/* ===== GUARDAR DATOS ===== */
+/* ---------- GUARDAR DATOS ---------- */
 function guardarDatosPersonales(){
   const datos = {
     nombre: dp_nombre.value.trim(),
@@ -472,17 +493,16 @@ function guardarDatosPersonales(){
   };
 
   localStorage.setItem("usuario", JSON.stringify(datos));
-
   mostrarBienvenida();
 
   const msg = document.getElementById("msgGuardado");
   if(msg){
-    msg.style.display="block";
-    setTimeout(()=>msg.style.display="none",3000);
+    msg.style.display = "block";
+    setTimeout(() => msg.style.display = "none", 3000);
   }
 }
 
-/* ===== CARGAR DATOS EN FORMULARIO ===== */
+/* ---------- CARGAR DATOS ---------- */
 function cargarDatos(){
   const datos = JSON.parse(localStorage.getItem("usuario"));
   if(!datos) return;
@@ -495,7 +515,7 @@ function cargarDatos(){
   dp_sonido.checked = !!datos.sonido;
 }
 
-/* ===== CALCULAR EDAD ===== */
+/* ---------- EDAD ---------- */
 function calcularEdad(fecha){
   if(!fecha) return "";
   const hoy = new Date();
@@ -512,7 +532,7 @@ function calcularEdad(fecha){
   return `${años} años y ${meses} meses`;
 }
 
-/* ===== MOSTRAR BIENVENIDA ===== */
+/* ---------- BIENVENIDA ---------- */
 function mostrarBienvenida(){
   const datos = JSON.parse(localStorage.getItem("usuario"));
   if(!datos || !datos.nombre || !datos.nacimiento) return;
