@@ -406,6 +406,55 @@ document.getElementById("datos-personales")
   .addEventListener("touchmove", e => e.preventDefault(), { passive:false });
 </script>
 
+<!-- =========================
+     BLOQUE – BIENVENIDA HOME
+     ========================= -->
+<script>
+function calcularEdadExacta(fecha){
+  const hoy = new Date();
+  const nac = new Date(fecha);
+
+  let años = hoy.getFullYear() - nac.getFullYear();
+  let meses = hoy.getMonth() - nac.getMonth();
+
+  if (hoy.getDate() < nac.getDate()) {
+    meses--;
+  }
+
+  if (meses < 0) {
+    años--;
+    meses += 12;
+  }
+
+  return { años, meses };
+}
+
+function actualizarBienvenida(){
+  const data = JSON.parse(localStorage.getItem("datosPersonales"));
+  if (!data) return;
+
+  const cont = document.getElementById("bienvenida");
+  if (!cont) return;
+
+  const edad = calcularEdadExacta(data.nacimiento);
+
+  cont.innerHTML = `
+    Bienvenido ${data.paciente}
+    <div style="
+      margin-top:6px;
+      text-align:center;
+      font-size:14px;
+      font-weight:500;
+      color:#555;
+    ">
+      ${edad.años} años y ${edad.meses} meses
+    </div>
+  `;
+}
+
+document.addEventListener("DOMContentLoaded", actualizarBienvenida);
+window.addEventListener("focus", actualizarBienvenida);
+</script>
 
 
      
