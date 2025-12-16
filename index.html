@@ -136,9 +136,8 @@ button{
 </div>
 
 
-
 <!-- =========================
-     DATOS PERSONALES (BLOQUE 2 FINAL)
+     DATOS PERSONALES (BLOQUE 2 FINAL + ICONOS)
      ========================= -->
 <style>
 #datos-personales{
@@ -147,7 +146,7 @@ button{
   inset:0;
   background:#eef1f4;
   z-index:1000;
-  overscroll-behavior: none; /* evita pull-to-refresh */
+  overscroll-behavior:none;
 }
 
 .dp-container{
@@ -188,25 +187,36 @@ button{
   font-size:15px;
 }
 
-/* Switch */
+/* Switch + icono */
 .switch-row{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
   margin:14px 0;
 }
 
+.switch-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:15px;
+  font-weight:500;
+}
+
+.switch-left svg{
+  width:22px;
+  height:22px;
+  fill:#2f80ed;
+}
+
+/* Switch */
 .switch{
   position:relative;
   width:46px;
   height:26px;
 }
 
-.switch input{
-  opacity:0;
-  width:0;
-  height:0;
-}
+.switch input{ opacity:0; }
 
 .slider{
   position:absolute;
@@ -261,34 +271,46 @@ button{
 
       <div class="dp-group">
         <label>Nombre del paciente</label>
-        <input type="text" placeholder="Ej: Juan Pérez">
+        <input type="text">
       </div>
 
       <div class="dp-group">
         <label>Edad</label>
-        <input type="number" placeholder="Ej: 65">
+        <input type="number">
       </div>
 
       <div class="dp-group">
         <label>Nombre del cuidador</label>
-        <input type="text" placeholder="Ej: María González">
+        <input type="text">
       </div>
 
       <div class="dp-group">
         <label>Teléfono del cuidador</label>
-        <input type="tel" placeholder="Ej: +56 9 1234 5678">
+        <input type="tel">
       </div>
 
+      <!-- VOZ -->
       <div class="switch-row">
-        <span>Recordatorios por voz</span>
+        <div class="switch-left">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 0 0-2.25-3.9v7.8A4.5 4.5 0 0 0 16.5 12z"/>
+          </svg>
+          <span>Recordatorios por voz</span>
+        </div>
         <label class="switch">
           <input type="checkbox">
           <span class="slider"></span>
         </label>
       </div>
 
+      <!-- VIBRACIÓN -->
       <div class="switch-row">
-        <span>Vibración</span>
+        <div class="switch-left">
+          <svg viewBox="0 0 24 24">
+            <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm4 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+          </svg>
+          <span>Vibración</span>
+        </div>
         <label class="switch">
           <input type="checkbox">
           <span class="slider"></span>
@@ -303,40 +325,8 @@ button{
 </div>
 
 <script>
-/* Bloquea gesto de refresco en móvil */
 document.getElementById("datos-personales")
   .addEventListener("touchmove", e => e.preventDefault(), { passive:false });
-</script>
-
-
-<!-- =========================
-     BLOQUE 3 – NAVEGACIÓN FINAL
-     ========================= -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  // Abrir Datos Personales desde Home
-  document.querySelectorAll("button").forEach(btn => {
-    if (btn.textContent.trim() === "Datos personales") {
-      btn.addEventListener("click", () => {
-        const dp = document.getElementById("datos-personales");
-        if (dp) dp.style.display = "block";
-      });
-    }
-  });
-
-  // Botón volver dentro de Datos Personales
-  document.addEventListener("click", e => {
-    if (
-      e.target.classList.contains("secundario") &&
-      e.target.textContent.trim() === "Volver"
-    ) {
-      const dp = document.getElementById("datos-personales");
-      if (dp) dp.style.display = "none";
-    }
-  });
-
-});
 </script>
 
      
