@@ -3,23 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Recordatorio de Medicamentos</title>
 
+<!-- =========================================================
+     ESTILOS GENERALES
+========================================================= -->
 <style>
+
+/* ---------------------------------------------------------
+   RESET BÁSICO
+--------------------------------------------------------- */
+*{
+  box-sizing:border-box;
+}
+
+/* ---------------------------------------------------------
+   BODY
+--------------------------------------------------------- */
 body{
   margin:0;
-  font-family:system-ui, Arial, sans-serif;
+  font-family: system-ui, Arial, sans-serif;
   background:#eef1f4;
   color:#333;
 }
 
-.hidden{display:none}
-
-header{
-  text-align:center;
-  padding:16px;
+/* ---------------------------------------------------------
+   UTILIDADES
+--------------------------------------------------------- */
+.hidden{
+  display:none;
 }
 
+/* ---------------------------------------------------------
+   HEADER
+--------------------------------------------------------- */
+header{
+  text-align:center;
+  padding:20px;
+}
+
+header h1{
+  margin:0;
+  font-size:28px;
+  font-weight:800;
+}
+
+/* ---------------------------------------------------------
+   CONTENEDORES
+--------------------------------------------------------- */
 .container{
   max-width:480px;
   margin:auto;
@@ -27,20 +59,23 @@ header{
 }
 
 .card{
-  background:#fff;
+  background:#ffffff;
   border-radius:18px;
-  padding:20px;
+  padding:22px;
   box-shadow:0 12px 28px rgba(0,0,0,.12);
 }
 
+/* ---------------------------------------------------------
+   BOTONES
+--------------------------------------------------------- */
 button{
   width:100%;
-  height:54px;
+  height:56px;
   border:none;
   border-radius:14px;
   background:#2f80ed;
-  color:#fff;
-  font-size:16px;
+  color:#ffffff;
+  font-size:17px;
   font-weight:700;
   margin-top:14px;
   cursor:pointer;
@@ -50,7 +85,16 @@ button.secondary{
   background:#6c757d;
 }
 
-.field{margin-top:14px}
+button.danger{
+  background:#e74c3c;
+}
+
+/* ---------------------------------------------------------
+   CAMPOS
+--------------------------------------------------------- */
+.field{
+  margin-top:16px;
+}
 
 .field label{
   display:block;
@@ -67,21 +111,9 @@ button.secondary{
   font-size:16px;
 }
 
-.days{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-top:10px;
-}
-
-.days label{
-  font-size:15px;
-}
-
-.time{
-  margin-top:6px;
-}
-
+/* ---------------------------------------------------------
+   SWITCH
+--------------------------------------------------------- */
 .switch-line{
   display:flex;
   justify-content:space-between;
@@ -95,7 +127,9 @@ button.secondary{
   height:30px;
 }
 
-.switch input{display:none}
+.switch input{
+  display:none;
+}
 
 .slider{
   position:absolute;
@@ -104,7 +138,7 @@ button.secondary{
   border-radius:30px;
 }
 
-.slider:before{
+.slider::before{
   content:"";
   position:absolute;
   width:24px;
@@ -120,10 +154,44 @@ button.secondary{
   background:#2f80ed;
 }
 
-.switch input:checked + .slider:before{
+.switch input:checked + .slider::before{
   transform:translateX(26px);
 }
 
+/* ---------------------------------------------------------
+   MENSAJES
+--------------------------------------------------------- */
+.msg{
+  margin-top:14px;
+  padding:10px;
+  border-radius:10px;
+  text-align:center;
+  display:none;
+}
+
+.msg.ok{
+  background:#e8f5e9;
+  color:#2e7d32;
+}
+
+.msg.warn{
+  background:#fff3cd;
+  color:#856404;
+}
+
+/* ---------------------------------------------------------
+   FOOTER
+--------------------------------------------------------- */
+.footer{
+  margin-top:20px;
+  text-align:center;
+  font-size:13px;
+  color:#777;
+}
+
+/* ---------------------------------------------------------
+   MEDICAMENTOS LISTADO
+--------------------------------------------------------- */
 .med-card{
   margin-top:14px;
   padding:14px;
@@ -139,31 +207,115 @@ button.secondary{
 .badge{
   font-size:12px;
   font-weight:700;
+  margin-bottom:6px;
 }
+
+.days{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:6px;
+}
+
+.days label{
+  font-size:15px;
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- =========================================================
+     HEADER
+========================================================= -->
 <header>
   <h1>💊 Recordatorio de Medicamentos</h1>
 </header>
 
-<!-- HOME -->
+<!-- =========================================================
+     HOME
+========================================================= -->
 <div class="container" id="home">
   <div class="card">
+
+    <div id="bienvenida" style="text-align:center;font-size:18px;font-weight:700;margin-bottom:12px;">
+      Bienvenido
+    </div>
+
+    <button onclick="irADatos()">Datos personales</button>
     <button onclick="irAMedicamentos()">Medicamentos</button>
+    <button disabled>Seguimiento</button>
+
+    <div class="footer">
+      Desarrollado por <strong>CA Tecnología</strong>
+    </div>
+
   </div>
 </div>
 
-<!-- MEDICAMENTOS -->
+<!-- =========================================================
+     DATOS PERSONALES
+========================================================= -->
+<div class="container hidden" id="datos">
+  <div class="card">
+
+    <h2>Datos personales</h2>
+
+    <div class="field">
+      <label>Nombre</label>
+      <input id="nombre">
+    </div>
+
+    <div class="field">
+      <label>Fecha de nacimiento</label>
+      <input type="date" id="nacimiento">
+    </div>
+
+    <div class="field">
+      <label>Cuidador</label>
+      <input id="cuidador">
+    </div>
+
+    <div class="field">
+      <label>Teléfono</label>
+      <input id="telefono" value="+56 ">
+    </div>
+
+    <div class="switch-line">
+      <span>Vibración</span>
+      <label class="switch">
+        <input type="checkbox" id="vibracion">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="switch-line">
+      <span>Sonido</span>
+      <label class="switch">
+        <input type="checkbox" id="sonido">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="msg ok" id="msgDatos"></div>
+
+    <button onclick="guardarDatos()">Guardar</button>
+    <button class="secondary" onclick="volverHome()">Volver</button>
+
+  </div>
+</div>
+
+<!-- =========================================================
+     MEDICAMENTOS
+========================================================= -->
 <div class="container hidden" id="medicamentos">
   <div class="card">
 
     <h2>Medicamentos</h2>
 
     <div class="field">
-      <label>Nombre</label>
+      <label>Nombre medicamento</label>
       <input id="mNombre">
     </div>
 
@@ -175,18 +327,18 @@ button.secondary{
     <div class="field">
       <label>Días</label>
       <div class="days">
-        <label><input type="checkbox" value="Lun"> Lun</label>
-        <label><input type="checkbox" value="Mar"> Mar</label>
-        <label><input type="checkbox" value="Mié"> Mié</label>
-        <label><input type="checkbox" value="Jue"> Jue</label>
-        <label><input type="checkbox" value="Vie"> Vie</label>
-        <label><input type="checkbox" value="Sáb"> Sáb</label>
-        <label><input type="checkbox" value="Dom"> Dom</label>
+        <label><input type="checkbox" value="Lunes"> Lunes</label>
+        <label><input type="checkbox" value="Martes"> Martes</label>
+        <label><input type="checkbox" value="Miércoles"> Miércoles</label>
+        <label><input type="checkbox" value="Jueves"> Jueves</label>
+        <label><input type="checkbox" value="Viernes"> Viernes</label>
+        <label><input type="checkbox" value="Sábado"> Sábado</label>
+        <label><input type="checkbox" value="Domingo"> Domingo</label>
       </div>
     </div>
 
     <div class="field">
-      <label>Horario</label>
+      <label>Hora</label>
       <input type="time" id="mHora">
     </div>
 
@@ -211,38 +363,79 @@ button.secondary{
   </div>
 </div>
 
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
 <script>
+
+/* ---------------------------------------------------------
+   REFERENCIAS
+--------------------------------------------------------- */
 const home = document.getElementById("home");
+const datos = document.getElementById("datos");
 const medicamentos = document.getElementById("medicamentos");
 
-const mNombre = document.getElementById("mNombre");
-const mLugar = document.getElementById("mLugar");
-const mHora = document.getElementById("mHora");
-const mPerm = document.getElementById("mPerm");
-const mFin = document.getElementById("mFin");
-const finBox = document.getElementById("finBox");
-const lista = document.getElementById("listaMedicamentos");
-
-mPerm.addEventListener("change",()=>{
-  finBox.style.display = mPerm.checked ? "none" : "block";
-});
+/* ---------------------------------------------------------
+   NAVEGACIÓN
+--------------------------------------------------------- */
+function irADatos(){
+  home.style.display="none";
+  datos.classList.remove("hidden");
+}
 
 function irAMedicamentos(){
   home.style.display="none";
   medicamentos.classList.remove("hidden");
-  render();
+  renderMedicamentos();
 }
 
 function volverHome(){
+  datos.classList.add("hidden");
   medicamentos.classList.add("hidden");
   home.style.display="block";
 }
 
-function guardarMedicamento(){
-  const dias=[...document.querySelectorAll(".days input:checked")].map(d=>d.value);
-  if(!mNombre.value || dias.length===0 || !mHora.value) return;
+/* ---------------------------------------------------------
+   DATOS PERSONALES
+--------------------------------------------------------- */
+function guardarDatos(){
+  if(!nombre.value || !nacimiento.value){
+    msgDatos.textContent="Completa los datos";
+    msgDatos.className="msg warn";
+    msgDatos.style.display="block";
+    return;
+  }
+  localStorage.setItem("usuario",JSON.stringify({
+    nombre:nombre.value,
+    nacimiento:nacimiento.value
+  }));
+  msgDatos.textContent="Datos guardados";
+  msgDatos.className="msg ok";
+  msgDatos.style.display="block";
+  mostrarBienvenida();
+}
 
-  const meds=JSON.parse(localStorage.getItem("meds"))||[];
+function mostrarBienvenida(){
+  const d = JSON.parse(localStorage.getItem("usuario"));
+  if(d){
+    bienvenida.textContent = "Bienvenido " + d.nombre;
+  }
+}
+mostrarBienvenida();
+
+/* ---------------------------------------------------------
+   MEDICAMENTOS
+--------------------------------------------------------- */
+mPerm.addEventListener("change",()=>{
+  finBox.style.display = mPerm.checked ? "none" : "block";
+});
+
+function guardarMedicamento(){
+  const dias = [...document.querySelectorAll(".days input:checked")].map(d=>d.value);
+  if(!mNombre.value || dias.length===0 || !mHora.value){
+    return;
+  }
+  const meds = JSON.parse(localStorage.getItem("meds")) || [];
   meds.push({
     nombre:mNombre.value,
     lugar:mLugar.value,
@@ -252,35 +445,36 @@ function guardarMedicamento(){
     fin:mFin.value
   });
   localStorage.setItem("meds",JSON.stringify(meds));
-  render();
+  renderMedicamentos();
 }
 
-function render(){
-  lista.innerHTML="";
-  const meds=JSON.parse(localStorage.getItem("meds"))||[];
-  const hoy=new Date();
+function renderMedicamentos(){
+  listaMedicamentos.innerHTML="";
+  const meds = JSON.parse(localStorage.getItem("meds")) || [];
+  const hoy = new Date();
 
   meds.forEach((m,i)=>{
-    const activo=m.permanente || new Date(m.fin)>=hoy;
-    const div=document.createElement("div");
-    div.className="med-card"+(activo?"":" med-final");
-    div.innerHTML=`
+    const activo = m.permanente || new Date(m.fin)>=hoy;
+    const div = document.createElement("div");
+    div.className = "med-card" + (activo?"":" med-final");
+    div.innerHTML = `
       <div class="badge">${activo?"EN USO":"FINALIZADO"}</div>
       <strong>${m.nombre}</strong><br>
       ${m.lugar}<br>
       ${m.dias.join(", ")} - ${m.hora}
-      <button class="secondary" onclick="eliminar(${i})">Eliminar</button>
+      <button class="danger" onclick="eliminarMedicamento(${i})">Eliminar</button>
     `;
-    lista.appendChild(div);
+    listaMedicamentos.appendChild(div);
   });
 }
 
-function eliminar(i){
-  const meds=JSON.parse(localStorage.getItem("meds"))||[];
+function eliminarMedicamento(i){
+  const meds = JSON.parse(localStorage.getItem("meds")) || [];
   meds.splice(i,1);
   localStorage.setItem("meds",JSON.stringify(meds));
-  render();
+  renderMedicamentos();
 }
+
 </script>
 
 </body>
