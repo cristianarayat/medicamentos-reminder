@@ -308,6 +308,37 @@ document.getElementById("datos-personales")
   .addEventListener("touchmove", e => e.preventDefault(), { passive:false });
 </script>
 
+
+<!-- =========================
+     BLOQUE 3 – NAVEGACIÓN FINAL
+     ========================= -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // Abrir Datos Personales desde Home
+  document.querySelectorAll("button").forEach(btn => {
+    if (btn.textContent.trim() === "Datos personales") {
+      btn.addEventListener("click", () => {
+        const dp = document.getElementById("datos-personales");
+        if (dp) dp.style.display = "block";
+      });
+    }
+  });
+
+  // Botón volver dentro de Datos Personales
+  document.addEventListener("click", e => {
+    if (
+      e.target.classList.contains("secundario") &&
+      e.target.textContent.trim() === "Volver"
+    ) {
+      const dp = document.getElementById("datos-personales");
+      if (dp) dp.style.display = "none";
+    }
+  });
+
+});
+</script>
+
      
 </body>
 </html>
