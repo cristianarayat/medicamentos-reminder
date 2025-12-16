@@ -137,14 +137,12 @@ button{
 
 
 <!-- =========================
-     BLOQUE 2 – DATOS PERSONALES (FINAL)
+     BLOQUE 2 – DATOS PERSONALES (FINAL + VALIDACIONES)
      ========================= -->
 <style>
 *,
 *::before,
-*::after{
-  box-sizing:border-box;
-}
+*::after{ box-sizing:border-box; }
 
 #datos-personales{
   display:none;
@@ -171,10 +169,7 @@ button{
   gap:16px;
 }
 
-.dp-card h2{
-  text-align:center;
-  margin:0 0 6px 0;
-}
+.dp-card h2{ text-align:center; margin:0 0 6px 0; }
 
 .dp-group label{
   display:block;
@@ -192,7 +187,6 @@ button{
   font-size:16px;
 }
 
-/* Switch + iconos */
 .switch-row{
   display:flex;
   align-items:center;
@@ -204,14 +198,9 @@ button{
   align-items:center;
   gap:12px;
   font-size:15px;
-  font-weight:500;
 }
 
-.switch-left svg{
-  width:26px;
-  height:26px;
-}
-
+.switch-left svg{ width:26px; height:26px; }
 .icon-voz{ fill:#2f80ed; }
 .icon-vibra{ fill:#27ae60; }
 
@@ -220,11 +209,7 @@ button{
   width:50px;
   height:28px;
 }
-
-.switch input{
-  opacity:0;
-}
-
+.switch input{ opacity:0; }
 .slider{
   position:absolute;
   inset:0;
@@ -232,26 +217,17 @@ button{
   border-radius:28px;
   transition:.3s;
 }
-
 .slider:before{
   content:"";
   position:absolute;
-  width:22px;
-  height:22px;
-  left:3px;
-  top:3px;
+  width:22px; height:22px;
+  left:3px; top:3px;
   background:#fff;
   border-radius:50%;
   transition:.3s;
 }
-
-.switch input:checked + .slider{
-  background:#2f80ed;
-}
-
-.switch input:checked + .slider:before{
-  transform:translateX(22px);
-}
+.switch input:checked + .slider{ background:#2f80ed; }
+.switch input:checked + .slider:before{ transform:translateX(22px); }
 
 .dp-btn{
   width:100%;
@@ -261,15 +237,20 @@ button{
   font-size:17px;
   font-weight:700;
 }
+.dp-btn{ background:#2f80ed; color:#fff; }
+.dp-btn.secundario{ background:#bdbdbd; }
 
-.dp-btn{
-  background:#2f80ed;
-  color:#fff;
+.toast{
+  display:none;
+  text-align:center;
+  font-weight:600;
+  color:#27ae60;
 }
-
-.dp-btn.secundario{
-  background:#bdbdbd;
-  color:#fff;
+.error{
+  color:#d32f2f;
+  font-size:13px;
+  text-align:center;
+  display:none;
 }
 </style>
 
@@ -281,53 +262,54 @@ button{
 
       <div class="dp-group">
         <label>Nombre del paciente</label>
-        <input type="text">
+        <input id="paciente" type="text">
       </div>
 
       <div class="dp-group">
-        <label>Edad</label>
-        <input type="number">
+        <label>Fecha de nacimiento</label>
+        <input id="nacimiento" type="date">
       </div>
 
       <div class="dp-group">
         <label>Nombre del cuidador</label>
-        <input type="text">
+        <input id="cuidador" type="text">
       </div>
 
       <div class="dp-group">
         <label>Teléfono del cuidador</label>
-        <input type="tel">
+        <input id="telefono" type="tel" placeholder="+56 9 12345678">
       </div>
 
-      <!-- PARLANTE (VOZ) -->
       <div class="switch-row">
         <div class="switch-left">
           <svg class="icon-voz" viewBox="0 0 24 24">
-            <path d="M3 10v4h4l5 5V5L7 10H3zm10.5 2a3.5 3.5 0 0 0-1.75-3.03v6.06A3.5 3.5 0 0 0 13.5 12z"/>
+            <path d="M3 10v4h4l5 5V5L7 10H3z"/>
           </svg>
           <span>Recordatorios por voz</span>
         </div>
         <label class="switch">
-          <input type="checkbox">
+          <input id="voz" type="checkbox">
           <span class="slider"></span>
         </label>
       </div>
 
-      <!-- CELULAR (VIBRACIÓN) -->
       <div class="switch-row">
         <div class="switch-left">
           <svg class="icon-vibra" viewBox="0 0 24 24">
-            <path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+            <path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
           </svg>
           <span>Vibración</span>
         </div>
         <label class="switch">
-          <input type="checkbox">
+          <input id="vibracion" type="checkbox">
           <span class="slider"></span>
         </label>
       </div>
 
-      <button class="dp-btn">Guardar</button>
+      <div class="error" id="error">Completa todos los campos con datos válidos</div>
+      <div class="toast" id="toast">✅ Datos guardados correctamente</div>
+
+      <button class="dp-btn" id="guardar">Guardar</button>
       <button class="dp-btn secundario">Volver</button>
 
     </div>
@@ -335,28 +317,73 @@ button{
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+const $ = id => document.getElementById(id);
 
-  document.querySelectorAll("button").forEach(b => {
-    if (b.textContent.trim() === "Datos personales") {
-      b.addEventListener("click", () => {
+const validarTelefono = tel =>
+  /^(\+56\s?9\d{8}|9\d{8})$/.test(tel.replace(/\s+/g,""));
+
+function guardarDatos(){
+  const data = {
+    paciente: $("paciente").value.trim(),
+    nacimiento: $("nacimiento").value,
+    cuidador: $("cuidador").value.trim(),
+    telefono: $("telefono").value.trim(),
+    voz: $("voz").checked,
+    vibracion: $("vibracion").checked
+  };
+
+  if(
+    !data.paciente ||
+    !data.nacimiento ||
+    !data.cuidador ||
+    !validarTelefono(data.telefono)
+  ){
+    $("error").style.display="block";
+    return;
+  }
+
+  $("error").style.display="none";
+  localStorage.setItem("datosPersonales", JSON.stringify(data));
+
+  $("toast").style.display="block";
+  setTimeout(()=> $("toast").style.display="none", 2000);
+}
+
+function cargarDatos(){
+  const data = JSON.parse(localStorage.getItem("datosPersonales"));
+  if(!data) return;
+
+  $("paciente").value = data.paciente;
+  $("nacimiento").value = data.nacimiento;
+  $("cuidador").value = data.cuidador;
+  $("telefono").value = data.telefono;
+  $("voz").checked = data.voz;
+  $("vibracion").checked = data.vibracion;
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  cargarDatos();
+
+  document.getElementById("guardar").addEventListener("click", guardarDatos);
+
+  document.querySelectorAll("button").forEach(b=>{
+    if(b.textContent.trim()==="Datos personales"){
+      b.addEventListener("click", ()=> {
         document.getElementById("datos-personales").style.display="block";
       });
     }
   });
 
-  document.addEventListener("click", e => {
-    if (e.target.classList.contains("secundario")) {
+  document.addEventListener("click", e=>{
+    if(e.target.classList.contains("secundario")){
       document.getElementById("datos-personales").style.display="none";
     }
   });
-
 });
 
 document.getElementById("datos-personales")
   .addEventListener("touchmove", e => e.preventDefault(), { passive:false });
 </script>
-
 
      
 </body>
