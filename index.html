@@ -816,6 +816,39 @@ document.addEventListener("DOMContentLoaded", listar);
 $("medicamentos").addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
 </script>
 
+<!-- =========================
+     CONECTOR BOTÓN MEDICAMENTOS
+     ========================= -->
+<script>
+(function () {
+  document.addEventListener(
+    "pointerdown",
+    function (e) {
+      let el = e.target;
+
+      while (el && el !== document.body) {
+        const texto = (el.textContent || "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .toLowerCase();
+
+        if (texto === "medicamentos") {
+          const panel = document.getElementById("medicamentos");
+          if (panel) {
+            panel.style.display = "block";
+            e.preventDefault();
+            e.stopImmediatePropagation();
+          }
+          return;
+        }
+
+        el = el.parentElement;
+      }
+    },
+    true // 👈 CAPTURA (clave para móvil)
+  );
+})();
+</script>
 
 
      
