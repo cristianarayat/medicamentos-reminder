@@ -771,6 +771,31 @@ $("medicamentos").addEventListener("touchmove", e=>e.preventDefault(), {passive:
 </script>
 
 
+<!-- =========================
+     CONECTOR MEDICAMENTOS (CAPTURA REAL)
+     ========================= -->
+<script>
+(function () {
+  document.addEventListener("pointerdown", function (e) {
+    let el = e.target;
+
+    while (el && el !== document.body) {
+      const txt = (el.textContent || "").replace(/\s+/g," ").trim().toLowerCase();
+
+      if (txt === "medicamentos") {
+        const panel = document.getElementById("medicamentos");
+        if (panel) {
+          panel.style.display = "block";
+          e.preventDefault();
+          e.stopImmediatePropagation();
+        }
+        return;
+      }
+      el = el.parentElement;
+    }
+  }, true); // 👈 CAPTURING
+})();
+</script>
 
 
 
