@@ -136,7 +136,6 @@ button{
 </div>
 
 
-
 <!-- =========================
      BLOQUE 2 – DATOS PERSONALES (FINAL)
      ========================= -->
@@ -177,10 +176,6 @@ button{
   margin:0 0 6px 0;
 }
 
-.dp-group{
-  width:100%;
-}
-
 .dp-group label{
   display:block;
   font-size:14px;
@@ -195,7 +190,6 @@ button{
   border:1px solid #cfcfcf;
   padding:0 16px;
   font-size:16px;
-  background:#fff;
 }
 
 /* Switch + iconos */
@@ -229,8 +223,6 @@ button{
 
 .switch input{
   opacity:0;
-  width:0;
-  height:0;
 }
 
 .slider{
@@ -307,11 +299,11 @@ button{
         <input type="tel">
       </div>
 
-      <!-- Voz -->
+      <!-- PARLANTE (VOZ) -->
       <div class="switch-row">
         <div class="switch-left">
           <svg class="icon-voz" viewBox="0 0 24 24">
-            <path d="M3 10v4h4l5 5V5L7 10H3z"/>
+            <path d="M3 10v4h4l5 5V5L7 10H3zm10.5 2a3.5 3.5 0 0 0-1.75-3.03v6.06A3.5 3.5 0 0 0 13.5 12z"/>
           </svg>
           <span>Recordatorios por voz</span>
         </div>
@@ -321,11 +313,11 @@ button{
         </label>
       </div>
 
-      <!-- Vibración -->
+      <!-- CELULAR (VIBRACIÓN) -->
       <div class="switch-row">
         <div class="switch-left">
           <svg class="icon-vibra" viewBox="0 0 24 24">
-            <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+            <path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
           </svg>
           <span>Vibración</span>
         </div>
@@ -343,10 +335,8 @@ button{
 </div>
 
 <script>
-/* Navegación sin tocar Home */
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Abrir desde botón Home
   document.querySelectorAll("button").forEach(b => {
     if (b.textContent.trim() === "Datos personales") {
       b.addEventListener("click", () => {
@@ -355,7 +345,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Volver
   document.addEventListener("click", e => {
     if (e.target.classList.contains("secundario")) {
       document.getElementById("datos-personales").style.display="none";
@@ -364,12 +353,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-/* Bloquea pull-to-refresh en móvil */
 document.getElementById("datos-personales")
   .addEventListener("touchmove", e => e.preventDefault(), { passive:false });
 </script>
 
-     
+
      
 </body>
 </html>
