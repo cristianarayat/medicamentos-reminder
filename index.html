@@ -342,331 +342,275 @@ mostrarBienvenida();
 <!-- =====================================================
      PANTALLA MEDICAMENTOS – VERSIÓN DEFINITIVA
      ===================================================== -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Página de Medicamentos</title>
 
 <style>
-/* ===== ESTILOS MEDICAMENTOS ===== */
+/* =========================
+   ESTILOS GENERALES
+   ========================= */
+body{
+  margin:0;
+  font-family: system-ui, Arial, sans-serif;
+  background:#eef1f4;
+  color:#333;
+}
+
+/* =========================
+   HEADER / MARCA
+   ========================= */
+.app-header{
+  position: sticky;
+  top: 0;
+  background: #1e88e5;
+  color: #fff;
+  padding: 14px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 16px;
+  z-index: 100;
+  letter-spacing: 1px;
+}
+
+/* =========================
+   CONTENEDOR
+   ========================= */
+.container{
+  max-width:480px;
+  margin: auto;
+  padding:16px;
+}
+
+/* =========================
+   LISTA MEDICAMENTOS
+   ========================= */
+#listaMedicamentos{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* =========================
+   TARJETA MEDICAMENTO
+   ========================= */
 .med-card{
-  border-radius:14px;
-  padding:12px;
-  margin-top:12px;
-  box-shadow:0 6px 14px rgba(0,0,0,.12);
+  background:#fff;
+  border-radius:12px;
+  padding:14px;
+  box-shadow:0 2px 6px rgba(0,0,0,.08);
 }
 
-.med-activo{
-  background:#e3f2fd;
-  border-left:5px solid #2f80ed;
-}
+/* ESTADOS */
+.med-activo{ border-left:5px solid #2ecc71; }
+.med-finalizado{ border-left:5px solid #e74c3c; }
 
-.med-finalizado{
-  background:#f1f1f1;
-  color:#777;
-  border-left:5px solid #bbb;
-}
-
+/* =========================
+   BADGES
+   ========================= */
 .badge{
   display:inline-block;
-  padding:3px 8px;
-  border-radius:10px;
+  padding:4px 10px;
   font-size:12px;
-  font-weight:700;
-  margin-bottom:4px;
+  border-radius:20px;
+  margin-bottom:6px;
 }
-.badge-activo{background:#2f80ed;color:#fff}
-.badge-finalizado{background:#999;color:#fff}
+.badge-activo{
+  background:#2ecc71;
+  color:#fff;
+}
+.badge-finalizado{
+  background:#e74c3c;
+  color:#fff;
+}
 
-.med-card img{
+/* =========================
+   TEXTOS
+   ========================= */
+.med-nombre{
+  font-size:18px;
+  font-weight:700;
+  margin-top:6px;
+}
+.med-lugar{
+  font-size:14px;
+  margin-bottom:8px;
+}
+
+/* =========================
+   HORARIOS / DÍAS
+   ========================= */
+.dia-horario{
+  font-size:15px;
+  line-height:1.3;
+  margin:4px 0;
+}
+
+/* =========================
+   IMAGEN MEDICAMENTO
+   ========================= */
+.med-foto{
   width:100%;
-  max-height:140px;
-  object-fit:contain;
+  max-width:220px;
+  display:block;
+  margin:10px auto;
+  border-radius:8px;
+}
+
+/* =========================
+   BOTONES
+   ========================= */
+button{
+  width:100%;
+  padding:10px;
+  font-size:15px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+button.secondary{
+  background:#ddd;
   margin-top:8px;
 }
 
-/* DÍAS COMPACTOS */
-.dias-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:6px;
-  margin-top:6px;
+/* =========================
+   SELECCIÓN DE DÍAS
+   ========================= */
+.dias{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
 }
 
-.dia{
-  font-size:13px;
+.dias label{
+  font-size:15px;
+  padding:4px 6px;
+  border-radius:6px;
+  background:#f0f0f0;
 }
 
-.horas{
-  margin-left:10px;
+.dias input{
+  transform:scale(0.9);
 }
-.horas input{
-  margin-top:4px;
-}
-
-/* SWITCH */
-.switch{
-  position:relative;
-  width:52px;
-  height:28px;
-}
-.switch input{display:none}
-.slider{
-  position:absolute;
-  inset:0;
-  background:#ccc;
-  border-radius:28px;
-  transition:.3s;
-}
-.slider:before{
-  content:"";
-  position:absolute;
-  width:22px;
-  height:22px;
-  left:3px;
-  top:3px;
-  background:#fff;
-  border-radius:50%;
-  transition:.3s;
-}
-.switch input:checked + .slider{
-  background:#2f80ed;
-}
-.switch input:checked + .slider:before{
-  transform:translateX(24px);
-}
-
-/* ===== FIX MÓVIL: mostrar medicamentos guardados ===== */
-#pantalla-medicamentos,
-#pantalla-medicamentos .card{
-  height: auto !important;
-  min-height: auto !important;
-  overflow: visible !important;
-}
-
 </style>
+</head>
 
-<div class="container hidden" id="pantalla-medicamentos">
-  <div class="card">
+<body>
 
-    <h2>Medicamentos</h2>
+<!-- =========================
+     HEADER
+     ========================= -->
+<header class="app-header">
+  PÁGINA DE MEDICAMENTOS
+</header>
 
-    <div class="field">
-      <label>Nombre del medicamento</label>
-      <input id="med_nombre">
-    </div>
+<!-- =========================
+     CONTENIDO
+     ========================= -->
+<div class="container">
 
-    <div class="field">
-      <label>Periodicidad</label>
-      <select id="med_periodicidad">
-        <option value="1">Todos los días</option>
-        <option value="2">Cada 2 días</option>
-        <option value="7">Cada 7 días</option>
-        <option value="14">Cada 14 días</option>
-        <option value="30">Cada 30 días</option>
-      </select>
-    </div>
+  <div id="listaMedicamentos"></div>
 
-    <div class="field">
-      <label>Dosis por día</label>
-      <input type="number" id="med_dosis" min="1" value="1" onchange="actualizarHoras()">
-    </div>
-
-    <!-- PERMANENTE -->
-    <div class="switch-line">
-      <span>Tratamiento permanente</span>
-      <label class="switch">
-        <input type="checkbox" id="med_permanente" onchange="toggleFin()">
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <div class="field" id="finBox">
-      <label>Fecha de término</label>
-      <input type="date" id="med_fin">
-    </div>
-
-    <div class="field">
-      <label>Días y horarios</label>
-      <div id="diasBox"></div>
-    </div>
-
-    <div class="field">
-      <label>Lugar donde se guarda</label>
-      <input id="med_lugar">
-    </div>
-
-    <div class="field">
-      <label>Foto del medicamento</label>
-      <input type="file" id="med_foto" accept="image/*">
-    </div>
-
-    <button onclick="guardarMedicamento()">Guardar medicamento</button>
-    <button class="secondary" onclick="volverMedicamentos()">Volver</button>
-
-    <hr>
-    <h3>Medicamentos guardados</h3>
-    <div id="listaMedicamentos"></div>
-
-  </div>
 </div>
 
 <script>
-/* ===== LÓGICA MEDICAMENTOS ===== */
+/* =========================
+   VARIABLES
+   ========================= */
+const listaMedicamentos = document.getElementById("listaMedicamentos");
 
-const diasSemana = ["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
-let medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
+const diasSemana = {
+  lun: "Lunes",
+  mar: "Martes",
+  mie: "Miércoles",
+  jue: "Jueves",
+  vie: "Viernes",
+  sab: "Sábado",
+  dom: "Domingo"
+};
 
-/* CONECTAR BOTÓN HOME */
-document.querySelectorAll("button").forEach(b=>{
-  if(b.textContent.trim()==="Medicamentos"){
-    b.onclick = irAMedicamentos;
-  }
-});
+let medicamentos = [];
 
-function irAMedicamentos(){
-  home.style.display = "none";
-  document.getElementById("pantalla-medicamentos").classList.remove("hidden");
-
-  // 🔑 RELEER SIEMPRE DESDE localStorage (clave para móvil)
-  medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
-
-  generarDias();
-  renderMedicamentos();
-}
-
-
-function volverMedicamentos(){
-  document.getElementById("pantalla-medicamentos").classList.add("hidden");
-  home.style.display="block";
-}
-
-/* PERMANENTE */
-function toggleFin(){
-  finBox.style.display = med_permanente.checked ? "none" : "block";
-}
-
-/* GENERAR DÍAS */
-function generarDias(){
-  diasBox.innerHTML="";
-  diasSemana.forEach((d,i)=>{
-    diasBox.innerHTML+=`
-      <div class="dia">
-        <label>
-          <input type="checkbox" id="dia_${i}" onchange="toggleDia(${i})">
-          ${d}
-        </label>
-        <div class="horas" id="horas_${i}" style="display:none"></div>
-      </div>
-    `;
-  });
-}
-
-function toggleDia(i){
-  const box=document.getElementById("horas_"+i);
-  box.innerHTML="";
-  if(!document.getElementById("dia_"+i).checked){
-    box.style.display="none";
-    return;
-  }
-  for(let d=0; d<med_dosis.value; d++){
-    box.innerHTML+=`<input type="time" class="hora" data-dia="${i}">`;
-  }
-  box.style.display="block";
-}
-
-function actualizarHoras(){
-  diasSemana.forEach((_,i)=>{
-    if(document.getElementById("dia_"+i)?.checked){
-      toggleDia(i);
-    }
-  });
-}
-
-/* GUARDAR */
-function guardarMedicamento(){
-  if(!med_nombre.value || !med_lugar.value){
-    alert("Completa los datos obligatorios");
-    return;
-  }
-  if(!med_permanente.checked && !med_fin.value){
-    alert("Debes indicar fecha de término o marcar permanente");
-    return;
-  }
-
-  const horarios={};
-  document.querySelectorAll(".hora").forEach(h=>{
-    if(!horarios[h.dataset.dia]) horarios[h.dataset.dia]=[];
-    if(h.value) horarios[h.dataset.dia].push(h.value);
-  });
-
-  if(Object.keys(horarios).length===0){
-    alert("Selecciona al menos un día y horario");
-    return;
-  }
-
-  const file=med_foto.files[0];
-  const reader=new FileReader();
-
-  reader.onload=()=>{
-    medicamentos.push({
-      nombre:med_nombre.value,
-      periodicidad:+med_periodicidad.value,
-      dosis:+med_dosis.value,
-      horarios,
-      lugar:med_lugar.value,
-      permanente:med_permanente.checked,
-      fin:med_permanente.checked?null:med_fin.value,
-      foto:file?reader.result:null
-    });
-    localStorage.setItem("medicamentos",JSON.stringify(medicamentos));
-    renderMedicamentos();
-  };
-
-  if(file) reader.readAsDataURL(file);
-  else reader.onload();
-}
-
-/* LISTAR */
+/* =========================
+   RENDER MEDICAMENTOS
+   ========================= */
 function renderMedicamentos(){
 
-  // 🔑 SIEMPRE sincronizar desde localStorage (clave móvil)
   medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
-
   listaMedicamentos.innerHTML = "";
+
   const hoy = new Date();
+
+  if(medicamentos.length === 0){
+    listaMedicamentos.innerHTML =
+      "<p>No hay medicamentos guardados.</p>";
+    return;
+  }
 
   medicamentos.forEach((m, i) => {
 
     const activo = m.permanente || hoy <= new Date(m.fin);
 
-    listaMedicamentos.innerHTML += `
-      <div class="med-card ${activo ? "med-activo" : "med-finalizado"}">
-        <span class="badge ${activo ? "badge-activo" : "badge-finalizado"}">
-          ${activo ? "EN USO" : "FINALIZADO"}
-        </span><br>
-        <strong>${m.nombre}</strong><br>
-        Lugar: ${m.lugar}<br>
+    const card = document.createElement("div");
+    card.className =
+      `med-card ${activo ? "med-activo" : "med-finalizado"}`;
 
-        ${Object.keys(m.horarios).map(d => `
-          <div>${diasSemana[d]}: ${m.horarios[d].join(", ")}</div>
-        `).join("")}
+    let horariosHTML = "";
+    Object.keys(m.horarios || {}).forEach(d => {
+      horariosHTML += `
+        <div class="dia-horario">
+          <strong>${diasSemana[d]}:</strong>
+          ${m.horarios[d].join(", ")}
+        </div>
+      `;
+    });
 
-        ${m.foto ? `<img src="${m.foto}">` : ""}
+    card.innerHTML = `
+      <span class="badge ${activo ? "badge-activo" : "badge-finalizado"}">
+        ${activo ? "EN USO" : "FINALIZADO"}
+      </span>
 
-        <button class="secondary" onclick="eliminarMedicamento(${i})">
-          Eliminar
-        </button>
-      </div>
+      <div class="med-nombre">${m.nombre}</div>
+      <div class="med-lugar">Lugar: ${m.lugar}</div>
+
+      ${horariosHTML}
+
+      ${m.foto
+        ? `<img src="${m.foto}" class="med-foto">`
+        : ""
+      }
+
+      <button class="secondary"
+        onclick="eliminarMedicamento(${i})">
+        Eliminar medicamento
+      </button>
     `;
+
+    listaMedicamentos.appendChild(card);
   });
 }
 
-
+/* =========================
+   ELIMINAR MEDICAMENTO
+   ========================= */
 function eliminarMedicamento(i){
-  medicamentos.splice(i,1);
-  localStorage.setItem("medicamentos",JSON.stringify(medicamentos));
+  medicamentos.splice(i, 1);
+  localStorage.setItem(
+    "medicamentos",
+    JSON.stringify(medicamentos)
+  );
   renderMedicamentos();
 }
+
+/* =========================
+   INICIO
+   ========================= */
+renderMedicamentos();
 </script>
 
-
-   
 </body>
 </html>
