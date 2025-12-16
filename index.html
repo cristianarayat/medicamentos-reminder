@@ -137,7 +137,7 @@ button{
 
 
 <!-- =========================
-     BLOQUE 2 – DATOS PERSONALES (FINAL + VALIDACIONES)
+     BLOQUE 2 – DATOS PERSONALES (FINAL)
      ========================= -->
 <style>
 *,
@@ -169,13 +169,13 @@ button{
   gap:16px;
 }
 
-.dp-card h2{ text-align:center; margin:0 0 6px 0; }
+.dp-card h2{ text-align:center; margin:0; }
 
 .dp-group label{
-  display:block;
   font-size:14px;
   font-weight:600;
   margin-bottom:6px;
+  display:block;
 }
 
 .dp-group input{
@@ -187,10 +187,37 @@ button{
   font-size:16px;
 }
 
-.switch-row{
+/* TELÉFONO CON PREFIJO */
+.phone-wrap{
   display:flex;
   align-items:center;
+  border:1px solid #cfcfcf;
+  border-radius:16px;
+  height:50px;
+  overflow:hidden;
+}
+
+.phone-prefix{
+  padding:0 14px;
+  background:#f1f3f4;
+  font-weight:600;
+  color:#333;
+  border-right:1px solid #cfcfcf;
+}
+
+.phone-wrap input{
+  border:none;
+  height:100%;
+  padding:0 14px;
+  flex:1;
+  font-size:16px;
+}
+
+/* Switch + iconos */
+.switch-row{
+  display:flex;
   justify-content:space-between;
+  align-items:center;
 }
 
 .switch-left{
@@ -200,7 +227,11 @@ button{
   font-size:15px;
 }
 
-.switch-left svg{ width:26px; height:26px; }
+.switch-left svg{
+  width:28px;
+  height:28px;
+}
+
 .icon-voz{ fill:#2f80ed; }
 .icon-vibra{ fill:#27ae60; }
 
@@ -220,8 +251,10 @@ button{
 .slider:before{
   content:"";
   position:absolute;
-  width:22px; height:22px;
-  left:3px; top:3px;
+  width:22px;
+  height:22px;
+  left:3px;
+  top:3px;
   background:#fff;
   border-radius:50%;
   transition:.3s;
@@ -237,6 +270,7 @@ button{
   font-size:17px;
   font-weight:700;
 }
+
 .dp-btn{ background:#2f80ed; color:#fff; }
 .dp-btn.secundario{ background:#bdbdbd; }
 
@@ -247,10 +281,10 @@ button{
   color:#27ae60;
 }
 .error{
-  color:#d32f2f;
-  font-size:13px;
-  text-align:center;
   display:none;
+  color:#d32f2f;
+  text-align:center;
+  font-size:13px;
 }
 </style>
 
@@ -277,13 +311,17 @@ button{
 
       <div class="dp-group">
         <label>Teléfono del cuidador</label>
-        <input id="telefono" type="tel" placeholder="+56 9 12345678">
+        <div class="phone-wrap">
+          <div class="phone-prefix">+569</div>
+          <input id="telefono" type="tel" maxlength="8" placeholder="12345678">
+        </div>
       </div>
 
+      <!-- VOZ -->
       <div class="switch-row">
         <div class="switch-left">
           <svg class="icon-voz" viewBox="0 0 24 24">
-            <path d="M3 10v4h4l5 5V5L7 10H3z"/>
+            <path d="M3 9v6h4l5 5V4L7 9H3zm11 3a4 4 0 0 0-2-3.46v6.92A4 4 0 0 0 14 12z"/>
           </svg>
           <span>Recordatorios por voz</span>
         </div>
@@ -293,10 +331,11 @@ button{
         </label>
       </div>
 
+      <!-- VIBRACIÓN -->
       <div class="switch-row">
         <div class="switch-left">
           <svg class="icon-vibra" viewBox="0 0 24 24">
-            <path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+            <path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
           </svg>
           <span>Vibración</span>
         </div>
@@ -306,8 +345,8 @@ button{
         </label>
       </div>
 
-      <div class="error" id="error">Completa todos los campos con datos válidos</div>
-      <div class="toast" id="toast">✅ Datos guardados correctamente</div>
+      <div id="error" class="error">Completa todos los campos correctamente</div>
+      <div id="toast" class="toast">✅ Datos guardados correctamente</div>
 
       <button class="dp-btn" id="guardar">Guardar</button>
       <button class="dp-btn secundario">Volver</button>
@@ -319,64 +358,55 @@ button{
 <script>
 const $ = id => document.getElementById(id);
 
-const validarTelefono = tel =>
-  /^(\+56\s?9\d{8}|9\d{8})$/.test(tel.replace(/\s+/g,""));
+function validarTelefono(){
+  return /^\d{8}$/.test($("telefono").value);
+}
 
 function guardarDatos(){
   const data = {
     paciente: $("paciente").value.trim(),
     nacimiento: $("nacimiento").value,
     cuidador: $("cuidador").value.trim(),
-    telefono: $("telefono").value.trim(),
+    telefono: "+569" + $("telefono").value,
     voz: $("voz").checked,
     vibracion: $("vibracion").checked
   };
 
-  if(
-    !data.paciente ||
-    !data.nacimiento ||
-    !data.cuidador ||
-    !validarTelefono(data.telefono)
-  ){
+  if(!data.paciente || !data.nacimiento || !data.cuidador || !validarTelefono()){
     $("error").style.display="block";
     return;
   }
 
   $("error").style.display="none";
   localStorage.setItem("datosPersonales", JSON.stringify(data));
-
   $("toast").style.display="block";
   setTimeout(()=> $("toast").style.display="none", 2000);
 }
 
 function cargarDatos(){
-  const data = JSON.parse(localStorage.getItem("datosPersonales"));
-  if(!data) return;
-
-  $("paciente").value = data.paciente;
-  $("nacimiento").value = data.nacimiento;
-  $("cuidador").value = data.cuidador;
-  $("telefono").value = data.telefono;
-  $("voz").checked = data.voz;
-  $("vibracion").checked = data.vibracion;
+  const d = JSON.parse(localStorage.getItem("datosPersonales"));
+  if(!d) return;
+  $("paciente").value = d.paciente;
+  $("nacimiento").value = d.nacimiento;
+  $("cuidador").value = d.cuidador;
+  $("telefono").value = d.telefono.replace("+569","");
+  $("voz").checked = d.voz;
+  $("vibracion").checked = d.vibracion;
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
   cargarDatos();
-
-  document.getElementById("guardar").addEventListener("click", guardarDatos);
+  $("guardar").addEventListener("click", guardarDatos);
 
   document.querySelectorAll("button").forEach(b=>{
     if(b.textContent.trim()==="Datos personales"){
-      b.addEventListener("click", ()=> {
-        document.getElementById("datos-personales").style.display="block";
-      });
+      b.addEventListener("click", ()=> $("datos-personales").style.display="block");
     }
   });
 
   document.addEventListener("click", e=>{
     if(e.target.classList.contains("secundario")){
-      document.getElementById("datos-personales").style.display="none";
+      $("datos-personales").style.display="none";
     }
   });
 });
