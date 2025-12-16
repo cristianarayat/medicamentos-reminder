@@ -351,9 +351,13 @@ mostrarBienvenida();
 <title>Recordatorio de Medicamentos</title>
 
 <style>
-/* =========================
-   ESTILOS GENERALES
-   ========================= */
+/* =======================
+   RESET Y BASE
+   ======================= */
+*{
+  box-sizing:border-box;
+}
+
 body{
   margin:0;
   font-family: system-ui, Arial, sans-serif;
@@ -361,24 +365,27 @@ body{
   color:#333;
 }
 
+/* =======================
+   HEADER ÚNICO
+   ======================= */
 header{
-  padding:16px;
-  font-size:18px;
+  padding:18px;
+  font-size:22px;
   font-weight:700;
 }
 
-/* =========================
+/* =======================
    CONTENEDOR
-   ========================= */
+   ======================= */
 .container{
   max-width:420px;
   margin:auto;
   padding:16px;
 }
 
-/* =========================
+/* =======================
    BOTONES
-   ========================= */
+   ======================= */
 button{
   width:100%;
   padding:14px;
@@ -390,9 +397,9 @@ button{
   cursor:pointer;
 }
 
-/* =========================
+/* =======================
    SISTEMA DE PANTALLAS
-   ========================= */
+   ======================= */
 .screen{
   display:none;
 }
@@ -401,9 +408,9 @@ button{
   display:block;
 }
 
-/* =========================
+/* =======================
    TARJETAS MEDICAMENTOS
-   ========================= */
+   ======================= */
 .med-card{
   background:#fff;
   border-radius:14px;
@@ -447,23 +454,18 @@ button{
   font-size:14px;
   margin-bottom:6px;
 }
-
-.dia-horario{
-  font-size:15px;
-  margin:3px 0;
-}
 </style>
 </head>
 
 <body>
 
-<header id="headerTitle">
+<header>
   💊 Recordatorio de Medicamentos
 </header>
 
-<!-- =========================
-     PANTALLA INICIO
-     ========================= -->
+<!-- =======================
+     PANTALLA INICIO (ÚNICA)
+     ======================= -->
 <div id="inicio" class="screen active">
   <div class="container">
 
@@ -483,9 +485,9 @@ button{
   </div>
 </div>
 
-<!-- =========================
+<!-- =======================
      PANTALLA MEDICAMENTOS
-     ========================= -->
+     ======================= -->
 <div id="medicamentos" class="screen">
   <div class="container">
 
@@ -499,25 +501,16 @@ button{
 </div>
 
 <script>
-/* =========================
-   REFERENCIAS
-   ========================= */
+/* =======================
+   REFERENCIAS ÚNICAS
+   ======================= */
 const inicio = document.getElementById("inicio");
 const medicamentos = document.getElementById("medicamentos");
 const listaMedicamentos = document.getElementById("listaMedicamentos");
 
-/* =========================
-   DÍAS
-   ========================= */
-const diasSemana = {
-  lun:"Lunes", mar:"Martes", mie:"Miércoles",
-  jue:"Jueves", vie:"Viernes",
-  sab:"Sábado", dom:"Domingo"
-};
-
-/* =========================
+/* =======================
    NAVEGACIÓN
-   ========================= */
+   ======================= */
 function irMedicamentos(){
   inicio.classList.remove("active");
   medicamentos.classList.add("active");
@@ -529,9 +522,9 @@ function irInicio(){
   inicio.classList.add("active");
 }
 
-/* =========================
+/* =======================
    RENDER MEDICAMENTOS
-   ========================= */
+   ======================= */
 function renderMedicamentos(){
   const meds = JSON.parse(localStorage.getItem("medicamentos")) || [];
   listaMedicamentos.innerHTML = "";
@@ -548,16 +541,15 @@ function renderMedicamentos(){
     const activo = m.permanente || hoy <= new Date(m.fin);
 
     const card = document.createElement("div");
-    card.className = `med-card ${activo ? "med-activo" : "med-finalizado"}`;
+    card.className =
+      `med-card ${activo ? "med-activo" : "med-finalizado"}`;
 
     card.innerHTML = `
       <span class="badge ${activo ? "badge-activo" : "badge-finalizado"}">
         ${activo ? "EN USO" : "FINALIZADO"}
       </span>
-
       <div class="med-nombre">${m.nombre}</div>
       <div class="med-lugar">Lugar: ${m.lugar}</div>
-
       <button onclick="eliminarMedicamento(${i})">
         Eliminar medicamento
       </button>
@@ -577,4 +569,3 @@ function eliminarMedicamento(i){
 
 </body>
 </html>
-
