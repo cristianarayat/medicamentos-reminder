@@ -457,9 +457,8 @@ window.addEventListener("focus", actualizarBienvenida);
 </script>
 
 
-
 <!-- =========================
-     BLOQUE 3 – MEDICAMENTOS (FINAL)
+     BLOQUE 3 – MEDICAMENTOS (FINAL CORREGIDO)
      ========================= -->
 <style>
 #medicamentos{
@@ -475,7 +474,7 @@ window.addEventListener("focus", actualizarBienvenida);
 .med-container{
   max-width:520px;
   margin:0 auto;
-  padding:20px 16px 100px;
+  padding:20px 16px 120px;
 }
 
 .med-card{
@@ -486,7 +485,14 @@ window.addEventListener("focus", actualizarBienvenida);
   margin-bottom:14px;
 }
 
-.med-card h2{ text-align:center; margin-bottom:10px; }
+.med-card h2{
+  text-align:center;
+  margin-bottom:12px;
+}
+
+.med-group{
+  margin-bottom:12px;
+}
 
 .med-group label{
   display:block;
@@ -495,7 +501,8 @@ window.addEventListener("focus", actualizarBienvenida);
   margin-bottom:4px;
 }
 
-.med-group input{
+.med-group input,
+.med-group select{
   width:100%;
   height:46px;
   border-radius:14px;
@@ -504,60 +511,32 @@ window.addEventListener("focus", actualizarBienvenida);
   font-size:15px;
 }
 
-.row{ display:flex; gap:8px; }
-.row > div{ flex:1; }
-
-.periodicidad{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:6px;
+.row{
+  display:flex;
+  gap:8px;
 }
-.periodicidad button{
-  height:38px;
-  border-radius:12px;
-  border:1px solid #cfcfcf;
-  background:#fff;
-  font-weight:600;
-}
-.periodicidad button.activo{
-  background:#2f80ed;
-  color:#fff;
+.row > div{
+  flex:1;
 }
 
-.dias{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:6px;
-}
-.dias button{
-  height:36px;
-  border-radius:10px;
-  border:1px solid #cfcfcf;
-  background:#fff;
-  font-weight:700;
-}
-.dias button.on{
-  background:#27ae60;
-  color:#fff;
-}
-
+/* Horarios */
 .horas{
   display:flex;
   flex-wrap:wrap;
   gap:6px;
-  margin-top:6px;
 }
 .horas input{
   width:90px;
-  height:34px;
+  height:36px;
   border-radius:10px;
   border:1px solid #cfcfcf;
 }
 
+/* Foto */
 .foto{
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
 }
 .foto img{
   width:64px;
@@ -565,6 +544,40 @@ window.addEventListener("focus", actualizarBienvenida);
   object-fit:cover;
   border-radius:12px;
   border:1px solid #ccc;
+}
+
+/* Lista */
+.lista .item{
+  display:grid;
+  grid-template-columns:64px 1fr auto;
+  gap:10px;
+  align-items:center;
+}
+
+.estado{
+  font-size:12px;
+  font-weight:700;
+  padding:4px 8px;
+  border-radius:999px;
+  display:inline-block;
+}
+
+.estado.activo{
+  background:#e9f7ef;
+  color:#27ae60;
+}
+.estado.caducado{
+  background:#fdecea;
+  color:#d32f2f;
+}
+
+.eliminar{
+  background:#fdecea;
+  color:#d32f2f;
+  border:none;
+  border-radius:10px;
+  padding:6px 10px;
+  font-weight:700;
 }
 
 .btn{
@@ -575,32 +588,6 @@ window.addEventListener("focus", actualizarBienvenida);
   background:#2f80ed;
   color:#fff;
   font-size:16px;
-  font-weight:700;
-}
-
-.lista .item{
-  display:grid;
-  grid-template-columns:64px 1fr auto;
-  gap:10px;
-  align-items:center;
-}
-
-.estado{
-  display:inline-block;
-  font-size:12px;
-  font-weight:700;
-  padding:4px 8px;
-  border-radius:999px;
-}
-.estado.activo{ background:#e9f7ef; color:#27ae60; }
-.estado.caducado{ background:#fdecea; color:#d32f2f; }
-
-.eliminar{
-  background:#fdecea;
-  color:#d32f2f;
-  border:none;
-  border-radius:10px;
-  padding:6px 10px;
   font-weight:700;
 }
 </style>
@@ -629,34 +616,30 @@ window.addEventListener("focus", actualizarBienvenida);
 
       <div class="med-group">
         <label>Periodicidad</label>
-        <div class="periodicidad" id="m-per">
-          <button data-v="1">Diario</button>
-          <button data-v="2">2</button>
-          <button data-v="5">5</button>
-          <button data-v="7">7</button>
-          <button data-v="14">14</button>
-          <button data-v="30">30</button>
-          <button data-v="0">Permanente</button>
-        </div>
+        <select id="m-periodicidad">
+          <option value="1">Todos los días</option>
+          <option value="2">Cada 2 días</option>
+          <option value="5">Cada 5 días</option>
+          <option value="7">Cada 7 días</option>
+          <option value="14">Cada 14 días</option>
+          <option value="30">Cada 30 días</option>
+          <option value="0">Permanente</option>
+        </select>
       </div>
 
       <div class="row">
         <div class="med-group">
-          <label>Inicio</label>
+          <label>Inicio del tratamiento</label>
           <input id="m-inicio" type="date">
         </div>
         <div class="med-group">
-          <label>Fin</label>
-          <input id="m-fin" type="date">
+          <label>Días de tratamiento</label>
+          <input id="m-duracion" type="number" min="1">
         </div>
       </div>
 
       <div class="med-group">
-        <label>Días de la semana</label>
-        <div class="dias" id="m-dias">
-          <button>L</button><button>M</button><button>X</button>
-          <button>J</button><button>V</button><button>S</button><button>D</button>
-        </div>
+        <label>Horas por día</label>
         <div class="horas" id="m-horas"></div>
       </div>
 
@@ -675,82 +658,70 @@ window.addEventListener("focus", actualizarBienvenida);
 
 <script>
 const $ = id => document.getElementById(id);
-const KEY = "medicamentos";
+const KEY = "medicamentos_v2";
 
-let per = 1;
-let diasSel = new Set();
+function abrirMedicamentos(){
+  $("medicamentos").style.display="block";
+}
 
-document.addEventListener("DOMContentLoaded", () => {
-
-  document.querySelectorAll("button").forEach(b=>{
-    if(b.textContent.toLowerCase().includes("medicamentos")){
-      b.addEventListener("click", ()=> $("medicamentos").style.display="block");
+document.addEventListener("click", e=>{
+  let el=e.target;
+  while(el && el!==document.body){
+    if((el.textContent||"").trim().toLowerCase()==="medicamentos"){
+      abrirMedicamentos();
+      return;
     }
-  });
-
-  $("m-per").onclick = e=>{
-    if(e.target.tagName!=="BUTTON") return;
-    per = Number(e.target.dataset.v);
-    [...$("m-per").children].forEach(b=>b.classList.remove("activo"));
-    e.target.classList.add("activo");
-    $("m-fin").disabled = per===0;
-  };
-
-  $("m-dias").onclick = e=>{
-    if(e.target.tagName!=="BUTTON") return;
-    e.target.classList.toggle("on");
-    const d=e.target.textContent;
-    e.target.classList.contains("on") ? diasSel.add(d) : diasSel.delete(d);
-    renderHoras();
-  };
-
-  $("m-dosis").onchange = renderHoras;
-
-  $("m-foto").onchange = e=>{
-    const f=e.target.files[0];
-    if(!f) return;
-    const r=new FileReader();
-    r.onload=()=> $("m-prev").src=r.result;
-    r.readAsDataURL(f);
-  };
-
-  $("m-guardar").onclick = guardar;
-  listar();
+    el=el.parentElement;
+  }
 });
 
-function renderHoras(){
-  $("m-horas").innerHTML="";
-  const n=Number($("m-dosis").value);
-  diasSel.forEach(()=>{
-    for(let i=0;i<n;i++){
-      const t=document.createElement("input");
-      t.type="time";
-      $("m-horas").appendChild(t);
-    }
-  });
-}
+$("m-dosis").addEventListener("change", generarHoras);
+$("m-periodicidad").addEventListener("change", ()=>{
+  $("m-duracion").disabled = $("m-periodicidad").value==="0";
+});
 
-function activo(fin){
-  return !fin || new Date()<=new Date(fin);
+function generarHoras(){
+  const cont=$("m-horas");
+  cont.innerHTML="";
+  const n=Number($("m-dosis").value||1);
+  for(let i=0;i<n;i++){
+    const t=document.createElement("input");
+    t.type="time";
+    cont.appendChild(t);
+  }
 }
+generarHoras();
 
-function guardar(){
-  if(!$("m-nombre").value || !$("m-inicio").value || (per!==0 && !$("m-fin").value) || diasSel.size===0){
+$("m-foto").addEventListener("change", e=>{
+  const f=e.target.files[0];
+  if(!f) return;
+  const r=new FileReader();
+  r.onload=()=> $("m-prev").src=r.result;
+  r.readAsDataURL(f);
+});
+
+$("m-guardar").addEventListener("click", ()=>{
+  if(
+    !$("m-nombre").value ||
+    !$("m-inicio").value ||
+    ($("m-periodicidad").value!=="0" && !$("m-duracion").value)
+  ){
     alert("Completa todos los campos");
     return;
   }
 
-  const horas=[...$("m-horas").querySelectorAll("input")].map(i=>i.value).filter(Boolean);
+  const horas=[...$("m-horas").querySelectorAll("input")].map(i=>i.value);
 
   const item={
     id:Date.now(),
     nombre:$("m-nombre").value,
     dosis:$("m-dosis").value,
     lugar:$("m-lugar").value,
-    per, inicio:$("m-inicio").value,
-    fin: per===0?null:$("m-fin").value,
-    dias:[...diasSel], horas,
-    foto:$("m-prev").src||""
+    periodicidad:$("m-periodicidad").value,
+    inicio:$("m-inicio").value,
+    duracion:$("m-periodicidad").value==="0"?null:$("m-duracion").value,
+    horas,
+    foto:$("m-prev").src||null
   };
 
   const arr=JSON.parse(localStorage.getItem(KEY)||"[]");
@@ -759,21 +730,30 @@ function guardar(){
 
   listar();
   alert("Medicamento guardado correctamente");
+});
+
+function activo(m){
+  if(m.periodicidad==="0") return true;
+  const fin=new Date(m.inicio);
+  fin.setDate(fin.getDate()+Number(m.duracion));
+  return new Date()<=fin;
 }
 
 function listar(){
   const arr=JSON.parse(localStorage.getItem(KEY)||"[]");
-  $("m-lista").innerHTML=arr.map(i=>{
-    const ok=activo(i.fin);
+  $("m-lista").innerHTML=arr.map(m=>{
+    const ok=activo(m);
     return `
       <div class="item">
-        <img src="${i.foto}">
+        <img src="${m.foto||''}">
         <div>
-          <strong>${i.nombre}</strong><br>
-          ${i.lugar} · ${i.dosis} dosis
-          <div class="estado ${ok?'activo':'caducado'}">${ok?'Activo':'Caducado'}</div>
+          <strong>${m.nombre}</strong><br>
+          ${m.lugar || ''} · ${m.dosis} dosis
+          <div class="estado ${ok?'activo':'caducado'}">
+            ${ok?'Activo':'Caducado'}
+          </div>
         </div>
-        <button class="eliminar" onclick="eliminar(${i.id})">Eliminar</button>
+        <button class="eliminar" onclick="eliminar(${m.id})">Eliminar</button>
       </div>
     `;
   }).join("");
@@ -786,32 +766,12 @@ function eliminar(id){
   listar();
 }
 
+document.addEventListener("DOMContentLoaded", listar);
 $("medicamentos").addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
 </script>
 
-<!-- =========================
-     CONEXIÓN DEFINITIVA MEDICAMENTOS
-     ========================= -->
-<script>
-document.addEventListener("click", function (e) {
-  let el = e.target;
 
-  // subir hasta encontrar un nodo con texto
-  while (el && el !== document.body) {
-    const txt = (el.textContent || "").trim().toLowerCase();
-    if (txt === "medicamentos") {
-      const panel = document.getElementById("medicamentos");
-      if (panel) {
-        panel.style.display = "block";
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      return;
-    }
-    el = el.parentElement;
-  }
-});
-</script>
+
 
      
 </body>
