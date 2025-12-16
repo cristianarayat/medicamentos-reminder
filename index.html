@@ -178,7 +178,7 @@ button.secondary{
     <div id="bienvenida"></div>
 
     <button onclick="irADatos()">Datos personales</button>
-    <button>Medicamentos</button>
+    <button onclick="irAMedicamentos()">Medicamentos</button>
     <button>Seguimiento</button>
 
     <img src="personas-inclusivas.png" style="width:100%;margin-top:16px">
@@ -343,229 +343,163 @@ mostrarBienvenida();
      PANTALLA MEDICAMENTOS – VERSIÓN DEFINITIVA
      ===================================================== -->
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Recordatorio de Medicamentos</title>
+<!-- =========================
+     MEDICAMENTOS
+     ========================= -->
+<div class="container hidden" id="medicamentos">
+  <div class="card">
 
-<style>
-/* =======================
-   RESET Y BASE
-   ======================= */
-*{
-  box-sizing:border-box;
-}
+    <h2>Medicamentos</h2>
 
-body{
-  margin:0;
-  font-family: system-ui, Arial, sans-serif;
-  background:#eef1f4;
-  color:#333;
-}
+    <div class="field">
+      <label>Nombre del medicamento</label>
+      <input id="med-nombre">
+    </div>
 
-/* =======================
-   HEADER ÚNICO
-   ======================= */
-header{
-  padding:18px;
-  font-size:22px;
-  font-weight:700;
-}
+    <div class="field">
+      <label>Lugar donde se guarda</label>
+      <input id="med-lugar">
+    </div>
 
-/* =======================
-   CONTENEDOR
-   ======================= */
-.container{
-  max-width:420px;
-  margin:auto;
-  padding:16px;
-}
+    <div class="switch-line">
+      <div class="switch-label">♾ Permanente</div>
+      <label class="switch">
+        <input type="checkbox" id="med-permanente">
+        <span class="slider"></span>
+      </label>
+    </div>
 
-/* =======================
-   BOTONES
-   ======================= */
-button{
-  width:100%;
-  padding:14px;
-  margin:8px 0;
-  border:none;
-  border-radius:10px;
-  background:#e0e0e0;
-  font-size:15px;
-  cursor:pointer;
-}
+    <div class="field" id="fin-line">
+      <label>Fecha de término</label>
+      <input type="date" id="med-fin">
+    </div>
 
-/* =======================
-   SISTEMA DE PANTALLAS
-   ======================= */
-.screen{
-  display:none;
-}
+    <div class="msg-ok" id="med-msg">✔ Medicamento guardado</div>
 
-.screen.active{
-  display:block;
-}
+    <button onclick="guardarMedicamento()">Guardar medicamento</button>
+    <button class="secondary" onclick="volverDesdeMedicamentos()">Volver</button>
 
-/* =======================
-   TARJETAS MEDICAMENTOS
-   ======================= */
-.med-card{
-  background:#fff;
-  border-radius:14px;
-  padding:16px;
-  margin-bottom:12px;
-  box-shadow:0 2px 6px rgba(0,0,0,.1);
-}
-
-.med-activo{
-  border-left:6px solid #2ecc71;
-}
-
-.med-finalizado{
-  border-left:6px solid #e74c3c;
-}
-
-.badge{
-  display:inline-block;
-  padding:4px 10px;
-  font-size:12px;
-  border-radius:20px;
-  margin-bottom:8px;
-}
-
-.badge-activo{
-  background:#2ecc71;
-  color:#fff;
-}
-
-.badge-finalizado{
-  background:#e74c3c;
-  color:#fff;
-}
-
-.med-nombre{
-  font-size:18px;
-  font-weight:700;
-}
-
-.med-lugar{
-  font-size:14px;
-  margin-bottom:6px;
-}
-</style>
-</head>
-
-<body>
-
-<header>
-  💊 Recordatorio de Medicamentos
-</header>
-
-<!-- =======================
-     PANTALLA INICIO (ÚNICA)
-     ======================= -->
-<div id="inicio" class="screen active">
-  <div class="container">
-
-    <p>
-      <strong>Bienvenido Cristian Araya T.</strong><br>
-      45 años y 7 meses
-    </p>
-
-    <button>Datos personales</button>
-    <button onclick="irMedicamentos()">Medicamentos</button>
-    <button>Seguimiento</button>
-
-    <p style="text-align:center;font-size:12px;margin-top:16px;">
-      Desarrollado por CA Tecnología
-    </p>
-
-  </div>
-</div>
-
-<!-- =======================
-     PANTALLA MEDICAMENTOS
-     ======================= -->
-<div id="medicamentos" class="screen">
-  <div class="container">
-
-    <h3 style="text-align:center;">PÁGINA DE MEDICAMENTOS</h3>
+    <hr style="margin:20px 0">
 
     <div id="listaMedicamentos"></div>
 
-    <button onclick="irInicio()">Volver</button>
+    <div class="footer">
+      Desarrollado por <strong>CA Tecnología</strong>
+    </div>
 
   </div>
 </div>
 
 <script>
-/* =======================
-   REFERENCIAS ÚNICAS
-   ======================= */
-const inicio = document.getElementById("inicio");
-const medicamentos = document.getElementById("medicamentos");
-const listaMedicamentos = document.getElementById("listaMedicamentos");
-
-/* =======================
+/* =========================
    NAVEGACIÓN
-   ======================= */
-function irMedicamentos(){
-  inicio.classList.remove("active");
-  medicamentos.classList.add("active");
+   ========================= */
+function irAMedicamentos(){
+  home.style.display="none";
+  datos.classList.add("hidden");
+  medicamentos.classList.remove("hidden");
   renderMedicamentos();
 }
 
-function irInicio(){
-  medicamentos.classList.remove("active");
-  inicio.classList.add("active");
+function volverDesdeMedicamentos(){
+  medicamentos.classList.add("hidden");
+  home.style.display="block";
 }
 
-/* =======================
-   RENDER MEDICAMENTOS
-   ======================= */
-function renderMedicamentos(){
-  const meds = JSON.parse(localStorage.getItem("medicamentos")) || [];
-  listaMedicamentos.innerHTML = "";
+/* =========================
+   PERMANENTE
+   ========================= */
+med-permanente?.addEventListener("change",()=>{
+  fin-line.style.display = med-permanente.checked ? "none" : "block";
+});
 
-  if(meds.length === 0){
-    listaMedicamentos.innerHTML =
-      "<p>No hay medicamentos guardados.</p>";
+/* =========================
+   GUARDAR
+   ========================= */
+function guardarMedicamento(){
+
+  if(med-nombre.value.trim()===""){
+    mostrarMedMsg("⚠️ Debes ingresar el nombre",true);
     return;
   }
 
+  if(!med-permanente.checked && med-fin.value===""){
+    mostrarMedMsg("⚠️ Debes indicar fecha de término",true);
+    return;
+  }
+
+  const meds = JSON.parse(localStorage.getItem("medicamentos")) || [];
+
+  meds.push({
+    nombre: med-nombre.value.trim(),
+    lugar: med-lugar.value.trim(),
+    permanente: med-permanente.checked,
+    fin: med-fin.value
+  });
+
+  localStorage.setItem("medicamentos",JSON.stringify(meds));
+
+  med-nombre.value="";
+  med-lugar.value="";
+  med-fin.value="";
+  med-permanente.checked=false;
+  fin-line.style.display="block";
+
+  mostrarMedMsg("✔ Medicamento guardado correctamente");
+  renderMedicamentos();
+}
+
+/* =========================
+   MENSAJE
+   ========================= */
+function mostrarMedMsg(texto,error=false){
+  med-msg.innerText=texto;
+  med-msg.style.display="block";
+  med-msg.style.background=error?"#fff3cd":"#e8f5e9";
+  med-msg.style.color=error?"#856404":"#2e7d32";
+  setTimeout(()=>med-msg.style.display="none",2500);
+}
+
+/* =========================
+   LISTADO
+   ========================= */
+function renderMedicamentos(){
+  listaMedicamentos.innerHTML="";
+  const meds = JSON.parse(localStorage.getItem("medicamentos")) || [];
   const hoy = new Date();
 
   meds.forEach((m,i)=>{
     const activo = m.permanente || hoy <= new Date(m.fin);
 
-    const card = document.createElement("div");
-    card.className =
-      `med-card ${activo ? "med-activo" : "med-finalizado"}`;
+    const div=document.createElement("div");
+    div.className="card";
+    div.style.marginBottom="12px";
+    div.style.borderLeft=`6px solid ${activo?"#2ecc71":"#e74c3c"}`;
 
-    card.innerHTML = `
-      <span class="badge ${activo ? "badge-activo" : "badge-finalizado"}">
-        ${activo ? "EN USO" : "FINALIZADO"}
-      </span>
-      <div class="med-nombre">${m.nombre}</div>
-      <div class="med-lugar">Lugar: ${m.lugar}</div>
-      <button onclick="eliminarMedicamento(${i})">
-        Eliminar medicamento
+    div.innerHTML=`
+      <strong>${m.nombre}</strong><br>
+      Lugar: ${m.lugar||"-"}<br>
+      Estado: ${activo?"EN USO":"FINALIZADO"}<br><br>
+      <button class="secondary" onclick="eliminarMedicamento(${i})">
+        Eliminar
       </button>
     `;
 
-    listaMedicamentos.appendChild(card);
+    listaMedicamentos.appendChild(div);
   });
 }
 
+/* =========================
+   ELIMINAR
+   ========================= */
 function eliminarMedicamento(i){
   const meds = JSON.parse(localStorage.getItem("medicamentos")) || [];
   meds.splice(i,1);
-  localStorage.setItem("medicamentos", JSON.stringify(meds));
+  localStorage.setItem("medicamentos",JSON.stringify(meds));
   renderMedicamentos();
 }
 </script>
+
 
 </body>
 </html>
