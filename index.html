@@ -456,7 +456,6 @@ document.addEventListener("DOMContentLoaded", actualizarBienvenida);
 window.addEventListener("focus", actualizarBienvenida);
 </script>
 
-
 <!-- =========================
      BLOQUE 3 – MEDICAMENTOS
      ========================= -->
@@ -472,7 +471,7 @@ window.addEventListener("focus", actualizarBienvenida);
 }
 
 .med-container{
-  max-width:540px;
+  max-width:560px;
   margin:0 auto;
   padding:20px 16px 140px;
 }
@@ -490,9 +489,7 @@ window.addEventListener("focus", actualizarBienvenida);
   margin-bottom:12px;
 }
 
-.med-group{
-  margin-bottom:12px;
-}
+.med-group{ margin-bottom:14px; }
 
 .med-group label{
   display:block;
@@ -517,12 +514,11 @@ window.addEventListener("focus", actualizarBienvenida);
 }
 .row > div{ flex:1; }
 
-/* DÍAS + HORAS */
+/* ===== DÍAS Y HORAS ===== */
 .dias-grid{
   display:grid;
   grid-template-columns:repeat(7,1fr);
   gap:8px;
-  margin-top:8px;
 }
 
 .dia-col{
@@ -531,10 +527,10 @@ window.addEventListener("focus", actualizarBienvenida);
 
 .dia-btn{
   width:100%;
-  height:34px;
+  height:36px;
   border-radius:10px;
   border:1px solid #cfcfcf;
-  background:#fff;
+  background:#f7f9fb;
   font-weight:700;
 }
 
@@ -545,10 +541,10 @@ window.addEventListener("focus", actualizarBienvenida);
 }
 
 .horas-dia{
+  margin-top:6px;
   display:flex;
   flex-direction:column;
   gap:6px;
-  margin-top:6px;
 }
 
 .horas-dia input{
@@ -558,7 +554,7 @@ window.addEventListener("focus", actualizarBienvenida);
   padding:0 6px;
 }
 
-/* Foto */
+/* ===== FOTO ===== */
 .foto{
   display:flex;
   align-items:center;
@@ -572,7 +568,7 @@ window.addEventListener("focus", actualizarBienvenida);
   border:1px solid #ccc;
 }
 
-/* Botones */
+/* ===== BOTONES ===== */
 .btn{
   width:100%;
   height:52px;
@@ -587,32 +583,6 @@ window.addEventListener("focus", actualizarBienvenida);
 .btn.volver{
   background:#bdbdbd;
   margin-top:8px;
-}
-
-/* Lista */
-.lista .item{
-  display:grid;
-  grid-template-columns:64px 1fr auto;
-  gap:10px;
-  align-items:center;
-}
-
-.estado{
-  font-size:12px;
-  font-weight:700;
-  padding:4px 8px;
-  border-radius:999px;
-}
-.estado.activo{ background:#e9f7ef; color:#27ae60; }
-.estado.caducado{ background:#fdecea; color:#d32f2f; }
-
-.eliminar{
-  background:#fdecea;
-  color:#d32f2f;
-  border:none;
-  border-radius:10px;
-  padding:6px 10px;
-  font-weight:700;
 }
 </style>
 
@@ -673,43 +643,41 @@ window.addEventListener("focus", actualizarBienvenida);
         <img id="m-prev">
       </div>
 
-      <button class="btn" id="m-guardar">Guardar medicamento</button>
-      <button class="btn volver" id="m-volver">Volver</button>
+      <button class="btn">Guardar medicamento</button>
+      <button class="btn volver" id="btn-volver">Volver</button>
     </div>
-
-    <div class="med-card lista" id="m-lista"></div>
 
   </div>
 </div>
 
 <script>
-const $ = id => document.getElementById(id);
-const KEY = "medicamentos_final_v2";
-
+/* ========= VARIABLES ========= */
 const dias = ["L","M","X","J","V","S","D"];
 let seleccionados = new Set();
 
+/* ========= CREAR DÍAS ========= */
 function crearDias(){
-  const grid = $("dias-grid");
+  const grid = document.getElementById("dias-grid");
   grid.innerHTML = "";
-  dias.forEach(d=>{
+
+  dias.forEach(dia=>{
     const col = document.createElement("div");
     col.className = "dia-col";
 
     const btn = document.createElement("button");
     btn.type="button";
     btn.className="dia-btn";
-    btn.textContent=d;
+    btn.textContent=dia;
 
     const horas = document.createElement("div");
     horas.className="horas-dia";
-    horas.dataset.dia=d;
+    horas.dataset.dia = dia;
 
     btn.onclick = ()=>{
       btn.classList.toggle("on");
       btn.classList.contains("on")
-        ? seleccionados.add(d)
-        : seleccionados.delete(d);
+        ? seleccionados.add(dia)
+        : seleccionados.delete(dia);
       generarHoras();
     };
 
@@ -719,8 +687,9 @@ function crearDias(){
   });
 }
 
+/* ========= HORAS SEGÚN DOSIS ========= */
 function generarHoras(){
-  const dosis = Number($("m-dosis").value || 1);
+  const dosis = Number(document.getElementById("m-dosis").value || 1);
   document.querySelectorAll(".horas-dia").forEach(h=>{
     h.innerHTML="";
     if(!seleccionados.has(h.dataset.dia)) return;
@@ -732,27 +701,34 @@ function generarHoras(){
   });
 }
 
-$("m-dosis").addEventListener("change", generarHoras);
-$("m-periodicidad").addEventListener("change", ()=>{
-  $("m-duracion").disabled = $("m-periodicidad").value==="0";
+document.getElementById("m-dosis").addEventListener("change", generarHoras);
+
+/* ========= PERMANENTE ========= */
+document.getElementById("m-periodicidad").addEventListener("change", ()=>{
+  document.getElementById("m-duracion").disabled =
+    document.getElementById("m-periodicidad").value==="0";
 });
 
-$("m-foto").addEventListener("change", e=>{
+/* ========= FOTO ========= */
+document.getElementById("m-foto").addEventListener("change", e=>{
   const f=e.target.files[0];
   if(!f) return;
   const r=new FileReader();
-  r.onload=()=> $("m-prev").src=r.result;
+  r.onload=()=> document.getElementById("m-prev").src=r.result;
   r.readAsDataURL(f);
 });
 
-$("m-volver").onclick = ()=> $("medicamentos").style.display="none";
+/* ========= VOLVER ========= */
+document.getElementById("btn-volver").onclick = ()=>{
+  document.getElementById("medicamentos").style.display="none";
+};
 
-/* CONECTOR MEDICAMENTOS (SIN TOCAR HOME) */
+/* ========= CONECTOR MEDICAMENTOS (SIN TOCAR HOME) ========= */
 document.addEventListener("pointerdown", e=>{
   let el=e.target;
   while(el && el!==document.body){
     if((el.textContent||"").trim().toLowerCase()==="medicamentos"){
-      $("medicamentos").style.display="block";
+      document.getElementById("medicamentos").style.display="block";
       e.preventDefault();
       return;
     }
@@ -761,41 +737,10 @@ document.addEventListener("pointerdown", e=>{
 }, true);
 
 document.addEventListener("DOMContentLoaded", crearDias);
-$("medicamentos").addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
+document.getElementById("medicamentos")
+  .addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
 </script>
 
-
-
-<!-- =========================
-     CONECTOR BOTÓN MEDICAMENTOS
-     ========================= -->
-<script>
-(function () {
-  document.addEventListener(
-    "pointerdown",
-    function (e) {
-      let el = e.target;
-      while (el && el !== document.body) {
-        const txt = (el.textContent || "")
-          .replace(/\s+/g, " ")
-          .trim()
-          .toLowerCase();
-        if (txt === "medicamentos") {
-          const panel = document.getElementById("medicamentos");
-          if (panel) {
-            panel.style.display = "block";
-            e.preventDefault();
-            e.stopImmediatePropagation();
-          }
-          return;
-        }
-        el = el.parentElement;
-      }
-    },
-    true // captura: clave para móvil
-  );
-})();
-</script>
 
 
      
