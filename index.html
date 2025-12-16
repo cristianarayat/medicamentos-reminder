@@ -789,6 +789,29 @@ function eliminar(id){
 $("medicamentos").addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
 </script>
 
+<!-- =========================
+     CONEXIÓN DEFINITIVA MEDICAMENTOS
+     ========================= -->
+<script>
+document.addEventListener("click", function (e) {
+  let el = e.target;
+
+  // subir hasta encontrar un nodo con texto
+  while (el && el !== document.body) {
+    const txt = (el.textContent || "").trim().toLowerCase();
+    if (txt === "medicamentos") {
+      const panel = document.getElementById("medicamentos");
+      if (panel) {
+        panel.style.display = "block";
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      return;
+    }
+    el = el.parentElement;
+  }
+});
+</script>
 
      
 </body>
