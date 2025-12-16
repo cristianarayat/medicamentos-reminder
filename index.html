@@ -3,24 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Recordatorio de Medicamentos</title>
 
-<!-- =========================================================
+<!-- =========================
      ESTILOS GENERALES
-========================================================= -->
+     ========================= -->
 <style>
-
-/* ---------------------------------------------------------
-   RESET BÁSICO
---------------------------------------------------------- */
-*{
-  box-sizing:border-box;
-}
-
-/* ---------------------------------------------------------
-   BODY
---------------------------------------------------------- */
 body{
   margin:0;
   font-family: system-ui, Arial, sans-serif;
@@ -28,454 +16,106 @@ body{
   color:#333;
 }
 
-/* ---------------------------------------------------------
-   UTILIDADES
---------------------------------------------------------- */
-.hidden{
-  display:none;
-}
-
-/* ---------------------------------------------------------
+/* =========================
    HEADER
---------------------------------------------------------- */
+   ========================= */
 header{
   text-align:center;
-  padding:20px;
+  padding:16px;
+  background:#f7f9fb;
 }
 
-header h1{
-  margin:0;
-  font-size:28px;
-  font-weight:800;
-}
-
-/* ---------------------------------------------------------
-   CONTENEDORES
---------------------------------------------------------- */
+/* =========================
+   CONTENEDOR PRINCIPAL
+   ========================= */
 .container{
   max-width:480px;
   margin:auto;
   padding:16px;
 }
 
+/* =========================
+   TARJETA HOME
+   ========================= */
 .card{
-  background:#ffffff;
+  background:#fff;
   border-radius:18px;
-  padding:22px;
+  padding:20px;
   box-shadow:0 12px 28px rgba(0,0,0,.12);
 }
 
-/* ---------------------------------------------------------
+/* =========================
+   BIENVENIDA
+   ========================= */
+#bienvenida{
+  font-size:18px;
+  font-weight:700;
+  text-align:center;
+  margin-bottom:16px;
+}
+
+/* =========================
    BOTONES
---------------------------------------------------------- */
+   ========================= */
 button{
   width:100%;
-  height:56px;
+  height:52px;
   border:none;
   border-radius:14px;
   background:#2f80ed;
-  color:#ffffff;
-  font-size:17px;
+  color:white;
+  font-size:16px;
   font-weight:700;
-  margin-top:14px;
+  margin-top:12px;
   cursor:pointer;
 }
 
-button.secondary{
-  background:#6c757d;
-}
-
-button.danger{
-  background:#e74c3c;
-}
-
-/* ---------------------------------------------------------
-   CAMPOS
---------------------------------------------------------- */
-.field{
-  margin-top:16px;
-}
-
-.field label{
-  display:block;
-  font-weight:600;
-  margin-bottom:6px;
-}
-
-.field input{
+/* =========================
+   IMAGEN HOME
+   ========================= */
+.imagen-home{
   width:100%;
-  height:52px;
-  border-radius:12px;
-  border:1px solid #ccc;
-  padding:12px;
-  font-size:16px;
+  max-width:420px;
+  display:block;
+  margin:20px auto 0 auto;
 }
-
-/* ---------------------------------------------------------
-   SWITCH
---------------------------------------------------------- */
-.switch-line{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:18px;
-}
-
-.switch{
-  position:relative;
-  width:56px;
-  height:30px;
-}
-
-.switch input{
-  display:none;
-}
-
-.slider{
-  position:absolute;
-  inset:0;
-  background:#ccc;
-  border-radius:30px;
-}
-
-.slider::before{
-  content:"";
-  position:absolute;
-  width:24px;
-  height:24px;
-  left:3px;
-  top:3px;
-  background:#fff;
-  border-radius:50%;
-  transition:.3s;
-}
-
-.switch input:checked + .slider{
-  background:#2f80ed;
-}
-
-.switch input:checked + .slider::before{
-  transform:translateX(26px);
-}
-
-/* ---------------------------------------------------------
-   MENSAJES
---------------------------------------------------------- */
-.msg{
-  margin-top:14px;
-  padding:10px;
-  border-radius:10px;
-  text-align:center;
-  display:none;
-}
-
-.msg.ok{
-  background:#e8f5e9;
-  color:#2e7d32;
-}
-
-.msg.warn{
-  background:#fff3cd;
-  color:#856404;
-}
-
-/* ---------------------------------------------------------
-   FOOTER
---------------------------------------------------------- */
-.footer{
-  margin-top:20px;
-  text-align:center;
-  font-size:13px;
-  color:#777;
-}
-
-/* ---------------------------------------------------------
-   MEDICAMENTOS LISTADO
---------------------------------------------------------- */
-.med-card{
-  margin-top:14px;
-  padding:14px;
-  border-radius:12px;
-  background:#f9f9f9;
-  border-left:6px solid #2ecc71;
-}
-
-.med-final{
-  border-left-color:#e74c3c;
-}
-
-.badge{
-  font-size:12px;
-  font-weight:700;
-  margin-bottom:6px;
-}
-
-.days{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:6px;
-}
-
-.days label{
-  font-size:15px;
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- =========================================================
+<!-- =========================
      HEADER
-========================================================= -->
+     ========================= -->
 <header>
   <h1>💊 Recordatorio de Medicamentos</h1>
 </header>
 
-<!-- =========================================================
-     HOME
-========================================================= -->
-<div class="container" id="home">
+<!-- =========================
+     HOME / MENÚ PRINCIPAL
+     ========================= -->
+<div class="container">
   <div class="card">
 
-    <div id="bienvenida" style="text-align:center;font-size:18px;font-weight:700;margin-bottom:12px;">
+    <!-- BIENVENIDA -->
+    <div id="bienvenida">
       Bienvenido
     </div>
 
-    <button onclick="irADatos()">Datos personales</button>
-    <button onclick="irAMedicamentos()">Medicamentos</button>
-    <button disabled>Seguimiento</button>
+    <!-- BOTONES DE NAVEGACIÓN -->
+    <button>Datos personales</button>
+    <button>Medicamentos</button>
+    <button>Seguimiento</button>
 
-    <div class="footer">
-      Desarrollado por <strong>CA Tecnología</strong>
-    </div>
-
-  </div>
-</div>
-
-<!-- =========================================================
-     DATOS PERSONALES
-========================================================= -->
-<div class="container hidden" id="datos">
-  <div class="card">
-
-    <h2>Datos personales</h2>
-
-    <div class="field">
-      <label>Nombre</label>
-      <input id="nombre">
-    </div>
-
-    <div class="field">
-      <label>Fecha de nacimiento</label>
-      <input type="date" id="nacimiento">
-    </div>
-
-    <div class="field">
-      <label>Cuidador</label>
-      <input id="cuidador">
-    </div>
-
-    <div class="field">
-      <label>Teléfono</label>
-      <input id="telefono" value="+56 ">
-    </div>
-
-    <div class="switch-line">
-      <span>Vibración</span>
-      <label class="switch">
-        <input type="checkbox" id="vibracion">
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <div class="switch-line">
-      <span>Sonido</span>
-      <label class="switch">
-        <input type="checkbox" id="sonido">
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <div class="msg ok" id="msgDatos"></div>
-
-    <button onclick="guardarDatos()">Guardar</button>
-    <button class="secondary" onclick="volverHome()">Volver</button>
+    <!-- IMAGEN INFERIOR -->
+    <img 
+      src="personas-inclusivas.png" 
+      alt="Personas inclusivas"
+      class="imagen-home"
+    >
 
   </div>
 </div>
-
-<!-- =========================================================
-     MEDICAMENTOS
-========================================================= -->
-<div class="container hidden" id="medicamentos">
-  <div class="card">
-
-    <h2>Medicamentos</h2>
-
-    <div class="field">
-      <label>Nombre medicamento</label>
-      <input id="mNombre">
-    </div>
-
-    <div class="field">
-      <label>Lugar</label>
-      <input id="mLugar">
-    </div>
-
-    <div class="field">
-      <label>Días</label>
-      <div class="days">
-        <label><input type="checkbox" value="Lunes"> Lunes</label>
-        <label><input type="checkbox" value="Martes"> Martes</label>
-        <label><input type="checkbox" value="Miércoles"> Miércoles</label>
-        <label><input type="checkbox" value="Jueves"> Jueves</label>
-        <label><input type="checkbox" value="Viernes"> Viernes</label>
-        <label><input type="checkbox" value="Sábado"> Sábado</label>
-        <label><input type="checkbox" value="Domingo"> Domingo</label>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Hora</label>
-      <input type="time" id="mHora">
-    </div>
-
-    <div class="switch-line">
-      <span>Permanente</span>
-      <label class="switch">
-        <input type="checkbox" id="mPerm">
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <div class="field" id="finBox">
-      <label>Fecha término</label>
-      <input type="date" id="mFin">
-    </div>
-
-    <button onclick="guardarMedicamento()">Guardar medicamento</button>
-    <button class="secondary" onclick="volverHome()">Volver</button>
-
-    <div id="listaMedicamentos"></div>
-
-  </div>
-</div>
-
-<!-- =========================================================
-     JAVASCRIPT
-========================================================= -->
-<script>
-
-/* ---------------------------------------------------------
-   REFERENCIAS
---------------------------------------------------------- */
-const home = document.getElementById("home");
-const datos = document.getElementById("datos");
-const medicamentos = document.getElementById("medicamentos");
-
-/* ---------------------------------------------------------
-   NAVEGACIÓN
---------------------------------------------------------- */
-function irADatos(){
-  home.style.display="none";
-  datos.classList.remove("hidden");
-}
-
-function irAMedicamentos(){
-  home.style.display="none";
-  medicamentos.classList.remove("hidden");
-  renderMedicamentos();
-}
-
-function volverHome(){
-  datos.classList.add("hidden");
-  medicamentos.classList.add("hidden");
-  home.style.display="block";
-}
-
-/* ---------------------------------------------------------
-   DATOS PERSONALES
---------------------------------------------------------- */
-function guardarDatos(){
-  if(!nombre.value || !nacimiento.value){
-    msgDatos.textContent="Completa los datos";
-    msgDatos.className="msg warn";
-    msgDatos.style.display="block";
-    return;
-  }
-  localStorage.setItem("usuario",JSON.stringify({
-    nombre:nombre.value,
-    nacimiento:nacimiento.value
-  }));
-  msgDatos.textContent="Datos guardados";
-  msgDatos.className="msg ok";
-  msgDatos.style.display="block";
-  mostrarBienvenida();
-}
-
-function mostrarBienvenida(){
-  const d = JSON.parse(localStorage.getItem("usuario"));
-  if(d){
-    bienvenida.textContent = "Bienvenido " + d.nombre;
-  }
-}
-mostrarBienvenida();
-
-/* ---------------------------------------------------------
-   MEDICAMENTOS
---------------------------------------------------------- */
-mPerm.addEventListener("change",()=>{
-  finBox.style.display = mPerm.checked ? "none" : "block";
-});
-
-function guardarMedicamento(){
-  const dias = [...document.querySelectorAll(".days input:checked")].map(d=>d.value);
-  if(!mNombre.value || dias.length===0 || !mHora.value){
-    return;
-  }
-  const meds = JSON.parse(localStorage.getItem("meds")) || [];
-  meds.push({
-    nombre:mNombre.value,
-    lugar:mLugar.value,
-    dias,
-    hora:mHora.value,
-    permanente:mPerm.checked,
-    fin:mFin.value
-  });
-  localStorage.setItem("meds",JSON.stringify(meds));
-  renderMedicamentos();
-}
-
-function renderMedicamentos(){
-  listaMedicamentos.innerHTML="";
-  const meds = JSON.parse(localStorage.getItem("meds")) || [];
-  const hoy = new Date();
-
-  meds.forEach((m,i)=>{
-    const activo = m.permanente || new Date(m.fin)>=hoy;
-    const div = document.createElement("div");
-    div.className = "med-card" + (activo?"":" med-final");
-    div.innerHTML = `
-      <div class="badge">${activo?"EN USO":"FINALIZADO"}</div>
-      <strong>${m.nombre}</strong><br>
-      ${m.lugar}<br>
-      ${m.dias.join(", ")} - ${m.hora}
-      <button class="danger" onclick="eliminarMedicamento(${i})">Eliminar</button>
-    `;
-    listaMedicamentos.appendChild(div);
-  });
-}
-
-function eliminarMedicamento(i){
-  const meds = JSON.parse(localStorage.getItem("meds")) || [];
-  meds.splice(i,1);
-  localStorage.setItem("meds",JSON.stringify(meds));
-  renderMedicamentos();
-}
-
-</script>
 
 </body>
 </html>
