@@ -458,7 +458,7 @@ window.addEventListener("focus", actualizarBienvenida);
 
 
 <!-- =========================
-     BLOQUE 3 – MEDICAMENTOS (FINAL CORREGIDO)
+     BLOQUE 3 – MEDICAMENTOS
      ========================= -->
 <style>
 #medicamentos{
@@ -515,11 +515,28 @@ window.addEventListener("focus", actualizarBienvenida);
   display:flex;
   gap:8px;
 }
-.row > div{
-  flex:1;
+.row > div{ flex:1; }
+
+/* Días */
+.dias{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+}
+.dias button{
+  height:36px;
+  border-radius:10px;
+  border:1px solid #cfcfcf;
+  background:#fff;
+  font-weight:700;
+}
+.dias button.on{
+  background:#27ae60;
+  color:#fff;
+  border-color:#27ae60;
 }
 
-/* Horarios */
+/* Horas */
 .horas{
   display:flex;
   flex-wrap:wrap;
@@ -559,9 +576,7 @@ window.addEventListener("focus", actualizarBienvenida);
   font-weight:700;
   padding:4px 8px;
   border-radius:999px;
-  display:inline-block;
 }
-
 .estado.activo{
   background:#e9f7ef;
   color:#27ae60;
@@ -627,6 +642,26 @@ window.addEventListener("focus", actualizarBienvenida);
         </select>
       </div>
 
+      <!-- DÍAS + HORAS (ANTES DE FECHAS) -->
+      <div class="med-group">
+        <label>Días de la semana</label>
+        <div class="dias" id="m-dias">
+          <button type="button">L</button>
+          <button type="button">M</button>
+          <button type="button">X</button>
+          <button type="button">J</button>
+          <button type="button">V</button>
+          <button type="button">S</button>
+          <button type="button">D</button>
+        </div>
+      </div>
+
+      <div class="med-group">
+        <label>Horarios por día</label>
+        <div class="horas" id="m-horas"></div>
+      </div>
+
+      <!-- FECHAS -->
       <div class="row">
         <div class="med-group">
           <label>Inicio del tratamiento</label>
@@ -636,11 +671,6 @@ window.addEventListener("focus", actualizarBienvenida);
           <label>Días de tratamiento</label>
           <input id="m-duracion" type="number" min="1">
         </div>
-      </div>
-
-      <div class="med-group">
-        <label>Horas por día</label>
-        <div class="horas" id="m-horas"></div>
       </div>
 
       <div class="med-group foto">
@@ -658,40 +688,53 @@ window.addEventListener("focus", actualizarBienvenida);
 
 <script>
 const $ = id => document.getElementById(id);
-const KEY = "medicamentos_v2";
+const KEY = "medicamentos_final";
 
-function abrirMedicamentos(){
-  $("medicamentos").style.display="block";
-}
+let diasSel = new Set();
 
-document.addEventListener("click", e=>{
+/* CONECTOR MEDICAMENTOS (SIN TOCAR HOME) */
+document.addEventListener("pointerdown", e=>{
   let el=e.target;
   while(el && el!==document.body){
     if((el.textContent||"").trim().toLowerCase()==="medicamentos"){
-      abrirMedicamentos();
+      $("medicamentos").style.display="block";
+      e.preventDefault();
       return;
     }
     el=el.parentElement;
   }
+}, true);
+
+/* DÍAS + HORAS */
+$("m-dias").addEventListener("click", e=>{
+  if(e.target.tagName!=="BUTTON") return;
+  e.target.classList.toggle("on");
+  const d=e.target.textContent;
+  e.target.classList.contains("on") ? diasSel.add(d) : diasSel.delete(d);
+  generarHoras();
 });
 
 $("m-dosis").addEventListener("change", generarHoras);
-$("m-periodicidad").addEventListener("change", ()=>{
-  $("m-duracion").disabled = $("m-periodicidad").value==="0";
-});
 
 function generarHoras(){
   const cont=$("m-horas");
   cont.innerHTML="";
-  const n=Number($("m-dosis").value||1);
-  for(let i=0;i<n;i++){
-    const t=document.createElement("input");
-    t.type="time";
-    cont.appendChild(t);
-  }
+  const dosis=Number($("m-dosis").value||1);
+  diasSel.forEach(()=>{
+    for(let i=0;i<dosis;i++){
+      const h=document.createElement("input");
+      h.type="time";
+      cont.appendChild(h);
+    }
+  });
 }
-generarHoras();
 
+/* PERMANENTE */
+$("m-periodicidad").addEventListener("change", ()=>{
+  $("m-duracion").disabled = $("m-periodicidad").value==="0";
+});
+
+/* FOTO */
 $("m-foto").addEventListener("change", e=>{
   const f=e.target.files[0];
   if(!f) return;
@@ -700,10 +743,12 @@ $("m-foto").addEventListener("change", e=>{
   r.readAsDataURL(f);
 });
 
+/* GUARDAR */
 $("m-guardar").addEventListener("click", ()=>{
   if(
     !$("m-nombre").value ||
     !$("m-inicio").value ||
+    diasSel.size===0 ||
     ($("m-periodicidad").value!=="0" && !$("m-duracion").value)
   ){
     alert("Completa todos los campos");
@@ -720,6 +765,7 @@ $("m-guardar").addEventListener("click", ()=>{
     periodicidad:$("m-periodicidad").value,
     inicio:$("m-inicio").value,
     duracion:$("m-periodicidad").value==="0"?null:$("m-duracion").value,
+    dias:[...diasSel],
     horas,
     foto:$("m-prev").src||null
   };
@@ -727,11 +773,11 @@ $("m-guardar").addEventListener("click", ()=>{
   const arr=JSON.parse(localStorage.getItem(KEY)||"[]");
   arr.push(item);
   localStorage.setItem(KEY, JSON.stringify(arr));
-
   listar();
   alert("Medicamento guardado correctamente");
 });
 
+/* LISTAR */
 function activo(m){
   if(m.periodicidad==="0") return true;
   const fin=new Date(m.inicio);
@@ -748,7 +794,7 @@ function listar(){
         <img src="${m.foto||''}">
         <div>
           <strong>${m.nombre}</strong><br>
-          ${m.lugar || ''} · ${m.dosis} dosis
+          ${m.lugar||''} · ${m.dosis} dosis
           <div class="estado ${ok?'activo':'caducado'}">
             ${ok?'Activo':'Caducado'}
           </div>
@@ -768,33 +814,6 @@ function eliminar(id){
 
 document.addEventListener("DOMContentLoaded", listar);
 $("medicamentos").addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
-</script>
-
-
-<!-- =========================
-     CONECTOR MEDICAMENTOS (CAPTURA REAL)
-     ========================= -->
-<script>
-(function () {
-  document.addEventListener("pointerdown", function (e) {
-    let el = e.target;
-
-    while (el && el !== document.body) {
-      const txt = (el.textContent || "").replace(/\s+/g," ").trim().toLowerCase();
-
-      if (txt === "medicamentos") {
-        const panel = document.getElementById("medicamentos");
-        if (panel) {
-          panel.style.display = "block";
-          e.preventDefault();
-          e.stopImmediatePropagation();
-        }
-        return;
-      }
-      el = el.parentElement;
-    }
-  }, true); // 👈 CAPTURING
-})();
 </script>
 
 
