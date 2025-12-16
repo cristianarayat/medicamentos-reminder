@@ -137,11 +137,16 @@ button{
 
 
 
-
 <!-- =========================
      BLOQUE 2 – DATOS PERSONALES (FINAL)
      ========================= -->
 <style>
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+}
+
 #datos-personales{
   display:none;
   position:fixed;
@@ -160,36 +165,37 @@ button{
 .dp-card{
   background:#fff;
   border-radius:18px;
-  padding:20px;
+  padding:22px;
   box-shadow:0 12px 28px rgba(0,0,0,.12);
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:16px;
 }
 
 .dp-card h2{
   text-align:center;
-  margin-bottom:8px;
+  margin:0 0 6px 0;
 }
 
 .dp-group{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
+  width:100%;
 }
 
 .dp-group label{
+  display:block;
   font-size:14px;
   font-weight:600;
+  margin-bottom:6px;
 }
 
 .dp-group input{
   width:100%;
-  height:46px;
-  border-radius:12px;
-  border:1px solid #ccc;
-  padding:0 14px;
+  height:50px;
+  border-radius:16px;
+  border:1px solid #cfcfcf;
+  padding:0 16px;
   font-size:16px;
+  background:#fff;
 }
 
 /* Switch + iconos */
@@ -197,43 +203,49 @@ button{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-top:6px;
 }
 
 .switch-left{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
   font-size:15px;
+  font-weight:500;
 }
 
 .switch-left svg{
-  width:22px;
-  height:22px;
-  fill:#2f80ed;
-}
-
-.switch{
-  position:relative;
-  width:46px;
+  width:26px;
   height:26px;
 }
 
-.switch input{ opacity:0; }
+.icon-voz{ fill:#2f80ed; }
+.icon-vibra{ fill:#27ae60; }
+
+.switch{
+  position:relative;
+  width:50px;
+  height:28px;
+}
+
+.switch input{
+  opacity:0;
+  width:0;
+  height:0;
+}
 
 .slider{
   position:absolute;
   inset:0;
   background:#ccc;
-  border-radius:26px;
+  border-radius:28px;
   transition:.3s;
 }
 
 .slider:before{
   content:"";
   position:absolute;
-  width:20px;
-  height:20px;
+  width:22px;
+  height:22px;
   left:3px;
   top:3px;
   background:#fff;
@@ -246,23 +258,26 @@ button{
 }
 
 .switch input:checked + .slider:before{
-  transform:translateX(20px);
+  transform:translateX(22px);
 }
 
 .dp-btn{
   width:100%;
-  height:52px;
+  height:56px;
   border:none;
-  border-radius:14px;
+  border-radius:18px;
+  font-size:17px;
+  font-weight:700;
+}
+
+.dp-btn{
   background:#2f80ed;
   color:#fff;
-  font-size:16px;
-  font-weight:700;
-  margin-top:8px;
 }
 
 .dp-btn.secundario{
-  background:#aaa;
+  background:#bdbdbd;
+  color:#fff;
 }
 </style>
 
@@ -292,10 +307,10 @@ button{
         <input type="tel">
       </div>
 
-      <!-- VOZ -->
+      <!-- Voz -->
       <div class="switch-row">
         <div class="switch-left">
-          <svg viewBox="0 0 24 24">
+          <svg class="icon-voz" viewBox="0 0 24 24">
             <path d="M3 10v4h4l5 5V5L7 10H3z"/>
           </svg>
           <span>Recordatorios por voz</span>
@@ -306,10 +321,10 @@ button{
         </label>
       </div>
 
-      <!-- VIBRACIÓN -->
+      <!-- Vibración -->
       <div class="switch-row">
         <div class="switch-left">
-          <svg viewBox="0 0 24 24">
+          <svg class="icon-vibra" viewBox="0 0 24 24">
             <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
           </svg>
           <span>Vibración</span>
@@ -327,33 +342,29 @@ button{
   </div>
 </div>
 
-<!-- =========================
-     BLOQUE 3 – NAVEGACIÓN (FINAL)
-     ========================= -->
 <script>
+/* Navegación sin tocar Home */
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Abrir Datos personales desde Home
+  // Abrir desde botón Home
   document.querySelectorAll("button").forEach(b => {
     if (b.textContent.trim() === "Datos personales") {
       b.addEventListener("click", () => {
-        const dp = document.getElementById("datos-personales");
-        if (dp) dp.style.display = "block";
+        document.getElementById("datos-personales").style.display="block";
       });
     }
   });
 
-  // Cerrar con botón Volver
+  // Volver
   document.addEventListener("click", e => {
-    if (e.target.matches(".dp-btn.secundario")) {
-      const dp = document.getElementById("datos-personales");
-      if (dp) dp.style.display = "none";
+    if (e.target.classList.contains("secundario")) {
+      document.getElementById("datos-personales").style.display="none";
     }
   });
 
 });
 
-// Bloquea pull-to-refresh en móvil
+/* Bloquea pull-to-refresh en móvil */
 document.getElementById("datos-personales")
   .addEventListener("touchmove", e => e.preventDefault(), { passive:false });
 </script>
