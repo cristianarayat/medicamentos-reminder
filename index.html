@@ -135,6 +135,112 @@ button{
   Desarrollado por <strong>CA Tecnología</strong>
 </div>
 
+
+
+<!-- =========================
+     DATOS PERSONALES (BLOQUE 2)
+     ========================= -->
+<style>
+#datos-personales{
+  display:none; /* se activará en bloque navegación */
+  position:fixed;
+  inset:0;
+  background:#eef1f4;
+  z-index:1000;
+}
+
+.dp-container{
+  max-width:480px;
+  margin:auto;
+  padding:16px;
+}
+
+.dp-card{
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+
+.dp-card h2{
+  text-align:center;
+  margin-bottom:16px;
+}
+
+.dp-group{
+  margin-bottom:14px;
+}
+
+.dp-group label{
+  font-size:14px;
+  font-weight:600;
+  display:block;
+  margin-bottom:4px;
+}
+
+.dp-group input{
+  width:100%;
+  height:44px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  padding:0 12px;
+  font-size:15px;
+}
+
+.dp-btn{
+  width:100%;
+  height:52px;
+  border:none;
+  border-radius:14px;
+  background:#2f80ed;
+  color:white;
+  font-size:16px;
+  font-weight:700;
+  margin-top:12px;
+}
+
+.dp-btn.secundario{
+  background:#aaa;
+}
+</style>
+
+<div id="datos-personales">
+  <div class="dp-container">
+    <div class="dp-card">
+
+      <h2>Datos personales</h2>
+
+      <div class="dp-group">
+        <label>Nombre</label>
+        <input type="text" placeholder="Ej: Juan Pérez">
+      </div>
+
+      <div class="dp-group">
+        <label>Edad</label>
+        <input type="number" placeholder="Ej: 65">
+      </div>
+
+      <div class="dp-group">
+        <label>Contacto de emergencia</label>
+        <input type="tel" placeholder="Ej: +56 9 1234 5678">
+      </div>
+
+      <button class="dp-btn">Guardar</button>
+      <button class="dp-btn secundario">Volver</button>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* 
+  Navegación se implementará
+  en bloque posterior.
+*/
+</script>
+
+     
+     
 </body>
 </html>
 
