@@ -201,7 +201,6 @@ button{
   padding:0 14px;
   background:#f1f3f4;
   font-weight:600;
-  color:#333;
   border-right:1px solid #cfcfcf;
 }
 
@@ -213,7 +212,7 @@ button{
   font-size:16px;
 }
 
-/* Switch + iconos */
+/* Switch */
 .switch-row{
   display:flex;
   justify-content:space-between;
@@ -227,13 +226,9 @@ button{
   font-size:15px;
 }
 
-.switch-left svg{
-  width:28px;
-  height:28px;
+.emoji{
+  font-size:24px;
 }
-
-.icon-voz{ fill:#2f80ed; }
-.icon-vibra{ fill:#27ae60; }
 
 .switch{
   position:relative;
@@ -320,9 +315,7 @@ button{
       <!-- VOZ -->
       <div class="switch-row">
         <div class="switch-left">
-          <svg class="icon-voz" viewBox="0 0 24 24">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm11 3a4 4 0 0 0-2-3.46v6.92A4 4 0 0 0 14 12z"/>
-          </svg>
+          <span class="emoji">🔊</span>
           <span>Recordatorios por voz</span>
         </div>
         <label class="switch">
@@ -334,9 +327,7 @@ button{
       <!-- VIBRACIÓN -->
       <div class="switch-row">
         <div class="switch-left">
-          <svg class="icon-vibra" viewBox="0 0 24 24">
-            <path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
-          </svg>
+          <span class="emoji">📳</span>
           <span>Vibración</span>
         </div>
         <label class="switch">
@@ -416,50 +407,6 @@ document.getElementById("datos-personales")
 </script>
 
 
-<!-- =========================
-     BLOQUE – BIENVENIDA HOME
-     ========================= -->
-<script>
-function calcularEdad(fechaNacimiento){
-  const hoy = new Date();
-  const nac = new Date(fechaNacimiento);
-
-  let años = hoy.getFullYear() - nac.getFullYear();
-  let meses = hoy.getMonth() - nac.getMonth();
-
-  if (meses < 0) {
-    años--;
-    meses += 12;
-  }
-
-  return { años, meses };
-}
-
-function actualizarHome(){
-  const data = JSON.parse(localStorage.getItem("datosPersonales"));
-  if (!data) return;
-
-  const bienvenida = document.getElementById("bienvenida");
-  if (!bienvenida) return;
-
-  const edad = calcularEdad(data.nacimiento);
-
-  bienvenida.innerHTML = `
-    Bienvenido ${data.paciente}
-    <div style="
-      margin-top:6px;
-      font-size:14px;
-      font-weight:500;
-      text-align:center;
-      color:#555;
-    ">
-      ${edad.años} años y ${edad.meses} meses
-    </div>
-  `;
-}
-
-document.addEventListener("DOMContentLoaded", actualizarHome);
-</script>
 
      
 </body>
