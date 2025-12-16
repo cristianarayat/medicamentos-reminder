@@ -733,6 +733,24 @@ document.addEventListener("DOMContentLoaded", listar);
 </script>
 
 
+<!-- =========================
+     FIX CONEXIÓN MEDICAMENTOS
+     ========================= -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const botones = document.querySelectorAll("button");
+
+  botones.forEach(b => {
+    const txt = b.textContent.toLowerCase();
+    if (txt.includes("medicamentos")) {
+      b.addEventListener("click", () => {
+        const p = document.getElementById("medicamentos");
+        if (p) p.style.display = "block";
+      });
+    }
+  });
+});
+</script>
 
 
      
