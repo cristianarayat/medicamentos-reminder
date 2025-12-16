@@ -342,7 +342,6 @@ mostrarBienvenida();
 <!-- =====================================================
      PANTALLA MEDICAMENTOS – VERSIÓN DEFINITIVA
      ===================================================== -->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -362,16 +361,15 @@ body{
 }
 
 /* =========================
-   HEADER / TÍTULO
+   HEADER
    ========================= */
-.app-header{
+header{
   background:#1e88e5;
   color:#fff;
   padding:14px;
   text-align:center;
-  font-weight:700;
   font-size:16px;
-  letter-spacing:1px;
+  font-weight:700;
 }
 
 /* =========================
@@ -384,21 +382,13 @@ body{
 }
 
 /* =========================
-   LISTA
-   ========================= */
-#listaMedicamentos{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-/* =========================
-   CARD MEDICAMENTO
+   TARJETA MEDICAMENTO
    ========================= */
 .med-card{
   background:#fff;
   border-radius:14px;
   padding:16px;
+  margin-bottom:14px;
   box-shadow:0 2px 6px rgba(0,0,0,.1);
 }
 
@@ -437,12 +427,11 @@ body{
 .med-nombre{
   font-size:18px;
   font-weight:700;
-  margin-bottom:2px;
 }
 
 .med-lugar{
   font-size:14px;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
 
 /* =========================
@@ -450,19 +439,8 @@ body{
    ========================= */
 .dia-horario{
   font-size:15px;
-  line-height:1.3;
   margin:3px 0;
-}
-
-/* =========================
-   IMAGEN
-   ========================= */
-.med-foto{
-  width:100%;
-  max-width:220px;
-  display:block;
-  margin:10px auto;
-  border-radius:8px;
+  line-height:1.3;
 }
 
 /* =========================
@@ -486,49 +464,41 @@ button:hover{
 
 <body>
 
-<!-- =========================
-     HEADER
-     ========================= -->
-<header class="app-header">
+<header>
   PÁGINA DE MEDICAMENTOS
 </header>
 
-<!-- =========================
-     CONTENIDO
-     ========================= -->
 <div class="container">
   <div id="listaMedicamentos"></div>
 </div>
 
 <script>
 /* =========================
-   VARIABLES
+   DÍAS DE LA SEMANA
    ========================= */
-const listaMedicamentos = document.getElementById("listaMedicamentos");
-
 const diasSemana = {
-  lun: "Lunes",
-  mar: "Martes",
-  mie: "Miércoles",
-  jue: "Jueves",
-  vie: "Viernes",
-  sab: "Sábado",
-  dom: "Domingo"
+  lun:"Lunes",
+  mar:"Martes",
+  mie:"Miércoles",
+  jue:"Jueves",
+  vie:"Viernes",
+  sab:"Sábado",
+  dom:"Domingo"
 };
 
 /* =========================
-   RENDER
+   RENDER MEDICAMENTOS
    ========================= */
 function renderMedicamentos(){
 
+  const lista = document.getElementById("listaMedicamentos");
   const medicamentos =
     JSON.parse(localStorage.getItem("medicamentos")) || [];
 
-  listaMedicamentos.innerHTML = "";
+  lista.innerHTML = "";
 
   if(medicamentos.length === 0){
-    listaMedicamentos.innerHTML =
-      "<p>No hay medicamentos guardados.</p>";
+    lista.innerHTML = "<p>No hay medicamentos guardados.</p>";
     return;
   }
 
@@ -563,27 +533,22 @@ function renderMedicamentos(){
 
       ${horariosHTML}
 
-      ${m.foto
-        ? `<img src="${m.foto}" class="med-foto">`
-        : ""
-      }
-
       <button onclick="eliminarMedicamento(${i})">
         Eliminar medicamento
       </button>
     `;
 
-    listaMedicamentos.appendChild(card);
+    lista.appendChild(card);
   });
 }
 
 /* =========================
-   ELIMINAR
+   ELIMINAR MEDICAMENTO
    ========================= */
 function eliminarMedicamento(i){
   const meds =
     JSON.parse(localStorage.getItem("medicamentos")) || [];
-  meds.splice(i, 1);
+  meds.splice(i,1);
   localStorage.setItem("medicamentos", JSON.stringify(meds));
   renderMedicamentos();
 }
