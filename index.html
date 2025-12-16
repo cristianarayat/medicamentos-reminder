@@ -239,6 +239,27 @@ button{
 */
 </script>
 
+     <!-- =========================
+     BLOQUE 3 – NAVEGACIÓN
+     ========================= -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // Buscar todos los botones
+  const botones = document.querySelectorAll("button");
+
+  botones.forEach(btn => {
+    if (btn.textContent.trim() === "Datos personales") {
+      btn.addEventListener("click", () => {
+        const pantalla = document.getElementById("datos-personales");
+        if (pantalla) pantalla.style.display = "block";
+      });
+    }
+  });
+
+});
+</script>
+
      
      
 </body>
