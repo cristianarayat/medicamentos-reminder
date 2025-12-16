@@ -138,15 +138,16 @@ button{
 
 
 <!-- =========================
-     DATOS PERSONALES (BLOQUE 2)
+     DATOS PERSONALES (BLOQUE 2 FINAL)
      ========================= -->
 <style>
 #datos-personales{
-  display:none; /* se activará en bloque navegación */
+  display:none;
   position:fixed;
   inset:0;
   background:#eef1f4;
   z-index:1000;
+  overscroll-behavior: none; /* evita pull-to-refresh */
 }
 
 .dp-container{
@@ -187,6 +188,54 @@ button{
   font-size:15px;
 }
 
+/* Switch */
+.switch-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:14px 0;
+}
+
+.switch{
+  position:relative;
+  width:46px;
+  height:26px;
+}
+
+.switch input{
+  opacity:0;
+  width:0;
+  height:0;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:#ccc;
+  border-radius:26px;
+  transition:.3s;
+}
+
+.slider:before{
+  content:"";
+  position:absolute;
+  width:20px;
+  height:20px;
+  left:3px;
+  top:3px;
+  background:white;
+  border-radius:50%;
+  transition:.3s;
+}
+
+.switch input:checked + .slider{
+  background:#2f80ed;
+}
+
+.switch input:checked + .slider:before{
+  transform:translateX(20px);
+}
+
 .dp-btn{
   width:100%;
   height:52px;
@@ -211,7 +260,7 @@ button{
       <h2>Datos personales</h2>
 
       <div class="dp-group">
-        <label>Nombre</label>
+        <label>Nombre del paciente</label>
         <input type="text" placeholder="Ej: Juan Pérez">
       </div>
 
@@ -221,8 +270,29 @@ button{
       </div>
 
       <div class="dp-group">
-        <label>Contacto de emergencia</label>
+        <label>Nombre del cuidador</label>
+        <input type="text" placeholder="Ej: María González">
+      </div>
+
+      <div class="dp-group">
+        <label>Teléfono del cuidador</label>
         <input type="tel" placeholder="Ej: +56 9 1234 5678">
+      </div>
+
+      <div class="switch-row">
+        <span>Recordatorios por voz</span>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="switch-row">
+        <span>Vibración</span>
+        <label class="switch">
+          <input type="checkbox">
+          <span class="slider"></span>
+        </label>
       </div>
 
       <button class="dp-btn">Guardar</button>
@@ -233,34 +303,11 @@ button{
 </div>
 
 <script>
-/* 
-  Navegación se implementará
-  en bloque posterior.
-*/
+/* Bloquea gesto de refresco en móvil */
+document.getElementById("datos-personales")
+  .addEventListener("touchmove", e => e.preventDefault(), { passive:false });
 </script>
 
-     <!-- =========================
-     BLOQUE 3 – NAVEGACIÓN
-     ========================= -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  // Buscar todos los botones
-  const botones = document.querySelectorAll("button");
-
-  botones.forEach(btn => {
-    if (btn.textContent.trim() === "Datos personales") {
-      btn.addEventListener("click", () => {
-        const pantalla = document.getElementById("datos-personales");
-        if (pantalla) pantalla.style.display = "block";
-      });
-    }
-  });
-
-});
-</script>
-
-     
      
 </body>
 </html>
