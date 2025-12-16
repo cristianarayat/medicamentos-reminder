@@ -472,9 +472,9 @@ window.addEventListener("focus", actualizarBienvenida);
 }
 
 .med-container{
-  max-width:520px;
+  max-width:540px;
   margin:0 auto;
-  padding:20px 16px 120px;
+  padding:20px 16px 140px;
 }
 
 .med-card{
@@ -498,7 +498,7 @@ window.addEventListener("focus", actualizarBienvenida);
   display:block;
   font-size:14px;
   font-weight:600;
-  margin-bottom:4px;
+  margin-bottom:6px;
 }
 
 .med-group input,
@@ -517,36 +517,45 @@ window.addEventListener("focus", actualizarBienvenida);
 }
 .row > div{ flex:1; }
 
-/* Días */
-.dias{
+/* DÍAS + HORAS */
+.dias-grid{
   display:grid;
   grid-template-columns:repeat(7,1fr);
-  gap:6px;
+  gap:8px;
+  margin-top:8px;
 }
-.dias button{
-  height:36px;
+
+.dia-col{
+  text-align:center;
+}
+
+.dia-btn{
+  width:100%;
+  height:34px;
   border-radius:10px;
   border:1px solid #cfcfcf;
   background:#fff;
   font-weight:700;
 }
-.dias button.on{
+
+.dia-btn.on{
   background:#27ae60;
   color:#fff;
   border-color:#27ae60;
 }
 
-/* Horas */
-.horas{
+.horas-dia{
   display:flex;
-  flex-wrap:wrap;
+  flex-direction:column;
   gap:6px;
+  margin-top:6px;
 }
-.horas input{
-  width:90px;
-  height:36px;
+
+.horas-dia input{
+  height:34px;
   border-radius:10px;
   border:1px solid #cfcfcf;
+  padding:0 6px;
 }
 
 /* Foto */
@@ -563,6 +572,23 @@ window.addEventListener("focus", actualizarBienvenida);
   border:1px solid #ccc;
 }
 
+/* Botones */
+.btn{
+  width:100%;
+  height:52px;
+  border:none;
+  border-radius:16px;
+  background:#2f80ed;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+}
+
+.btn.volver{
+  background:#bdbdbd;
+  margin-top:8px;
+}
+
 /* Lista */
 .lista .item{
   display:grid;
@@ -577,14 +603,8 @@ window.addEventListener("focus", actualizarBienvenida);
   padding:4px 8px;
   border-radius:999px;
 }
-.estado.activo{
-  background:#e9f7ef;
-  color:#27ae60;
-}
-.estado.caducado{
-  background:#fdecea;
-  color:#d32f2f;
-}
+.estado.activo{ background:#e9f7ef; color:#27ae60; }
+.estado.caducado{ background:#fdecea; color:#d32f2f; }
 
 .eliminar{
   background:#fdecea;
@@ -592,17 +612,6 @@ window.addEventListener("focus", actualizarBienvenida);
   border:none;
   border-radius:10px;
   padding:6px 10px;
-  font-weight:700;
-}
-
-.btn{
-  width:100%;
-  height:52px;
-  border:none;
-  border-radius:16px;
-  background:#2f80ed;
-  color:#fff;
-  font-size:16px;
   font-weight:700;
 }
 </style>
@@ -642,26 +651,12 @@ window.addEventListener("focus", actualizarBienvenida);
         </select>
       </div>
 
-      <!-- DÍAS + HORAS (ANTES DE FECHAS) -->
+      <!-- DÍAS + HORAS -->
       <div class="med-group">
-        <label>Días de la semana</label>
-        <div class="dias" id="m-dias">
-          <button type="button">L</button>
-          <button type="button">M</button>
-          <button type="button">X</button>
-          <button type="button">J</button>
-          <button type="button">V</button>
-          <button type="button">S</button>
-          <button type="button">D</button>
-        </div>
+        <label>Días y horarios</label>
+        <div class="dias-grid" id="dias-grid"></div>
       </div>
 
-      <div class="med-group">
-        <label>Horarios por día</label>
-        <div class="horas" id="m-horas"></div>
-      </div>
-
-      <!-- FECHAS -->
       <div class="row">
         <div class="med-group">
           <label>Inicio del tratamiento</label>
@@ -679,6 +674,7 @@ window.addEventListener("focus", actualizarBienvenida);
       </div>
 
       <button class="btn" id="m-guardar">Guardar medicamento</button>
+      <button class="btn volver" id="m-volver">Volver</button>
     </div>
 
     <div class="med-card lista" id="m-lista"></div>
@@ -688,9 +684,68 @@ window.addEventListener("focus", actualizarBienvenida);
 
 <script>
 const $ = id => document.getElementById(id);
-const KEY = "medicamentos_final";
+const KEY = "medicamentos_final_v2";
 
-let diasSel = new Set();
+const dias = ["L","M","X","J","V","S","D"];
+let seleccionados = new Set();
+
+function crearDias(){
+  const grid = $("dias-grid");
+  grid.innerHTML = "";
+  dias.forEach(d=>{
+    const col = document.createElement("div");
+    col.className = "dia-col";
+
+    const btn = document.createElement("button");
+    btn.type="button";
+    btn.className="dia-btn";
+    btn.textContent=d;
+
+    const horas = document.createElement("div");
+    horas.className="horas-dia";
+    horas.dataset.dia=d;
+
+    btn.onclick = ()=>{
+      btn.classList.toggle("on");
+      btn.classList.contains("on")
+        ? seleccionados.add(d)
+        : seleccionados.delete(d);
+      generarHoras();
+    };
+
+    col.appendChild(btn);
+    col.appendChild(horas);
+    grid.appendChild(col);
+  });
+}
+
+function generarHoras(){
+  const dosis = Number($("m-dosis").value || 1);
+  document.querySelectorAll(".horas-dia").forEach(h=>{
+    h.innerHTML="";
+    if(!seleccionados.has(h.dataset.dia)) return;
+    for(let i=0;i<dosis;i++){
+      const t=document.createElement("input");
+      t.type="time";
+      h.appendChild(t);
+    }
+  });
+}
+
+$("m-dosis").addEventListener("change", generarHoras);
+$("m-periodicidad").addEventListener("change", ()=>{
+  $("m-duracion").disabled = $("m-periodicidad").value==="0";
+});
+
+$("m-foto").addEventListener("change", e=>{
+  const f=e.target.files[0];
+  if(!f) return;
+  const r=new FileReader();
+  r.onload=()=> $("m-prev").src=r.result;
+  r.readAsDataURL(f);
+});
+
+$("m-volver").onclick = ()=> $("medicamentos").style.display="none";
 
 /* CONECTOR MEDICAMENTOS (SIN TOCAR HOME) */
 document.addEventListener("pointerdown", e=>{
@@ -705,116 +760,11 @@ document.addEventListener("pointerdown", e=>{
   }
 }, true);
 
-/* DÍAS + HORAS */
-$("m-dias").addEventListener("click", e=>{
-  if(e.target.tagName!=="BUTTON") return;
-  e.target.classList.toggle("on");
-  const d=e.target.textContent;
-  e.target.classList.contains("on") ? diasSel.add(d) : diasSel.delete(d);
-  generarHoras();
-});
-
-$("m-dosis").addEventListener("change", generarHoras);
-
-function generarHoras(){
-  const cont=$("m-horas");
-  cont.innerHTML="";
-  const dosis=Number($("m-dosis").value||1);
-  diasSel.forEach(()=>{
-    for(let i=0;i<dosis;i++){
-      const h=document.createElement("input");
-      h.type="time";
-      cont.appendChild(h);
-    }
-  });
-}
-
-/* PERMANENTE */
-$("m-periodicidad").addEventListener("change", ()=>{
-  $("m-duracion").disabled = $("m-periodicidad").value==="0";
-});
-
-/* FOTO */
-$("m-foto").addEventListener("change", e=>{
-  const f=e.target.files[0];
-  if(!f) return;
-  const r=new FileReader();
-  r.onload=()=> $("m-prev").src=r.result;
-  r.readAsDataURL(f);
-});
-
-/* GUARDAR */
-$("m-guardar").addEventListener("click", ()=>{
-  if(
-    !$("m-nombre").value ||
-    !$("m-inicio").value ||
-    diasSel.size===0 ||
-    ($("m-periodicidad").value!=="0" && !$("m-duracion").value)
-  ){
-    alert("Completa todos los campos");
-    return;
-  }
-
-  const horas=[...$("m-horas").querySelectorAll("input")].map(i=>i.value);
-
-  const item={
-    id:Date.now(),
-    nombre:$("m-nombre").value,
-    dosis:$("m-dosis").value,
-    lugar:$("m-lugar").value,
-    periodicidad:$("m-periodicidad").value,
-    inicio:$("m-inicio").value,
-    duracion:$("m-periodicidad").value==="0"?null:$("m-duracion").value,
-    dias:[...diasSel],
-    horas,
-    foto:$("m-prev").src||null
-  };
-
-  const arr=JSON.parse(localStorage.getItem(KEY)||"[]");
-  arr.push(item);
-  localStorage.setItem(KEY, JSON.stringify(arr));
-  listar();
-  alert("Medicamento guardado correctamente");
-});
-
-/* LISTAR */
-function activo(m){
-  if(m.periodicidad==="0") return true;
-  const fin=new Date(m.inicio);
-  fin.setDate(fin.getDate()+Number(m.duracion));
-  return new Date()<=fin;
-}
-
-function listar(){
-  const arr=JSON.parse(localStorage.getItem(KEY)||"[]");
-  $("m-lista").innerHTML=arr.map(m=>{
-    const ok=activo(m);
-    return `
-      <div class="item">
-        <img src="${m.foto||''}">
-        <div>
-          <strong>${m.nombre}</strong><br>
-          ${m.lugar||''} · ${m.dosis} dosis
-          <div class="estado ${ok?'activo':'caducado'}">
-            ${ok?'Activo':'Caducado'}
-          </div>
-        </div>
-        <button class="eliminar" onclick="eliminar(${m.id})">Eliminar</button>
-      </div>
-    `;
-  }).join("");
-}
-
-function eliminar(id){
-  let arr=JSON.parse(localStorage.getItem(KEY)||"[]");
-  arr=arr.filter(x=>x.id!==id);
-  localStorage.setItem(KEY, JSON.stringify(arr));
-  listar();
-}
-
-document.addEventListener("DOMContentLoaded", listar);
+document.addEventListener("DOMContentLoaded", crearDias);
 $("medicamentos").addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
 </script>
+
+
 
 <!-- =========================
      CONECTOR BOTÓN MEDICAMENTOS
@@ -825,14 +775,12 @@ $("medicamentos").addEventListener("touchmove", e=>e.preventDefault(), {passive:
     "pointerdown",
     function (e) {
       let el = e.target;
-
       while (el && el !== document.body) {
-        const texto = (el.textContent || "")
+        const txt = (el.textContent || "")
           .replace(/\s+/g, " ")
           .trim()
           .toLowerCase();
-
-        if (texto === "medicamentos") {
+        if (txt === "medicamentos") {
           const panel = document.getElementById("medicamentos");
           if (panel) {
             panel.style.display = "block";
@@ -841,11 +789,10 @@ $("medicamentos").addEventListener("touchmove", e=>e.preventDefault(), {passive:
           }
           return;
         }
-
         el = el.parentElement;
       }
     },
-    true // 👈 CAPTURA (clave para móvil)
+    true // captura: clave para móvil
   );
 })();
 </script>
