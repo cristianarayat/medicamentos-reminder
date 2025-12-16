@@ -136,8 +136,10 @@ button{
 </div>
 
 
+
+
 <!-- =========================
-     DATOS PERSONALES (BLOQUE 2 FINAL + ICONOS)
+     BLOQUE 2 – DATOS PERSONALES (FINAL)
      ========================= -->
 <style>
 #datos-personales{
@@ -151,8 +153,8 @@ button{
 
 .dp-container{
   max-width:480px;
-  margin:auto;
-  padding:16px;
+  margin:0 auto;
+  padding:24px 16px;
 }
 
 .dp-card{
@@ -160,39 +162,42 @@ button{
   border-radius:18px;
   padding:20px;
   box-shadow:0 12px 28px rgba(0,0,0,.12);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
 }
 
 .dp-card h2{
   text-align:center;
-  margin-bottom:16px;
+  margin-bottom:8px;
 }
 
 .dp-group{
-  margin-bottom:14px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
 }
 
 .dp-group label{
   font-size:14px;
   font-weight:600;
-  display:block;
-  margin-bottom:4px;
 }
 
 .dp-group input{
   width:100%;
-  height:44px;
-  border-radius:10px;
+  height:46px;
+  border-radius:12px;
   border:1px solid #ccc;
-  padding:0 12px;
-  font-size:15px;
+  padding:0 14px;
+  font-size:16px;
 }
 
-/* Switch + icono */
+/* Switch + iconos */
 .switch-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin:14px 0;
+  margin-top:6px;
 }
 
 .switch-left{
@@ -200,7 +205,6 @@ button{
   align-items:center;
   gap:10px;
   font-size:15px;
-  font-weight:500;
 }
 
 .switch-left svg{
@@ -209,7 +213,6 @@ button{
   fill:#2f80ed;
 }
 
-/* Switch */
 .switch{
   position:relative;
   width:46px;
@@ -233,7 +236,7 @@ button{
   height:20px;
   left:3px;
   top:3px;
-  background:white;
+  background:#fff;
   border-radius:50%;
   transition:.3s;
 }
@@ -252,10 +255,10 @@ button{
   border:none;
   border-radius:14px;
   background:#2f80ed;
-  color:white;
+  color:#fff;
   font-size:16px;
   font-weight:700;
-  margin-top:12px;
+  margin-top:8px;
 }
 
 .dp-btn.secundario{
@@ -293,7 +296,7 @@ button{
       <div class="switch-row">
         <div class="switch-left">
           <svg viewBox="0 0 24 24">
-            <path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 0 0-2.25-3.9v7.8A4.5 4.5 0 0 0 16.5 12z"/>
+            <path d="M3 10v4h4l5 5V5L7 10H3z"/>
           </svg>
           <span>Recordatorios por voz</span>
         </div>
@@ -307,7 +310,7 @@ button{
       <div class="switch-row">
         <div class="switch-left">
           <svg viewBox="0 0 24 24">
-            <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm4 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+            <path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
           </svg>
           <span>Vibración</span>
         </div>
@@ -324,11 +327,38 @@ button{
   </div>
 </div>
 
+<!-- =========================
+     BLOQUE 3 – NAVEGACIÓN (FINAL)
+     ========================= -->
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // Abrir Datos personales desde Home
+  document.querySelectorAll("button").forEach(b => {
+    if (b.textContent.trim() === "Datos personales") {
+      b.addEventListener("click", () => {
+        const dp = document.getElementById("datos-personales");
+        if (dp) dp.style.display = "block";
+      });
+    }
+  });
+
+  // Cerrar con botón Volver
+  document.addEventListener("click", e => {
+    if (e.target.matches(".dp-btn.secundario")) {
+      const dp = document.getElementById("datos-personales");
+      if (dp) dp.style.display = "none";
+    }
+  });
+
+});
+
+// Bloquea pull-to-refresh en móvil
 document.getElementById("datos-personales")
   .addEventListener("touchmove", e => e.preventDefault(), { passive:false });
 </script>
 
+     
      
 </body>
 </html>
