@@ -1261,7 +1261,60 @@ function renderSeguimiento(){
 }
 </script>
 
-     
+
+
+
+
+<!-- =========================
+     BLOQUE 4 – SEGUIMIENTO (BASE CORRECTA)
+     ========================= -->
+<section id="pantalla-seguimiento" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#eef1f4;
+  z-index:1000;
+  overflow:auto;
+">
+
+  <div class="container">
+    <div class="card">
+
+      <h2 style="text-align:center;">Seguimiento diario</h2>
+
+      <p style="text-align:center;color:#666;">
+        Aquí aparecerán los recordatorios del día
+      </p>
+
+      <button onclick="cerrarSeguimiento()" style="background:#bdbdbd;">
+        Volver
+      </button>
+
+    </div>
+  </div>
+
+</section>
+
+
+<script>
+document.addEventListener("pointerdown", e => {
+  let el = e.target;
+
+  while (el && el !== document.body) {
+    if ((el.textContent || "").trim() === "Seguimiento") {
+      document.getElementById("pantalla-seguimiento").style.display = "block";
+      e.preventDefault();
+      return;
+    }
+    el = el.parentElement;
+  }
+}, true);
+
+function cerrarSeguimiento(){
+  document.getElementById("pantalla-seguimiento").style.display = "none";
+}
+</script>
+
      
      
 </body>
