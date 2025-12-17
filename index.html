@@ -935,75 +935,119 @@ function eliminarMedicamento(id){
 document.addEventListener("DOMContentLoaded", renderListaMedicamentos);
 </script>
 
+
+
+     
 <script>
 /* =========================
    VALIDACIÓN ANTES DE GUARDAR
    ========================= */
 
-function validarMedicamento(){
-  const nombre = document.getElementById("m-nombre")?.value.trim();
-  const dosis = Number(document.getElementById("m-dosis")?.value);
-  const periodicidad = document.getElementById("m-periodicidad")?.value;
-  const inicio = document.getElementById("m-inicio")?.value;
-  const diasTrat = document.getElementById("m-dias-trat")?.value;
+<script>
+function guardarMedicamento() {
 
-  if(!nombre){
+  const nombre = document.getElementById("medNombre")?.value.trim();
+  const dosis = parseInt(document.getElementById("medDosis")?.value);
+  const ubicacion = document.getElementById("medUbicacion")?.value.trim();
+  const periodicidad = document.getElementById("medPeriodicidad")?.value;
+  const diasTratamiento = parseInt(document.getElementById("medDias")?.value);
+  const inicio = document.getElementById("medInicio")?.value;
+
+  // === VALIDACIONES BÁSICAS ===
+  if (!nombre) {
     alert("Debe ingresar el nombre del medicamento");
-    return false;
+    return;
   }
 
-  if(!dosis || dosis < 1){
-    alert("Debe indicar la dosis diaria");
-    return false;
+  if (!dosis || dosis <= 0) {
+    alert("Debe ingresar la dosis por día");
+    return;
   }
 
-  /* DÍAS SELECCIONADOS */
-  if(typeof seleccionados === "undefined" || seleccionados.size === 0){
-    alert("Debe seleccionar al menos un día de la semana");
-    return false;
+  if (!ubicacion) {
+    alert("Debe ingresar la ubicación del medicamento");
+    return;
   }
 
-  /* HORAS COMPLETAS */
-  for(const dia of seleccionados){
-    const cont = document.querySelector(`.horas-dia[data-dia="${dia}"]`);
-    if(!cont) continue;
+  if (!periodicidad) {
+    alert("Debe seleccionar la periodicidad");
+    return;
+  }
 
-    const horas = cont.querySelectorAll('input[type="time"]');
-    if(horas.length === 0){
-      alert(`Debe ingresar horarios para el día ${dia}`);
-      return false;
+  if (!diasTratamiento || diasTratamiento <= 0) {
+    alert("Debe ingresar los días de tratamiento");
+    return;
+  }
+
+  if (!inicio) {
+    alert("Debe seleccionar la fecha de inicio del tratamiento");
+    return;
+  }
+
+  // === VALIDAR DÍAS Y HORAS ===
+  let diasSeleccionados = [];
+  let horasValidas = false;
+
+  document.querySelectorAll(".dia-btn.activo").forEach(dia => {
+    const diaId = dia.dataset.dia;
+    const horas = [];
+
+    document
+      .querySelectorAll(`input[data-dia="${diaId}"]`)
+      .forEach(h => {
+        if (h.value) {
+          horas.push(h.value);
+        }
+      });
+
+    if (horas.length > 0) {
+      horasValidas = true;
     }
 
-    for(const h of horas){
-      if(!h.value){
-        alert(`Faltan horarios en el día ${dia}`);
-        return false;
-      }
-    }
+    diasSeleccionados.push({
+      dia: diaId,
+      horas: horas
+    });
+  });
+
+  if (diasSeleccionados.length === 0 || !horasValidas) {
+    alert("Debe seleccionar al menos un día con una hora de recordatorio");
+    return;
   }
 
-  /* FECHAS */
-  if(periodicidad !== "0"){
-    if(!inicio || !diasTrat){
-      alert("Debe indicar inicio y duración del tratamiento");
-      return false;
-    }
-  }
+  // === FECHA DE TÉRMINO ===
+  const fechaInicio = new Date(inicio);
+  const fechaFin = new Date(fechaInicio);
+  fechaFin.setDate(fechaInicio.getDate() + diasTratamiento);
 
-  return true;
+  const hoy = new Date();
+  const estado = hoy <= fechaFin ? "activo" : "caducado";
+
+  // === OBJETO MEDICAMENTO ===
+  const medicamento = {
+    nombre,
+    dosis,
+    ubicacion,
+    periodicidad,
+    diasTratamiento,
+    inicio,
+    fin: fechaFin.toISOString().split("T")[0],
+    dias: diasSeleccionados,
+    estado
+  };
+
+  // === GUARDAR ===
+  let lista = JSON.parse(localStorage.getItem("medicamentos")) || [];
+  lista.push(medicamento);
+  localStorage.setItem("medicamentos", JSON.stringify(lista));
+
+  alert("Medicamento guardado correctamente");
+
+  mostrarMedicamentos();
+  document.getElementById("formMedicamento").reset();
 }
-
-/* ENGANCHE DEFINITIVO AL BOTÓN GUARDAR */
-document.querySelectorAll("button").forEach(b=>{
-  if(b.textContent.toLowerCase().includes("guardar medicamento")){
-    const original = b.onclick;
-    b.onclick = ()=>{
-      if(!validarMedicamento()) return;
-      if(typeof original === "function") original();
-    };
-  }
-});
 </script>
+
 
 
      
