@@ -1226,6 +1226,58 @@ document.addEventListener("click", function(e){
 </script>
 
 
+<script>
+/* =========================
+   CONECTOR SEGUIMIENTO (ROBUSTO)
+   NO TOCA HOME
+   ========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  // 1️⃣ Obtener botones del Home (solo los visibles)
+  const botonesHome = Array.from(
+    document.querySelectorAll(".container .card > button")
+  );
+
+  // 2️⃣ El botón Seguimiento es el TERCERO
+  const btnSeguimiento = botonesHome[2];
+
+  if (!btnSeguimiento) {
+    console.error("❌ Botón Seguimiento no encontrado");
+    return;
+  }
+
+  // 3️⃣ Conectar evento
+  btnSeguimiento.addEventListener("click", () => {
+    // Ocultar otras pantallas si estuvieran abiertas
+    const meds = document.getElementById("medicamentos");
+    const datos = document.getElementById("datos-personales");
+
+    if (meds) meds.style.display = "none";
+    if (datos) datos.style.display = "none";
+
+    // Mostrar seguimiento
+    const seg = document.getElementById("seguimiento");
+    if (seg) {
+      seg.style.display = "block";
+    } else {
+      console.error("❌ No existe #seguimiento en el HTML");
+    }
+  });
+
+  // 4️⃣ Botón volver
+  const volver = document.getElementById("volver-seg");
+  if (volver) {
+    volver.addEventListener("click", () => {
+      document.getElementById("seguimiento").style.display = "none";
+    });
+  }
+
+});
+</script>
+
+     
+
 </body>
 </html>
 
