@@ -460,9 +460,7 @@ window.addEventListener("focus", actualizarBienvenida);
      BLOQUE 3 – MEDICAMENTOS
      ========================= -->
 <style>
-*{
-  box-sizing:border-box;
-}
+*{ box-sizing:border-box; }
 
 #medicamentos{
   display:none;
@@ -475,7 +473,6 @@ window.addEventListener("focus", actualizarBienvenida);
 }
 
 .med-container{
-  max-width:100%;
   width:100%;
   margin:0 auto;
   padding:20px 14px 140px;
@@ -486,12 +483,11 @@ window.addEventListener("focus", actualizarBienvenida);
   border-radius:18px;
   padding:18px;
   box-shadow:0 12px 28px rgba(0,0,0,.12);
-  margin-bottom:14px;
 }
 
 .med-card h2{
   text-align:center;
-  margin-bottom:12px;
+  margin-bottom:14px;
 }
 
 .med-group{ margin-bottom:14px; }
@@ -597,8 +593,8 @@ window.addEventListener("focus", actualizarBienvenida);
 
 <div id="medicamentos">
   <div class="med-container">
-
     <div class="med-card">
+
       <h2>Medicamentos</h2>
 
       <div class="med-group">
@@ -630,10 +626,14 @@ window.addEventListener("focus", actualizarBienvenida);
         </select>
       </div>
 
-      <!-- DÍAS + HORAS -->
       <div class="med-group">
         <label>Seleccione las horas para tomar su medicamento</label>
         <div class="dias-vertical" id="dias-grid"></div>
+      </div>
+
+      <div class="med-group">
+        <label>Días del tratamiento</label>
+        <input id="m-dias-trat" type="number" min="1" placeholder="Ej: 10">
       </div>
 
       <div class="row">
@@ -642,8 +642,8 @@ window.addEventListener("focus", actualizarBienvenida);
           <input id="m-inicio" type="date">
         </div>
         <div class="med-group">
-          <label>Días de tratamiento</label>
-          <input id="m-duracion" type="number" min="1">
+          <label>Final del tratamiento</label>
+          <input id="m-final" type="date" disabled>
         </div>
       </div>
 
@@ -654,20 +654,19 @@ window.addEventListener("focus", actualizarBienvenida);
 
       <button class="btn">Guardar medicamento</button>
       <button class="btn volver" id="btn-volver">Volver</button>
-    </div>
 
+    </div>
   </div>
 </div>
 
 <script>
+/* ===== DÍAS ===== */
 const dias = ["L","M","X","J","V","S","D"];
 let seleccionados = new Set();
 
-/* ===== CREAR DÍAS ===== */
 function crearDias(){
   const grid = document.getElementById("dias-grid");
   grid.innerHTML = "";
-
   dias.forEach(dia=>{
     const row = document.createElement("div");
     row.className = "dia-row";
@@ -711,10 +710,33 @@ function generarHoras(){
 
 document.getElementById("m-dosis").addEventListener("change", generarHoras);
 
+/* ===== FECHA FINAL ===== */
+function recalcularFinal(){
+  const inicio = document.getElementById("m-inicio").value;
+  const dias = Number(document.getElementById("m-dias-trat").value);
+  const perma = document.getElementById("m-periodicidad").value==="0";
+  const fin = document.getElementById("m-final");
+
+  if(perma || !inicio || !dias){
+    fin.value="";
+    return;
+  }
+  const d = new Date(inicio);
+  d.setDate(d.getDate() + dias);
+  fin.value = d.toISOString().slice(0,10);
+}
+
+document.getElementById("m-inicio").addEventListener("change", recalcularFinal);
+document.getElementById("m-dias-trat").addEventListener("input", recalcularFinal);
+
 /* ===== PERMANENTE ===== */
 document.getElementById("m-periodicidad").addEventListener("change", ()=>{
-  document.getElementById("m-duracion").disabled =
-    document.getElementById("m-periodicidad").value==="0";
+  const perma = document.getElementById("m-periodicidad").value==="0";
+  ["m-dias-trat","m-inicio","m-final"].forEach(id=>{
+    const el=document.getElementById(id);
+    el.disabled = perma;
+    if(perma) el.value="";
+  });
 });
 
 /* ===== FOTO ===== */
@@ -730,6 +752,22 @@ document.getElementById("m-foto").addEventListener("change", e=>{
 document.getElementById("btn-volver").onclick = ()=>{
   document.getElementById("medicamentos").style.display="none";
 };
+
+/* ===== CONECTOR MEDICAMENTOS (SIN TOCAR HOME) ===== */
+document.addEventListener("pointerdown", e=>{
+  let el=e.target;
+  while(el && el!==document.body){
+    if((el.textContent||"").trim().toLowerCase()==="medicamentos"){
+      document.getElementById("medicamentos").style.display="block";
+      e.preventDefault(); return;
+    }
+    el=el.parentElement;
+  }
+}, true);
+
+document.addEventListener("DOMContentLoaded", crearDias);
+</script>
+
 
 /* ===== CONECTOR BOTÓN MEDICAMENTOS (SIN TOCAR HOME) ===== */
 document.addEventListener("pointerdown", e=>{
