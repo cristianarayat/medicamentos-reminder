@@ -1048,6 +1048,77 @@ function guardarMedicamento() {
 }
 </script>
 
+<script>
+function guardarMedicamento() {
+
+  const nombre = document.getElementById("med-nombre")?.value.trim();
+  const dosis = parseInt(document.getElementById("med-dosis")?.value);
+  const ubicacion = document.getElementById("med-ubicacion")?.value.trim();
+  const periodicidad = document.getElementById("med-periodicidad")?.value;
+  const inicio = document.getElementById("med-inicio")?.value;
+  const diasTratamiento = parseInt(document.getElementById("med-dias")?.value);
+
+  const mensaje = document.getElementById("mensajeMedicamento");
+  mensaje.innerHTML = "";
+  mensaje.style.display = "block";
+
+  let errores = [];
+
+  if (!nombre) errores.push("• Nombre del medicamento");
+  if (!dosis || dosis <= 0) errores.push("• Dosis por día");
+  if (!ubicacion) errores.push("• Ubicación del remedio");
+  if (!periodicidad) errores.push("• Periodicidad");
+  if (!inicio) errores.push("• Inicio del tratamiento");
+  if (!diasTratamiento || diasTratamiento <= 0) errores.push("• Días de tratamiento");
+
+  // Validar días y horas
+  const diasSeleccionados = document.querySelectorAll(".dia.activo");
+  let horasValidas = false;
+
+  diasSeleccionados.forEach(dia => {
+    const horas = dia.parentElement.querySelectorAll("input[type='time']");
+    horas.forEach(h => {
+      if (h.value) horasValidas = true;
+    });
+  });
+
+  if (diasSeleccionados.length === 0 || !horasValidas) {
+    errores.push("• Seleccionar al menos un día con hora");
+  }
+
+  // SI HAY ERRORES → NO GUARDA
+  if (errores.length > 0) {
+    mensaje.style.background = "#fdecea";
+    mensaje.style.color = "#b71c1c";
+    mensaje.innerHTML = `
+      <strong>No se puede guardar:</strong><br>
+      ${errores.join("<br>")}
+    `;
+    return;
+  }
+
+  // SI TODO ESTÁ OK → GUARDA
+  const medicamento = {
+    nombre,
+    dosis,
+    ubicacion,
+    periodicidad,
+    inicio,
+    diasTratamiento,
+    creado: new Date().toISOString()
+  };
+
+  let lista = JSON.parse(localStorage.getItem("medicamentos")) || [];
+  lista.push(medicamento);
+  localStorage.setItem("medicamentos", JSON.stringify(lista));
+
+  mensaje.style.background = "#e6f4ea";
+  mensaje.style.color = "#1b5e20";
+  mensaje.innerHTML = "✅ Medicamento guardado correctamente";
+
+  mostrarMedicamentos();
+}
+</script>
 
 
      
