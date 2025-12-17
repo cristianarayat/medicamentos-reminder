@@ -783,6 +783,156 @@ document.addEventListener("pointerdown", e=>{
 document.addEventListener("DOMContentLoaded", crearDias);
 </script>
 
+<!-- =========================
+     MEJORA LISTADO MEDICAMENTOS
+     ========================= -->
+<style>
+.lista-meds{
+  margin-top:16px;
+}
+
+.med-item{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding:12px;
+  border-radius:14px;
+  margin-bottom:10px;
+}
+
+.med-item.en-uso{
+  background:#e9f7ef;
+  border:1px solid #27ae60;
+}
+
+.med-item.caducado{
+  background:#e0e0e0;
+  border:1px solid #9e9e9e;
+  color:#555;
+}
+
+.med-item img{
+  width:48px;
+  height:48px;
+  border-radius:10px;
+  object-fit:cover;
+}
+
+.med-info{
+  flex:1;
+}
+
+.med-info strong{
+  display:block;
+}
+
+.estado{
+  font-size:12px;
+  font-weight:700;
+  margin-top:4px;
+}
+
+.eliminar-med{
+  background:#d32f2f;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  padding:6px 10px;
+  font-weight:700;
+}
+</style>
+
+<script>
+/* === CLAVE STORAGE === */
+const MED_KEY = "medicamentos_guardados_v1";
+
+/* === ENGANCHE AL BOTÓN GUARDAR EXISTENTE === */
+document.querySelectorAll("button").forEach(b=>{
+  if(b.textContent.toLowerCase().includes("guardar medicamento")){
+    b.addEventListener("click", guardarMedicamentoExtendido);
+  }
+});
+
+function guardarMedicamentoExtendido(){
+  const nombre = document.getElementById("m-nombre")?.value;
+  if(!nombre) return;
+
+  const inicio = document.getElementById("m-inicio")?.value;
+  const fin = document.getElementById("m-final")?.value;
+  const foto = document.getElementById("m-prev")?.src || "";
+
+  const med = {
+    id: Date.now(),
+    nombre,
+    inicio,
+    fin,
+    foto
+  };
+
+  const arr = JSON.parse(localStorage.getItem(MED_KEY) || "[]");
+  arr.push(med);
+  localStorage.setItem(MED_KEY, JSON.stringify(arr));
+
+  alert("Medicamento guardado correctamente");
+  renderListaMedicamentos();
+}
+
+/* === ESTADO === */
+function estadoMedicamento(m){
+  if(!m.fin) return "en-uso";
+  const hoy = new Date().setHours(0,0,0,0);
+  const fin = new Date(m.fin).setHours(0,0,0,0);
+  return hoy <= fin ? "en-uso" : "caducado";
+}
+
+/* === RENDER LISTA === */
+function renderListaMedicamentos(){
+  let cont = document.getElementById("lista-meds");
+  if(!cont){
+    cont = document.createElement("div");
+    cont.id = "lista-meds";
+    cont.className = "lista-meds";
+    document.querySelector("#medicamentos .med-container")
+      .appendChild(cont);
+  }
+
+  const arr = JSON.parse(localStorage.getItem(MED_KEY) || "[]");
+  cont.innerHTML = "";
+
+  arr.forEach(m=>{
+    const estado = estadoMedicamento(m);
+
+    const div = document.createElement("div");
+    div.className = `med-item ${estado}`;
+
+    div.innerHTML = `
+      ${m.foto ? `<img src="${m.foto}">` : ""}
+      <div class="med-info">
+        <strong>${m.nombre}</strong>
+        <div class="estado">
+          ${estado === "en-uso" ? "🟢 En uso" : "⚪ Caducado"}
+        </div>
+      </div>
+      <button class="eliminar-med" onclick="eliminarMedicamento(${m.id})">
+        Eliminar
+      </button>
+    `;
+
+    cont.appendChild(div);
+  });
+}
+
+/* === ELIMINAR === */
+function eliminarMedicamento(id){
+  let arr = JSON.parse(localStorage.getItem(MED_KEY) || "[]");
+  arr = arr.filter(m=>m.id!==id);
+  localStorage.setItem(MED_KEY, JSON.stringify(arr));
+  renderListaMedicamentos();
+}
+
+/* === CARGA INICIAL === */
+document.addEventListener("DOMContentLoaded", renderListaMedicamentos);
+</script>
 
 
 
