@@ -1107,9 +1107,12 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js');
 }
 </script>
+
+
+
+
 <!-- =========================
      BLOQUE 4 – SEGUIMIENTO (SUBPASO 1)
-     NO TOCA HOME
      ========================= -->
 
 <style>
@@ -1145,7 +1148,6 @@ if ('serviceWorker' in navigator) {
 
 .seg-item strong{
   display:block;
-  font-size:16px;
 }
 
 .seg-btns{
@@ -1165,21 +1167,22 @@ if ('serviceWorker' in navigator) {
 .ok{ background:#27ae60; color:#fff; }
 .no{ background:#d32f2f; color:#fff; }
 
-.seg-volver{
+.volver{
+  width:100%;
+  height:46px;
   margin-top:16px;
   background:#bdbdbd;
+  border:none;
+  border-radius:12px;
+  font-weight:700;
 }
 </style>
 
 <div id="seguimiento">
   <div class="seg-container">
     <div class="seg-card">
+      <h2 style="text-align:center">Seguimiento diario</h2>
 
-      <h2 style="text-align:center;margin-bottom:12px;">
-        Seguimiento diario
-      </h2>
-
-      <!-- EJEMPLO (luego será dinámico) -->
       <div class="seg-item">
         <strong>💊 Aspirina</strong>
         <span>⏰ Hoy: 08:00</span>
@@ -1190,91 +1193,35 @@ if ('serviceWorker' in navigator) {
         </div>
       </div>
 
-      <button class="seg-volver">Volver</button>
-
+      <button class="volver" id="volver-seg">Volver</button>
     </div>
   </div>
 </div>
 
 <script>
-/* =========================================
-   CONECTOR BOTÓN "SEGUIMIENTO"
-   (SIN TOCAR HOME)
-   ========================================= */
-document.addEventListener("pointerdown", function(e){
-  let el = e.target;
-
-  while(el && el !== document.body){
-    if(
-      el.tagName === "BUTTON" &&
-      el.textContent.trim().toLowerCase() === "seguimiento"
-    ){
-      document.getElementById("seguimiento").style.display = "block";
-      e.preventDefault();
-      return;
-    }
-    el = el.parentElement;
-  }
-}, true);
-
-/* ===== VOLVER ===== */
-document.addEventListener("click", function(e){
-  if(e.target.classList.contains("seg-volver")){
-    document.getElementById("seguimiento").style.display = "none";
-  }
-});
-</script>
-
-
-<script>
-/* =========================
-   CONECTOR SEGUIMIENTO (ROBUSTO)
-   NO TOCA HOME
-   ========================= */
-
 document.addEventListener("DOMContentLoaded", () => {
 
-  // 1️⃣ Obtener botones del Home (solo los visibles)
-  const botonesHome = Array.from(
-    document.querySelectorAll(".container .card > button")
-  );
+  // 🔹 Botón Seguimiento = tercer botón del Home
+  const botonesHome = document.querySelectorAll(".container .card button");
+  const btnSeguimiento = botonesHome[2]; // índice 2 = Seguimiento
 
-  // 2️⃣ El botón Seguimiento es el TERCERO
-  const btnSeguimiento = botonesHome[2];
-
-  if (!btnSeguimiento) {
-    console.error("❌ Botón Seguimiento no encontrado");
-    return;
-  }
-
-  // 3️⃣ Conectar evento
-  btnSeguimiento.addEventListener("click", () => {
-    // Ocultar otras pantallas si estuvieran abiertas
-    const meds = document.getElementById("medicamentos");
-    const datos = document.getElementById("datos-personales");
-
-    if (meds) meds.style.display = "none";
-    if (datos) datos.style.display = "none";
-
-    // Mostrar seguimiento
-    const seg = document.getElementById("seguimiento");
-    if (seg) {
-      seg.style.display = "block";
-    } else {
-      console.error("❌ No existe #seguimiento en el HTML");
-    }
-  });
-
-  // 4️⃣ Botón volver
-  const volver = document.getElementById("volver-seg");
-  if (volver) {
-    volver.addEventListener("click", () => {
-      document.getElementById("seguimiento").style.display = "none";
+  if (btnSeguimiento) {
+    btnSeguimiento.addEventListener("click", () => {
+      document.getElementById("seguimiento").style.display = "block";
     });
   }
 
+  // 🔹 Volver
+  document.getElementById("volver-seg").addEventListener("click", () => {
+    document.getElementById("seguimiento").style.display = "none";
+  });
+
 });
 </script>
+
+
+
+
 
      
 
