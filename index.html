@@ -1110,206 +1110,133 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+
+
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO
+     BLOQUE 4 – SEGUIMIENTO (SUBPASO 1 BASE)
      ========================= -->
-
-<section id="pantalla-seguimiento" class="pantalla" style="display:none">
-
-  <div class="container">
-    <div class="card">
-
-      <!-- TÍTULO -->
-      <h2 style="text-align:center;margin-bottom:6px;">
-        Seguimiento diario
-      </h2>
-
-      <div id="fecha-hoy" style="text-align:center;color:#666;margin-bottom:16px;"></div>
-
-      <!-- LISTA DE RECORDATORIOS -->
-      <div id="lista-seguimiento"></div>
-
-      <!-- BOTÓN VOLVER -->
-      <button onclick="volverHome()" style="background:#6c757d;margin-top:16px;">
-        Volver
-      </button>
-
-    </div>
-  </div>
-
-</section>
 
 <style>
-.recordatorio {
-  background:#f8f9fa;
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:12px;
-  box-shadow:0 6px 14px rgba(0,0,0,.08);
-}
-
-.recordatorio.activo {
-  border-left:6px solid #2f80ed;
-}
-
-.recordatorio h4 {
-  margin:0 0 6px 0;
-}
-
-.hora {
-  font-weight:700;
-  color:#2f80ed;
-  margin-bottom:10px;
-}
-
-.botones-accion {
-  display:flex;
-  gap:10px;
-}
-
-.botones-accion button {
-  flex:1;
-  height:42px;
-  border-radius:10px;
-  font-weight:700;
-}
-
-.btn-ok {
-  background:#27ae60;
-}
-
-.btn-no {
-  background:#eb5757;
-}
-</style>
-
-<script>
-/* =========================
-   CONEXIÓN BOTÓN SEGUIMIENTO
-   ========================= */
-
-function abrirSeguimiento(){
-  ocultarPantallas();
-  document.getElementById("pantalla-seguimiento").style.display="block";
-  cargarSeguimientoHoy();
-}
-
-/* =========================
-   UTILIDADES
-   ========================= */
-
-function ocultarPantallas(){
-  document.querySelectorAll(".pantalla").forEach(p=>p.style.display="none");
-}
-
-function volverHome(){
-  ocultarPantallas();
-  document.getElementById("home").style.display="block";
-}
-
-/* =========================
-   SEGUIMIENTO DEL DÍA
-   ========================= */
-
-function cargarSeguimientoHoy(){
-
-  const contenedor = document.getElementById("lista-seguimiento");
-  contenedor.innerHTML = "";
-
-  const hoy = new Date();
-  const dia = hoy.toISOString().split("T")[0];
-
-  document.getElementById("fecha-hoy").innerText =
-    hoy.toLocaleDateString("es-CL",{weekday:"long", day:"numeric", month:"long"});
-
-  const meds = JSON.parse(localStorage.getItem("medicamentos")) || [];
-
-  meds.forEach(med => {
-
-    if(!med.horarios) return;
-
-    const horariosHoy = med.horarios[dia];
-    if(!horariosHoy) return;
-
-    horariosHoy.forEach(hora => {
-
-      const div = document.createElement("div");
-      div.className = "recordatorio activo";
-
-      div.innerHTML = `
-        <h4>${med.nombre}</h4>
-        <div class="hora">⏰ ${hora}</div>
-
-        <div class="botones-accion">
-          <button class="btn-ok">Completado</button>
-          <button class="btn-no">Rechazado</button>
-        </div>
-      `;
-
-      contenedor.appendChild(div);
-    });
-
-  });
-
-  if(contenedor.innerHTML===""){
-    contenedor.innerHTML = "<p style='text-align:center;color:#777'>No hay medicamentos para hoy</p>";
-  }
-}
-</script>
-
-
-<!-- =========================
-     BLOQUE 4 – SEGUIMIENTO (BASE)
-     ========================= -->
-<div id="seguimiento" style="
+#seguimiento{
   display:none;
   position:fixed;
   inset:0;
   background:#eef1f4;
   z-index:1000;
-  overflow:auto;
-">
+  overflow-y:auto;
+}
 
-  <div style="
-    max-width:480px;
-    margin:0 auto;
-    padding:20px;
-  ">
+.seg-container{
+  max-width:480px;
+  margin:0 auto;
+  padding:20px 14px 120px;
+}
 
-    <div style="
-      background:#fff;
-      border-radius:18px;
-      padding:20px;
-      box-shadow:0 12px 28px rgba(0,0,0,.12);
-    ">
+.seg-card{
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
 
-      <h2 style="text-align:center;">Seguimiento</h2>
+.seg-card h2{
+  text-align:center;
+  margin-bottom:6px;
+}
 
-      <p style="text-align:center;color:#666;">
-        Aquí aparecerán los recordatorios del día
-      </p>
+#seg-fecha{
+  text-align:center;
+  font-size:14px;
+  color:#666;
+  margin-bottom:16px;
+}
 
-      <button
-        style="
-          width:100%;
-          height:52px;
-          border:none;
-          border-radius:16px;
-          background:#bdbdbd;
-          color:#fff;
-          font-size:16px;
-          font-weight:700;
-        "
-        onclick="document.getElementById('seguimiento').style.display='none'">
-        Volver
-      </button>
+.seg-lista{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.seg-item{
+  padding:14px;
+  border-radius:14px;
+  border:1px solid #ddd;
+  background:#f9f9f9;
+  font-size:14px;
+  color:#555;
+  text-align:center;
+}
+
+.seg-btn{
+  width:100%;
+  height:52px;
+  border:none;
+  border-radius:16px;
+  background:#bdbdbd;
+  color:#333;
+  font-size:16px;
+  font-weight:700;
+  margin-top:16px;
+}
+</style>
+
+<div id="seguimiento">
+  <div class="seg-container">
+    <div class="seg-card">
+
+      <h2>Seguimiento diario</h2>
+      <div id="seg-fecha"></div>
+
+      <div id="lista-seguimiento" class="seg-lista">
+        <div class="seg-item">
+          Aquí aparecerán los recordatorios del día
+        </div>
+      </div>
+
+      <button class="seg-btn" id="seg-volver">Volver</button>
 
     </div>
   </div>
 </div>
 
+<script>
+/* =========================
+   CONECTOR BOTÓN SEGUIMIENTO
+   (SIN TOCAR HOME)
+   ========================= */
+document.addEventListener("pointerdown", e=>{
+  let el = e.target;
+  while(el && el !== document.body){
+    if((el.textContent || "").trim().toLowerCase() === "seguimiento"){
+      document.getElementById("seguimiento").style.display = "block";
+      actualizarFechaSeguimiento();
+      e.preventDefault();
+      return;
+    }
+    el = el.parentElement;
+  }
+}, true);
+
+/* =========================
+   VOLVER
+   ========================= */
+document.getElementById("seg-volver").onclick = ()=>{
+  document.getElementById("seguimiento").style.display = "none";
+};
+
+/* =========================
+   FECHA HOY
+   ========================= */
+function actualizarFechaSeguimiento(){
+  const f = new Date();
+  const opciones = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById("seg-fecha").textContent =
+    f.toLocaleDateString("es-CL", opciones);
+}
+</script>
 
 
+     
      
      
 </body>
