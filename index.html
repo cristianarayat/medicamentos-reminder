@@ -1171,6 +1171,98 @@ document.getElementById("volver-seguimiento")
 </script>
 
 
+
+
+<script>
+/* =====================================================
+   CONECTOR CENTRAL DE NAVEGACIÓN (SOLUCIÓN DEFINITIVA)
+   ===================================================== */
+
+/*
+  Este script:
+  - NO toca el Home
+  - NO rompe Datos personales ni Medicamentos
+  - Conecta Seguimiento de forma estable
+*/
+
+(function(){
+
+  function abrirPantalla(id){
+    const el = document.getElementById(id);
+    if(!el) return;
+
+    el.style.display = "block";
+  }
+
+  function cerrarPantalla(id){
+    const el = document.getElementById(id);
+    if(!el) return;
+
+    el.style.display = "none";
+  }
+
+  function esBotonConTexto(el, texto){
+    return (
+      el &&
+      el.tagName === "BUTTON" &&
+      el.textContent &&
+      el.textContent.trim().toLowerCase() === texto
+    );
+  }
+
+  // ==== LISTENER ÚNICO Y LIMPIO ====
+  document.addEventListener("click", function(e){
+    let el = e.target;
+
+    while(el && el !== document.body){
+
+      // DATOS PERSONALES
+      if(esBotonConTexto(el, "datos personales")){
+        abrirPantalla("datos-personales");
+        e.preventDefault();
+        return;
+      }
+
+      // MEDICAMENTOS
+      if(esBotonConTexto(el, "medicamentos")){
+        abrirPantalla("medicamentos");
+        e.preventDefault();
+        return;
+      }
+
+      // SEGUIMIENTO (EL QUE FALLABA)
+      if(esBotonConTexto(el, "seguimiento")){
+        abrirPantalla("seguimiento");
+        e.preventDefault();
+        return;
+      }
+
+      el = el.parentElement;
+    }
+  }, true);
+
+  // ==== BOTONES VOLVER ====
+  document.addEventListener("click", function(e){
+    const el = e.target;
+
+    if(el.id === "volver-seguimiento"){
+      cerrarPantalla("seguimiento");
+    }
+
+    if(el.id === "btn-volver"){
+      cerrarPantalla("medicamentos");
+    }
+
+    if(el.classList.contains("secundario")){
+      cerrarPantalla("datos-personales");
+    }
+  });
+
+})();
+</script>
+
+
+
 </body>
 </html>
 
