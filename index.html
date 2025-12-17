@@ -1171,5 +1171,149 @@ document.getElementById("volver-seguimiento")
 </script>
 
 
+
+<!-- =========================
+     BLOQUE 4.1 – SEGUIMIENTO HOY
+     ========================= -->
+
+<style>
+.seguimiento-item{
+  background:#fff;
+  border-radius:16px;
+  padding:14px;
+  box-shadow:0 8px 18px rgba(0,0,0,.1);
+  margin-bottom:12px;
+}
+
+.seguimiento-item h3{
+  margin:0 0 6px;
+  font-size:16px;
+}
+
+.hora-pill{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:10px;
+  background:#2f80ed;
+  color:#fff;
+  font-weight:700;
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+.seguimiento-actions{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.seguimiento-actions button{
+  flex:1;
+  height:44px;
+  border:none;
+  border-radius:12px;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+}
+
+.btn-ok{ background:#27ae60; color:#fff; }
+.btn-no{ background:#d32f2f; color:#fff; }
+</style>
+
+<script>
+/* === UTILIDADES === */
+const DIAS_MAP = ["D","L","M","X","J","V","S"];
+
+function hoyLetra(){
+  return DIAS_MAP[new Date().getDay()];
+}
+
+/* === REGISTRO CUMPLIMIENTO === */
+function registrarSeguimiento(idMed, hora, estado){
+  const key = "seguimiento_log";
+  const log = JSON.parse(localStorage.getItem(key) || "[]");
+
+  log.push({
+    idMed,
+    hora,
+    fecha: new Date().toISOString().slice(0,10),
+    estado // "ok" | "no"
+  });
+
+  localStorage.setItem(key, JSON.stringify(log));
+  alert(estado === "ok" ? "✅ Medicamento registrado" : "❌ Medicamento rechazado");
+}
+
+/* === RENDER HOY === */
+function renderSeguimientoHoy(){
+  const cont = document.getElementById("seguimiento-contenido");
+  if(!cont) return;
+
+  cont.innerHTML = "";
+
+  const meds = JSON.parse(localStorage.getItem("medicamentos_guardados_v1") || "[]");
+  const hoy = hoyLetra();
+
+  meds.forEach(m=>{
+    if(!m.dias) return;
+
+    const diaHoy = m.dias.find(d=>d.dia === hoy);
+    if(!diaHoy || !diaHoy.horas) return;
+
+    diaHoy.horas.forEach(hora=>{
+      const div = document.createElement("div");
+      div.className = "seguimiento-item";
+
+      div.innerHTML = `
+        <h3>${m.nombre}</h3>
+        <div class="hora-pill">⏰ ${hora}</div>
+
+        <div class="seguimiento-actions">
+          <button class="btn-ok">Tomado</button>
+          <button class="btn-no">Rechazado</button>
+        </div>
+      `;
+
+      div.querySelector(".btn-ok").onclick =
+        ()=> registrarSeguimiento(m.id, hora, "ok");
+
+      div.querySelector(".btn-no").onclick =
+        ()=> registrarSeguimiento(m.id, hora, "no");
+
+      cont.appendChild(div);
+    });
+  });
+
+  if(!cont.children.length){
+    cont.innerHTML = `
+      <p style="text-align:center;color:#666">
+        No hay medicamentos para hoy
+      </p>
+    `;
+  }
+}
+
+/* === INYECTAR CONTENEDOR SI NO EXISTE === */
+document.addEventListener("DOMContentLoaded", ()=>{
+  const base = document.querySelector("#seguimiento > div > div");
+  if(!base) return;
+
+  let cont = document.getElementById("seguimiento-contenido");
+  if(!cont){
+    cont = document.createElement("div");
+    cont.id = "seguimiento-contenido";
+    cont.style.marginTop = "14px";
+    base.appendChild(cont);
+  }
+
+  renderSeguimientoHoy();
+});
+</script>
+
+
+
+     
+
 </body>
 </html>
