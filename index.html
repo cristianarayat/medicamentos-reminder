@@ -1051,16 +1051,25 @@ function guardarMedicamento() {
 <script>
 function guardarMedicamento() {
 
-  const nombre = document.getElementById("med-nombre")?.value.trim();
-  const dosis = parseInt(document.getElementById("med-dosis")?.value);
-  const ubicacion = document.getElementById("med-ubicacion")?.value.trim();
-  const periodicidad = document.getElementById("med-periodicidad")?.value;
-  const inicio = document.getElementById("med-inicio")?.value;
-  const diasTratamiento = parseInt(document.getElementById("med-dias")?.value);
+  const nombre = document.getElementById("nombreMedicamento").value.trim();
+  const dosis = parseInt(document.getElementById("dosisDia").value);
+  const ubicacion = document.getElementById("ubicacion").value.trim();
+  const periodicidad = document.getElementById("periodicidad").value;
+  const diasTratamiento = parseInt(document.getElementById("diasTratamiento").value);
+  const inicio = document.getElementById("inicioTratamiento").value;
 
-  const mensaje = document.getElementById("mensajeMedicamento");
-  mensaje.innerHTML = "";
-  mensaje.style.display = "block";
+  const diasSeleccionados = document.querySelectorAll(".dia-checkbox:checked");
+  let horasValidas = false;
+
+  diasSeleccionados.forEach(dia => {
+    const contenedorHoras = document.getElementById("horas-" + dia.value);
+    if (!contenedorHoras) return;
+
+    const horas = contenedorHoras.querySelectorAll("input[type='time']");
+    horas.forEach(h => {
+      if (h.value) horasValidas = true;
+    });
+  });
 
   let errores = [];
 
@@ -1068,55 +1077,28 @@ function guardarMedicamento() {
   if (!dosis || dosis <= 0) errores.push("• Dosis por día");
   if (!ubicacion) errores.push("• Ubicación del remedio");
   if (!periodicidad) errores.push("• Periodicidad");
-  if (!inicio) errores.push("• Inicio del tratamiento");
   if (!diasTratamiento || diasTratamiento <= 0) errores.push("• Días de tratamiento");
+  if (!inicio) errores.push("• Fecha de inicio");
+  if (diasSeleccionados.length === 0 || !horasValidas)
+    errores.push("• Al menos un día con hora de recordatorio");
 
-  // Validar días y horas
-  const diasSeleccionados = document.querySelectorAll(".dia.activo");
-  let horasValidas = false;
+  const mensaje = document.getElementById("mensajeMedicamento");
 
-  diasSeleccionados.forEach(dia => {
-    const horas = dia.parentElement.querySelectorAll("input[type='time']");
-    horas.forEach(h => {
-      if (h.value) horasValidas = true;
-    });
-  });
-
-  if (diasSeleccionados.length === 0 || !horasValidas) {
-    errores.push("• Seleccionar al menos un día con hora");
-  }
-
-  // SI HAY ERRORES → NO GUARDA
   if (errores.length > 0) {
-    mensaje.style.background = "#fdecea";
-    mensaje.style.color = "#b71c1c";
+    mensaje.style.color = "#b00020";
     mensaje.innerHTML = `
-      <strong>No se puede guardar:</strong><br>
-      ${errores.join("<br>")}
+      <strong>No se puede guardar.</strong><br>
+      Falta completar:<br>${errores.join("<br>")}
     `;
-    return;
+    return; // ❌ NO guarda
   }
 
-  // SI TODO ESTÁ OK → GUARDA
-  const medicamento = {
-    nombre,
-    dosis,
-    ubicacion,
-    periodicidad,
-    inicio,
-    diasTratamiento,
-    creado: new Date().toISOString()
-  };
+  // ✅ SI PASA TODAS LAS VALIDACIONES
+  mensaje.style.color = "#2e7d32";
+  mensaje.textContent = "Medicamento guardado correctamente";
 
-  let lista = JSON.parse(localStorage.getItem("medicamentos")) || [];
-  lista.push(medicamento);
-  localStorage.setItem("medicamentos", JSON.stringify(lista));
-
-  mensaje.style.background = "#e6f4ea";
-  mensaje.style.color = "#1b5e20";
-  mensaje.innerHTML = "✅ Medicamento guardado correctamente";
-
-  mostrarMedicamentos();
+  // AQUÍ recién se ejecuta tu lógica de guardado real
+  guardarMedicamentoEnMemoria(); // ← tu función existente
 }
 </script>
 
