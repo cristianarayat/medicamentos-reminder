@@ -1110,160 +1110,153 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
-
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO (SUBPASO 1)
+     BLOQUE 4 – SEGUIMIENTO
      ========================= -->
 
+<section id="pantalla-seguimiento" class="pantalla" style="display:none">
+
+  <div class="container">
+    <div class="card">
+
+      <!-- TÍTULO -->
+      <h2 style="text-align:center;margin-bottom:6px;">
+        Seguimiento diario
+      </h2>
+
+      <div id="fecha-hoy" style="text-align:center;color:#666;margin-bottom:16px;"></div>
+
+      <!-- LISTA DE RECORDATORIOS -->
+      <div id="lista-seguimiento"></div>
+
+      <!-- BOTÓN VOLVER -->
+      <button onclick="volverHome()" style="background:#6c757d;margin-top:16px;">
+        Volver
+      </button>
+
+    </div>
+  </div>
+
+</section>
+
 <style>
-/* ===== CONTENEDOR SEGUIMIENTO ===== */
-#seguimientoScreen{
-  display:none;
-  padding:16px;
-}
-
-/* ===== TÍTULO FECHA ===== */
-.fecha-dia{
-  text-align:center;
-  font-size:18px;
-  font-weight:700;
-  margin-bottom:10px;
-}
-
-/* ===== INDICADORES ===== */
-.indicadores{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:14px;
-  gap:10px;
-}
-
-.indicador{
-  flex:1;
-  background:#fff;
-  border-radius:14px;
-  padding:10px;
-  text-align:center;
-  box-shadow:0 6px 14px rgba(0,0,0,.08);
-}
-
-.indicador span{
-  display:block;
-  font-size:12px;
-  color:#666;
-}
-
-.indicador strong{
-  font-size:18px;
-  color:#2f80ed;
-}
-
-/* ===== TARJETA RECORDATORIO ===== */
-.recordatorio{
-  background:#ffffff;
-  border-left:6px solid #2f80ed;
+.recordatorio {
+  background:#f8f9fa;
   border-radius:14px;
   padding:14px;
   margin-bottom:12px;
-  box-shadow:0 8px 18px rgba(0,0,0,.1);
+  box-shadow:0 6px 14px rgba(0,0,0,.08);
 }
 
-.recordatorio h3{
-  margin:0;
-  font-size:16px;
+.recordatorio.activo {
+  border-left:6px solid #2f80ed;
 }
 
-.recordatorio .hora{
-  font-size:14px;
-  color:#555;
-  margin:4px 0;
+.recordatorio h4 {
+  margin:0 0 6px 0;
 }
 
-.recordatorio .dosis{
-  font-size:14px;
-  font-weight:600;
+.hora {
+  font-weight:700;
+  color:#2f80ed;
   margin-bottom:10px;
 }
 
-/* ===== BOTONES ===== */
-.acciones{
+.botones-accion {
   display:flex;
   gap:10px;
 }
 
-.acciones button{
+.botones-accion button {
   flex:1;
-  height:40px;
-  border:none;
+  height:42px;
   border-radius:10px;
   font-weight:700;
-  cursor:pointer;
 }
 
-.btn-ok{
+.btn-ok {
   background:#27ae60;
-  color:#fff;
 }
 
-.btn-no{
+.btn-no {
   background:#eb5757;
-  color:#fff;
 }
 </style>
 
-<!-- ===== PANTALLA SEGUIMIENTO ===== -->
-<div id="seguimientoScreen" class="container">
-
-  <!-- FECHA -->
-  <div class="fecha-dia" id="fechaHoy">
-    📅 Hoy
-  </div>
-
-  <!-- INDICADORES -->
-  <div class="indicadores">
-    <div class="indicador">
-      <strong>85%</strong>
-      <span>Cumplimiento mensual</span>
-    </div>
-    <div class="indicador">
-      <strong>78%</strong>
-      <span>Cumplimiento acumulado</span>
-    </div>
-  </div>
-
-  <!-- RECORDATORIOS DEL DÍA -->
-  <div class="recordatorio">
-    <h3>Paracetamol</h3>
-    <div class="hora">⏰ 08:00</div>
-    <div class="dosis">💊 1 dosis</div>
-    <div class="acciones">
-      <button class="btn-ok">Completado</button>
-      <button class="btn-no">Rechazado</button>
-    </div>
-  </div>
-
-  <div class="recordatorio">
-    <h3>Paracetamol</h3>
-    <div class="hora">⏰ 20:00</div>
-    <div class="dosis">💊 1 dosis</div>
-    <div class="acciones">
-      <button class="btn-ok">Completado</button>
-      <button class="btn-no">Rechazado</button>
-    </div>
-  </div>
-
-</div>
-
 <script>
-/* ===== MOSTRAR FECHA ACTUAL ===== */
-const fecha = new Date();
-document.getElementById("fechaHoy").innerText =
-  fecha.toLocaleDateString("es-CL", {
-    weekday: "long",
-    day: "numeric",
-    month: "long"
+/* =========================
+   CONEXIÓN BOTÓN SEGUIMIENTO
+   ========================= */
+
+function abrirSeguimiento(){
+  ocultarPantallas();
+  document.getElementById("pantalla-seguimiento").style.display="block";
+  cargarSeguimientoHoy();
+}
+
+/* =========================
+   UTILIDADES
+   ========================= */
+
+function ocultarPantallas(){
+  document.querySelectorAll(".pantalla").forEach(p=>p.style.display="none");
+}
+
+function volverHome(){
+  ocultarPantallas();
+  document.getElementById("home").style.display="block";
+}
+
+/* =========================
+   SEGUIMIENTO DEL DÍA
+   ========================= */
+
+function cargarSeguimientoHoy(){
+
+  const contenedor = document.getElementById("lista-seguimiento");
+  contenedor.innerHTML = "";
+
+  const hoy = new Date();
+  const dia = hoy.toISOString().split("T")[0];
+
+  document.getElementById("fecha-hoy").innerText =
+    hoy.toLocaleDateString("es-CL",{weekday:"long", day:"numeric", month:"long"});
+
+  const meds = JSON.parse(localStorage.getItem("medicamentos")) || [];
+
+  meds.forEach(med => {
+
+    if(!med.horarios) return;
+
+    const horariosHoy = med.horarios[dia];
+    if(!horariosHoy) return;
+
+    horariosHoy.forEach(hora => {
+
+      const div = document.createElement("div");
+      div.className = "recordatorio activo";
+
+      div.innerHTML = `
+        <h4>${med.nombre}</h4>
+        <div class="hora">⏰ ${hora}</div>
+
+        <div class="botones-accion">
+          <button class="btn-ok">Completado</button>
+          <button class="btn-no">Rechazado</button>
+        </div>
+      `;
+
+      contenedor.appendChild(div);
+    });
+
   });
+
+  if(contenedor.innerHTML===""){
+    contenedor.innerHTML = "<p style='text-align:center;color:#777'>No hay medicamentos para hoy</p>";
+  }
+}
 </script>
+
 
      
 </body>
