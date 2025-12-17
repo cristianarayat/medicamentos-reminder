@@ -460,6 +460,10 @@ window.addEventListener("focus", actualizarBienvenida);
      BLOQUE 3 – MEDICAMENTOS
      ========================= -->
 <style>
+*{
+  box-sizing:border-box;
+}
+
 #medicamentos{
   display:none;
   position:fixed;
@@ -467,13 +471,14 @@ window.addEventListener("focus", actualizarBienvenida);
   background:#eef1f4;
   z-index:1000;
   overflow:auto;
-  overscroll-behavior:none;
+  overflow-x:hidden;
 }
 
 .med-container{
-  max-width:560px;
+  max-width:100%;
+  width:100%;
   margin:0 auto;
-  padding:20px 16px 140px;
+  padding:20px 14px 140px;
 }
 
 .med-card{
@@ -514,7 +519,7 @@ window.addEventListener("focus", actualizarBienvenida);
 }
 .row > div{ flex:1; }
 
-/* ===== DÍAS + HORAS (VERTICAL) ===== */
+/* ===== DÍAS + HORAS ===== */
 .dias-vertical{
   display:flex;
   flex-direction:column;
@@ -523,12 +528,13 @@ window.addEventListener("focus", actualizarBienvenida);
 
 .dia-row{
   display:flex;
-  align-items:center;
+  align-items:flex-start;
   gap:10px;
 }
 
 .dia-btn{
   width:42px;
+  min-width:42px;
   height:36px;
   border-radius:10px;
   border:1px solid #cfcfcf;
@@ -545,10 +551,12 @@ window.addEventListener("focus", actualizarBienvenida);
 
 .horas-dia{
   display:flex;
+  flex-wrap:wrap;
   gap:6px;
 }
 
 .horas-dia input{
+  width:80px;
   height:34px;
   border-radius:10px;
   border:1px solid #cfcfcf;
@@ -624,7 +632,7 @@ window.addEventListener("focus", actualizarBienvenida);
 
       <!-- DÍAS + HORAS -->
       <div class="med-group">
-        <label>Selección de días y horas de recordatorio</label>
+        <label>Seleccione las horas para tomar su medicamento</label>
         <div class="dias-vertical" id="dias-grid"></div>
       </div>
 
@@ -737,28 +745,8 @@ document.addEventListener("pointerdown", e=>{
 }, true);
 
 document.addEventListener("DOMContentLoaded", crearDias);
-document.getElementById("medicamentos")
-  .addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
 </script>
 
-
-/* ========= CONECTOR MEDICAMENTOS (SIN TOCAR HOME) ========= */
-document.addEventListener("pointerdown", e=>{
-  let el=e.target;
-  while(el && el!==document.body){
-    if((el.textContent||"").trim().toLowerCase()==="medicamentos"){
-      document.getElementById("medicamentos").style.display="block";
-      e.preventDefault();
-      return;
-    }
-    el=el.parentElement;
-  }
-}, true);
-
-document.addEventListener("DOMContentLoaded", crearDias);
-document.getElementById("medicamentos")
-  .addEventListener("touchmove", e=>e.preventDefault(), {passive:false});
-</script>
 
 
 
