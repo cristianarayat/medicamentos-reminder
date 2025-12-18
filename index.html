@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori10 de Medicamentos</h1>
+  <h1>💊 Recordatori11 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1109,10 +1109,8 @@ if ('serviceWorker' in navigator) {
 </script>
 
 
-
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO (FINAL DEFINITIVO)
-     Basado en FECHAS (inicio / fin)
+     BLOQUE 4 – SEGUIMIENTO (MEJORADO)
 ========================= -->
 
 <div id="seguimiento" style="
@@ -1130,9 +1128,9 @@ if ('serviceWorker' in navigator) {
       padding:20px;
       box-shadow:0 12px 28px rgba(0,0,0,.12);
     ">
-      <h2 style="text-align:center">Seguimiento</h2>
+      <h2 style="text-align:center;margin-bottom:6px">Seguimiento</h2>
 
-      <p style="text-align:center;color:#555">
+      <p style="text-align:center;color:#666;font-size:14px">
         Medicamentos programados para hoy
       </p>
 
@@ -1146,7 +1144,7 @@ if ('serviceWorker' in navigator) {
         background:#bdbdbd;
         font-size:16px;
         font-weight:700;
-        margin-top:20px;
+        margin-top:24px;
       ">
         Volver
       </button>
@@ -1180,7 +1178,8 @@ document.getElementById("volver-seguimiento")
   });
 
 /* =========================
-   LÓGICA SEGUIMIENTO (FECHAS)
+   SEGUIMIENTO POR FECHAS
+   + RESUMEN VISUAL
 ========================= */
 function cargarSeguimientoHoy(){
   const cont = document.getElementById("listaSeguimiento");
@@ -1206,23 +1205,57 @@ function cargarSeguimientoHoy(){
   });
 
   if (medsHoy.length === 0) {
-    cont.innerHTML =
-      '<p style="text-align:center;color:#777">No hay medicamentos para hoy</p>';
+    cont.innerHTML = `
+      <p style="text-align:center;color:#777;margin-top:20px">
+        No hay medicamentos para hoy
+      </p>
+    `;
     return;
   }
 
   medsHoy.forEach(m => {
     const div = document.createElement("div");
-    div.style.padding = "12px";
-    div.style.borderBottom = "1px solid #ddd";
+
+    div.style.background = "#f7f9fc";
+    div.style.borderRadius = "14px";
+    div.style.padding = "14px";
+    div.style.marginBottom = "12px";
+    div.style.boxShadow = "0 4px 10px rgba(0,0,0,.06)";
+
     div.innerHTML = `
-      <strong>${m.nombre}</strong>
-      <div style="font-size:14px;color:#555">
-        ${m.hora || ''}
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong style="font-size:16px">${m.nombre}</strong>
+        <span style="
+          background:#e6f4ea;
+          color:#2e7d32;
+          font-size:12px;
+          padding:4px 8px;
+          border-radius:10px;
+          font-weight:600;
+        ">
+          Activo
+        </span>
+      </div>
+
+      <div style="margin-top:8px;font-size:14px;color:#555">
+        ⏰ <strong>Hora:</strong> ${m.hora || '—'}
+      </div>
+
+      <div style="margin-top:4px;font-size:13px;color:#777">
+        📅 ${formatearFecha(m.inicio)} → ${formatearFecha(m.fin)}
       </div>
     `;
+
     cont.appendChild(div);
   });
+}
+
+/* =========================
+   FORMATO FECHA
+========================= */
+function formatearFecha(fecha){
+  const f = new Date(fecha);
+  return f.toLocaleDateString('es-CL');
 }
 </script>
 
