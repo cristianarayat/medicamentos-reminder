@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori1 de Medicamentos</h1>
+  <h1>💊 Recordatori2 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1173,16 +1173,27 @@ document.getElementById("volver-seguimiento")
 
 
 
-
 <!-- ==================================================
-     PASO 4.1 – SEGUIMIENTO (COMPATIBLE)
+     PASO 4.1 – SEGUIMIENTO (AUTOCONTENIDO)
+     Reemplaza COMPLETAMENTE el paso 4.1 anterior
 ================================================== -->
+
+<section id="seguimiento" class="pantalla">
+  <div class="card">
+    <h2>Seguimiento</h2>
+    <p class="subtitulo">Medicamentos programados para hoy</p>
+
+    <div id="listaSeguimiento"></div>
+
+    <button class="btn-secundario" id="btnVolverSeguimiento">Volver</button>
+  </div>
+</section>
 
 <style>
 /* =========================
-   ESTILOS SEGUIMIENTO
+   ESTILOS PASO 4.1
 ========================= */
-.lista-seguimiento{
+#listaSeguimiento{
   margin:20px 0;
   display:flex;
   flex-direction:column;
@@ -1217,42 +1228,36 @@ document.getElementById("volver-seguimiento")
 }
 </style>
 
-<!-- 👇 OJO: usa el MISMO ID que ya tenías -->
-<section id="seguimiento" class="pantalla">
-  <div class="card">
-    <h2>Seguimiento</h2>
-    <p class="subtitulo">Medicamentos programados para hoy</p>
-
-    <div id="listaSeguimiento" class="lista-seguimiento"></div>
-
-    <button class="btn-secundario" onclick="volverHome()">Volver</button>
-  </div>
-</section>
-
 <script>
 /* =========================
-   PASO 4.1 – LÓGICA REAL
+   PASO 4.1 – LÓGICA TOTAL
 ========================= */
 
-// 🔴 PISA CUALQUIER LÓGICA ANTERIOR
 document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('btnSeguimiento');
-  if (btn) {
-    btn.onclick = () => {
-      mostrarPantalla('seguimiento'); // 👈 TU SISTEMA REAL
+
+  /* Conectar botón Seguimiento del HOME */
+  const btnSeguimiento = document.getElementById('btnSeguimiento');
+  if (btnSeguimiento) {
+    btnSeguimiento.onclick = () => {
+      mostrarPantalla('seguimiento');
       cargarSeguimientoHoy();
     };
   }
+
+  /* Botón volver */
+  const btnVolver = document.getElementById('btnVolverSeguimiento');
+  if (btnVolver) {
+    btnVolver.onclick = volverHome;
+  }
 });
 
+/* Cargar medicamentos del día */
 function cargarSeguimientoHoy(){
   const contenedor = document.getElementById('listaSeguimiento');
-  if (!contenedor) return;
-
   contenedor.innerHTML = '';
 
   const medicamentos = JSON.parse(localStorage.getItem('medicamentos')) || [];
-  const hoy = new Date().getDay();
+  const hoy = new Date().getDay(); // 0=domingo
 
   const medsHoy = medicamentos.filter(m =>
     Array.isArray(m.dias) && m.dias.includes(hoy)
@@ -1265,18 +1270,18 @@ function cargarSeguimientoHoy(){
   }
 
   medsHoy.forEach(m => {
-    const item = document.createElement('div');
-    item.className = 'item-seguimiento';
+    const div = document.createElement('div');
+    div.className = 'item-seguimiento';
 
-    item.innerHTML = `
+    div.innerHTML = `
       <div>
         <h4>${m.nombre}</h4>
-        <span>${m.hora || 'Hora no definida'}</span>
+        <span>${m.hora ? 'Hora: ' + m.hora : 'Hora no definida'}</span>
       </div>
       <span>⏰</span>
     `;
 
-    contenedor.appendChild(item);
+    contenedor.appendChild(div);
   });
 }
 </script>
