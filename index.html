@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatoria de Medicamentos</h1>
+  <h1>💊 Recordatorio de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1376,33 +1376,95 @@ document.addEventListener("DOMContentLoaded", ()=>{
   </div>
 </section>
 
+<!-- ==================================================
+     PASO 4.1 – SEGUIMIENTO (COMPLETO Y CORREGIDO)
+================================================== -->
+
+<style>
+/* =========================
+   ESTILOS PASO 4.1
+========================= */
+#pantalla-seguimiento{
+  display:none;
+}
+
+#pantalla-seguimiento.activa{
+  display:block;
+}
+
+.lista-seguimiento{
+  margin:20px 0;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.item-seguimiento{
+  background:#f4f7fb;
+  border-radius:14px;
+  padding:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+.item-seguimiento h4{
+  margin:0 0 4px 0;
+  font-size:16px;
+}
+
+.item-seguimiento span{
+  font-size:14px;
+  color:#555;
+}
+
+.sin-meds{
+  text-align:center;
+  color:#777;
+  font-size:15px;
+  margin:20px 0;
+}
+</style>
+
+<section id="pantalla-seguimiento" class="pantalla">
+  <div class="card">
+    <h2>Seguimiento</h2>
+    <p class="subtitulo">Medicamentos programados para hoy</p>
+
+    <div id="listaSeguimiento" class="lista-seguimiento"></div>
+
+    <button class="btn-secundario" onclick="volverHome()">Volver</button>
+  </div>
+</section>
+
 <script>
 /* =========================
-   BLOQUE 4.1 – LÓGICA TOTAL
+   PASO 4.1 – LÓGICA TOTAL
 ========================= */
 
-// 🔹 CONEXIÓN AUTOMÁTICA DEL BOTÓN SEGUIMIENTO
+/* 🔴 SOBRESCRIBE CUALQUIER LÓGICA ANTERIOR DEL BOTÓN */
 document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('btnSeguimiento');
-  if (btn) {
-    btn.addEventListener('click', abrirSeguimiento);
+  const btnSeguimiento = document.getElementById('btnSeguimiento');
+  if (btnSeguimiento) {
+    btnSeguimiento.onclick = abrirSeguimiento; // pisa todo lo anterior
   }
 });
 
-// 🔹 FUNCIÓN PRINCIPAL
+/* 🔹 FUNCIÓN DE ENTRADA REAL */
 function abrirSeguimiento(){
   mostrarPantalla('pantalla-seguimiento');
   cargarSeguimientoHoy();
 }
 
-// 🔹 LÓGICA DE CARGA
+/* 🔹 LÓGICA PASO 4.1 */
 function cargarSeguimientoHoy(){
   const contenedor = document.getElementById('listaSeguimiento');
   contenedor.innerHTML = '';
 
   const medicamentos = JSON.parse(localStorage.getItem('medicamentos')) || [];
 
-  const hoy = new Date().getDay(); // 0=domingo
+  const hoy = new Date().getDay(); // 0=domingo, 6=sábado
 
   const medsHoy = medicamentos.filter(m => {
     if (!m.dias || !Array.isArray(m.dias)) return false;
@@ -1410,9 +1472,8 @@ function cargarSeguimientoHoy(){
   });
 
   if (medsHoy.length === 0) {
-    contenedor.innerHTML = `
-      <p class="sin-meds">No hay medicamentos para hoy</p>
-    `;
+    contenedor.innerHTML =
+      '<p class="sin-meds">No hay medicamentos para hoy</p>';
     return;
   }
 
@@ -1432,6 +1493,7 @@ function cargarSeguimientoHoy(){
   });
 }
 </script>
+
 
 
 
