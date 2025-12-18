@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori2 de Medicamentos</h1>
+  <h1>💊 Recordatori3 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1172,20 +1172,18 @@ document.getElementById("volver-seguimiento")
 
 
 
-
 <!-- ==================================================
-     PASO 4.1 – SEGUIMIENTO (AUTOCONTENIDO)
-     Reemplaza COMPLETAMENTE el paso 4.1 anterior
+     PASO 4.1 – SEGUIMIENTO (REEMPLAZO TOTAL)
 ================================================== -->
 
-<section id="seguimiento" class="pantalla">
+<section id="seguimiento" class="pantalla oculto">
   <div class="card">
     <h2>Seguimiento</h2>
     <p class="subtitulo">Medicamentos programados para hoy</p>
 
     <div id="listaSeguimiento"></div>
 
-    <button class="btn-secundario" id="btnVolverSeguimiento">Volver</button>
+    <button class="btn-primario" id="btnVolverSeguimiento">Volver</button>
   </div>
 </section>
 
@@ -1211,7 +1209,7 @@ document.getElementById("volver-seguimiento")
 }
 
 .item-seguimiento h4{
-  margin:0 0 4px 0;
+  margin:0;
   font-size:16px;
 }
 
@@ -1235,7 +1233,7 @@ document.getElementById("volver-seguimiento")
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* Conectar botón Seguimiento del HOME */
+  /* BOTÓN SEGUIMIENTO (HOME) */
   const btnSeguimiento = document.getElementById('btnSeguimiento');
   if (btnSeguimiento) {
     btnSeguimiento.onclick = () => {
@@ -1244,14 +1242,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  /* Botón volver */
+  /* BOTÓN VOLVER */
   const btnVolver = document.getElementById('btnVolverSeguimiento');
   if (btnVolver) {
     btnVolver.onclick = volverHome;
   }
 });
 
-/* Cargar medicamentos del día */
+/* CARGA MEDICAMENTOS DEL DÍA */
 function cargarSeguimientoHoy(){
   const contenedor = document.getElementById('listaSeguimiento');
   contenedor.innerHTML = '';
