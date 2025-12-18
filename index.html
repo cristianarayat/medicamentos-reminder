@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori3 de Medicamentos</h1>
+  <h1>💊 Recordatori4 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1173,10 +1173,10 @@ document.getElementById("volver-seguimiento")
 
 
 <!-- ==================================================
-     PASO 4.1 – SEGUIMIENTO (REEMPLAZO TOTAL)
+     PASO 4.1 – SEGUIMIENTO (AUTÓNOMO)
 ================================================== -->
 
-<section id="seguimiento" class="pantalla oculto">
+<section id="seguimiento" style="display:none">
   <div class="card">
     <h2>Seguimiento</h2>
     <p class="subtitulo">Medicamentos programados para hoy</p>
@@ -1233,19 +1233,26 @@ document.getElementById("volver-seguimiento")
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* BOTÓN SEGUIMIENTO (HOME) */
+  const pantallaSeguimiento = document.getElementById('seguimiento');
+  const home = document.getElementById('home'); // home REAL de tu app
   const btnSeguimiento = document.getElementById('btnSeguimiento');
+  const btnVolver = document.getElementById('btnVolverSeguimiento');
+
+  /* ENTRAR A SEGUIMIENTO */
   if (btnSeguimiento) {
     btnSeguimiento.onclick = () => {
-      mostrarPantalla('seguimiento');
+      if (home) home.style.display = 'none';
+      pantallaSeguimiento.style.display = 'block';
       cargarSeguimientoHoy();
     };
   }
 
-  /* BOTÓN VOLVER */
-  const btnVolver = document.getElementById('btnVolverSeguimiento');
+  /* VOLVER AL HOME */
   if (btnVolver) {
-    btnVolver.onclick = volverHome;
+    btnVolver.onclick = () => {
+      pantallaSeguimiento.style.display = 'none';
+      if (home) home.style.display = 'block';
+    };
   }
 });
 
