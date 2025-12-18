@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori4 de Medicamentos</h1>
+  <h1>💊 Recordatori5 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1173,17 +1173,17 @@ document.getElementById("volver-seguimiento")
 
 
 <!-- ==================================================
-     PASO 4.1 – SEGUIMIENTO (AUTÓNOMO)
+     PASO 4.1 – SEGUIMIENTO FUNCIONAL (NO CONFLICTIVO)
 ================================================== -->
 
-<section id="seguimiento" style="display:none">
+<section id="seguimiento_v41" style="display:none">
   <div class="card">
     <h2>Seguimiento</h2>
     <p class="subtitulo">Medicamentos programados para hoy</p>
 
-    <div id="listaSeguimiento"></div>
+    <div id="listaSeguimiento_v41"></div>
 
-    <button class="btn-primario" id="btnVolverSeguimiento">Volver</button>
+    <button class="btn-primario" id="btnVolverSeguimiento_v41">Volver</button>
   </div>
 </section>
 
@@ -1191,7 +1191,7 @@ document.getElementById("volver-seguimiento")
 /* =========================
    ESTILOS PASO 4.1
 ========================= */
-#listaSeguimiento{
+#listaSeguimiento_v41{
   margin:20px 0;
   display:flex;
   flex-direction:column;
@@ -1233,32 +1233,32 @@ document.getElementById("volver-seguimiento")
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  const pantallaSeguimiento = document.getElementById('seguimiento');
-  const home = document.getElementById('home'); // home REAL de tu app
+  const home = document.getElementById('home'); // home existente
+  const seguimiento = document.getElementById('seguimiento_v41');
   const btnSeguimiento = document.getElementById('btnSeguimiento');
-  const btnVolver = document.getElementById('btnVolverSeguimiento');
+  const btnVolver = document.getElementById('btnVolverSeguimiento_v41');
 
-  /* ENTRAR A SEGUIMIENTO */
-  if (btnSeguimiento) {
+  /* ENTRAR A SEGUIMIENTO 4.1 */
+  if (btnSeguimiento && seguimiento) {
     btnSeguimiento.onclick = () => {
       if (home) home.style.display = 'none';
-      pantallaSeguimiento.style.display = 'block';
-      cargarSeguimientoHoy();
+      seguimiento.style.display = 'block';
+      cargarSeguimientoHoy_v41();
     };
   }
 
   /* VOLVER AL HOME */
-  if (btnVolver) {
+  if (btnVolver && seguimiento) {
     btnVolver.onclick = () => {
-      pantallaSeguimiento.style.display = 'none';
+      seguimiento.style.display = 'none';
       if (home) home.style.display = 'block';
     };
   }
 });
 
 /* CARGA MEDICAMENTOS DEL DÍA */
-function cargarSeguimientoHoy(){
-  const contenedor = document.getElementById('listaSeguimiento');
+function cargarSeguimientoHoy_v41(){
+  const contenedor = document.getElementById('listaSeguimiento_v41');
   contenedor.innerHTML = '';
 
   const medicamentos = JSON.parse(localStorage.getItem('medicamentos')) || [];
