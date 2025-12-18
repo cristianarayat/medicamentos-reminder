@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori8 de Medicamentos</h1>
+  <h1>💊 Recordatori9 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1111,9 +1111,8 @@ if ('serviceWorker' in navigator) {
 
 
 
-
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO (FINAL)
+     BLOQUE 4 – SEGUIMIENTO (FINAL DEFINITIVO)
 ========================= -->
 
 <div id="seguimiento" style="
@@ -1181,13 +1180,17 @@ document.getElementById("volver-seguimiento")
 
 /* =========================
    LÓGICA REAL SEGUIMIENTO
+   (CLAVE CORRECTA)
 ========================= */
 function cargarSeguimientoHoy(){
   const cont = document.getElementById("listaSeguimiento");
   cont.innerHTML = "";
 
-  const medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
-  const hoy = new Date().getDay(); // jueves = 4
+  const medicamentos = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
+
+  const hoy = new Date().getDay(); // 0=domingo ... 4=jueves
 
   const medsHoy = medicamentos.filter(m =>
     Array.isArray(m.dias) && m.dias.includes(hoy)
@@ -1208,6 +1211,7 @@ function cargarSeguimientoHoy(){
   });
 }
 </script>
+
 
 
 
