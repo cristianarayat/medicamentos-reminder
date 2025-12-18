@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori13 de Medicamentos</h1>
+  <h1>💊 Recordatori14 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1109,7 +1109,7 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO COMPLETO
+     BLOQUE 4 – SEGUIMIENTO + HISTORIAL
 ========================= -->
 
 <div id="seguimiento" style="
@@ -1133,11 +1133,25 @@ if ('serviceWorker' in navigator) {
         Medicamentos programados para hoy
       </p>
 
-      <!-- PENDIENTES -->
+      <!-- HOY -->
       <div id="pendientesHoy" style="margin-top:20px"></div>
-
-      <!-- TOMADOS -->
       <div id="tomadosHoy" style="margin-top:26px"></div>
+
+      <!-- HISTORIAL -->
+      <div style="margin-top:30px;border-top:1px solid #eee;padding-top:20px">
+        <h3 style="font-size:16px;margin-bottom:10px">📅 Historial</h3>
+
+        <input type="date" id="fechaHistorial" style="
+          width:100%;
+          height:42px;
+          border-radius:10px;
+          border:1px solid #ccc;
+          padding:0 12px;
+          font-size:15px;
+        ">
+
+        <div id="listaHistorial" style="margin-top:12px"></div>
+      </div>
 
       <button id="volver-seguimiento" style="
         width:100%;
@@ -1166,6 +1180,7 @@ document.addEventListener("pointerdown", function(e){
       e.preventDefault();
       document.getElementById("seguimiento").style.display = "block";
       cargarSeguimientoHoy();
+      prepararHistorial();
       return;
     }
     el = el.parentElement;
@@ -1202,38 +1217,62 @@ function cargarSeguimientoHoy(){
 
   const activosHoy = medicamentos.filter(m => {
     if (!m.inicio || !m.fin) return false;
-
     const ini = new Date(m.inicio);
     const fin = new Date(m.fin);
     ini.setHours(0,0,0,0);
     fin.setHours(23,59,59,999);
-
     return hoy >= ini && hoy <= fin;
   });
 
   const pendientes = activosHoy.filter(m => !tomadosHoy.includes(m.nombre));
   const hechos = activosHoy.filter(m => tomadosHoy.includes(m.nombre));
 
-  /* ===== PENDIENTES ===== */
   if (pendientes.length === 0) {
-    contPend.innerHTML = `
-      <p style="text-align:center;color:#777">
-        No hay medicamentos pendientes
-      </p>
-    `;
+    contPend.innerHTML = `<p style="text-align:center;color:#777">No hay medicamentos pendientes</p>`;
   } else {
     pendientes.forEach(m => contPend.appendChild(cardPendiente(m)));
   }
 
-  /* ===== TOMADOS ===== */
   if (hechos.length > 0) {
-    contTom.innerHTML = `
-      <h3 style="margin-bottom:10px;font-size:15px;color:#4caf50">
-        ✓ Tomados hoy
-      </h3>
-    `;
+    contTom.innerHTML = `<h3 style="margin-bottom:10px;font-size:15px;color:#4caf50">✓ Tomados hoy</h3>`;
     hechos.forEach(m => contTom.appendChild(cardTomado(m)));
   }
+}
+
+/* =========================
+   HISTORIAL
+========================= */
+function prepararHistorial(){
+  const input = document.getElementById("fechaHistorial");
+  const hoy = new Date().toISOString().slice(0,10);
+  input.value = hoy;
+  mostrarHistorial(hoy);
+
+  input.onchange = () => mostrarHistorial(input.value);
+}
+
+function mostrarHistorial(fecha){
+  const cont = document.getElementById("listaHistorial");
+  cont.innerHTML = "";
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  const lista = tomados[fecha] || [];
+
+  if (lista.length === 0) {
+    cont.innerHTML = `<p style="color:#777;text-align:center">No hay registros este día</p>`;
+    return;
+  }
+
+  lista.forEach(n => {
+    const div = document.createElement("div");
+    div.style.padding = "10px";
+    div.style.borderBottom = "1px solid #eee";
+    div.innerHTML = `✓ ${n}`;
+    cont.appendChild(div);
+  });
 }
 
 /* =========================
@@ -1242,7 +1281,6 @@ function cargarSeguimientoHoy(){
 function cardPendiente(m){
   const div = document.createElement("div");
   estiloCard(div);
-
   div.innerHTML = `
     <div style="display:flex;justify-content:space-between">
       <strong>${m.nombre}</strong>
@@ -1250,9 +1288,7 @@ function cardPendiente(m){
     </div>
     <div class="meta">⏰ ${m.hora || '—'}</div>
     <div class="meta">📅 ${fmt(m.inicio)} → ${fmt(m.fin)}</div>
-    <button class="btn-ok" onclick="marcarTomado('${m.nombre}')">
-      ✓ Tomado
-    </button>
+    <button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>
   `;
   return div;
 }
@@ -1261,7 +1297,6 @@ function cardTomado(m){
   const div = document.createElement("div");
   estiloCard(div);
   div.style.opacity = "0.7";
-
   div.innerHTML = `
     <div style="display:flex;justify-content:space-between">
       <strong>${m.nombre}</strong>
