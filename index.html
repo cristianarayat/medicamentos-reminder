@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori6 de Medicamentos</h1>
+  <h1>💊 Recordatori7 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1173,74 +1173,40 @@ document.getElementById("volver-seguimiento")
 
 
 <!-- ==================================================
-     PASO 4.1 – SEGUIMIENTO (VERSIÓN FINAL)
-     Reemplaza COMPLETAMENTE cualquier 4.1 anterior
+     PASO 4.1 – SEGUIMIENTO (REEMPLAZO FORZADO)
 ================================================== -->
 
-<section id="seguimiento" class="pantalla" style="display:none">
-  <div class="card">
-    <h2>Seguimiento</h2>
-    <p class="subtitulo">Medicamentos programados para hoy</p>
-
-    <div id="listaSeguimiento"></div>
-
-    <button class="btn-secundario" id="btnVolverSeguimiento">Volver</button>
-  </div>
-</section>
-
-<style>
-/* =========================
-   ESTILOS PASO 4.1
-========================= */
-#listaSeguimiento{
-  margin-top:20px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.item-seguimiento{
-  background:#f4f7fb;
-  border-radius:14px;
-  padding:16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
-}
-
-.item-seguimiento h4{
-  margin:0;
-  font-size:16px;
-}
-
-.item-seguimiento span{
-  font-size:14px;
-  color:#555;
-}
-
-.sin-meds{
-  margin-top:20px;
-  text-align:center;
-  color:#777;
-  font-size:15px;
-}
-</style>
-
 <script>
-/* =========================
-   PASO 4.1 – LÓGICA FINAL
-========================= */
-
 document.addEventListener('DOMContentLoaded', () => {
 
+  // 1️⃣ BUSCAR CUALQUIER BLOQUE QUE DIGA "Seguimiento"
+  const secciones = document.querySelectorAll('section');
+
+  secciones.forEach(sec => {
+    if (sec.innerText.includes('Bloque 4 – en construcción')) {
+
+      // 2️⃣ REEMPLAZAR COMPLETAMENTE SU CONTENIDO
+      sec.innerHTML = `
+        <div class="card">
+          <h2>Seguimiento</h2>
+          <p class="subtitulo">Medicamentos programados para hoy</p>
+          <div id="listaSeguimiento"></div>
+          <button class="btn-secundario" id="btnVolverSeguimiento">Volver</button>
+        </div>
+      `;
+
+      // 3️⃣ FORZAR VISIBILIDAD CONTROLADA
+      sec.style.display = 'none';
+      sec.id = 'seguimiento';
+    }
+  });
+
+  // 4️⃣ CONECTAR BOTONES
+  const btnSeguimiento = document.getElementById('btnSeguimiento');
   const home = document.getElementById('home');
   const seguimiento = document.getElementById('seguimiento');
-  const btnSeguimiento = document.getElementById('btnSeguimiento');
-  const btnVolver = document.getElementById('btnVolverSeguimiento');
 
-  /* ENTRAR A SEGUIMIENTO */
-  if (btnSeguimiento) {
+  if (btnSeguimiento && seguimiento) {
     btnSeguimiento.onclick = () => {
       if (home) home.style.display = 'none';
       seguimiento.style.display = 'block';
@@ -1248,21 +1214,23 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  /* VOLVER AL HOME */
-  if (btnVolver) {
-    btnVolver.onclick = () => {
+  document.addEventListener('click', e => {
+    if (e.target.id === 'btnVolverSeguimiento') {
       seguimiento.style.display = 'none';
       if (home) home.style.display = 'block';
-    };
-  }
+    }
+  });
 });
 
+// 5️⃣ LÓGICA REAL DEL SEGUIMIENTO
 function cargarSeguimientoHoy(){
   const contenedor = document.getElementById('listaSeguimiento');
+  if (!contenedor) return;
+
   contenedor.innerHTML = '';
 
   const medicamentos = JSON.parse(localStorage.getItem('medicamentos')) || [];
-  const hoy = new Date().getDay(); // 0=domingo ... 4=jueves
+  const hoy = new Date().getDay(); // jueves = 4
 
   const medsHoy = medicamentos.filter(m =>
     Array.isArray(m.dias) && m.dias.includes(hoy)
@@ -1270,22 +1238,15 @@ function cargarSeguimientoHoy(){
 
   if (medsHoy.length === 0) {
     contenedor.innerHTML =
-      '<p class="sin-meds">No hay medicamentos programados para hoy</p>';
+      '<p style="text-align:center;color:#777;">No hay medicamentos para hoy</p>';
     return;
   }
 
   medsHoy.forEach(m => {
     const div = document.createElement('div');
-    div.className = 'item-seguimiento';
-
-    div.innerHTML = `
-      <div>
-        <h4>${m.nombre}</h4>
-        <span>${m.hora || 'Hora no definida'}</span>
-      </div>
-      <span>⏰</span>
-    `;
-
+    div.style.padding = '12px';
+    div.style.borderBottom = '1px solid #ddd';
+    div.innerHTML = `<strong>${m.nombre}</strong> – ${m.hora}`;
     contenedor.appendChild(div);
   });
 }
