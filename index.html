@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatoria de Medicamentos</h1>
+  <h1>💊 Recordatori1 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1174,23 +1174,14 @@ document.getElementById("volver-seguimiento")
 
 
 
-     
 <!-- ==================================================
-     PASO 4.1 – SEGUIMIENTO (COMPLETO Y CORREGIDO)
+     PASO 4.1 – SEGUIMIENTO (COMPATIBLE)
 ================================================== -->
 
 <style>
 /* =========================
-   ESTILOS PASO 4.1
+   ESTILOS SEGUIMIENTO
 ========================= */
-#pantalla-seguimiento{
-  display:none;
-}
-
-#pantalla-seguimiento.activa{
-  display:block;
-}
-
 .lista-seguimiento{
   margin:20px 0;
   display:flex;
@@ -1226,7 +1217,8 @@ document.getElementById("volver-seguimiento")
 }
 </style>
 
-<section id="pantalla-seguimiento" class="pantalla">
+<!-- 👇 OJO: usa el MISMO ID que ya tenías -->
+<section id="seguimiento" class="pantalla">
   <div class="card">
     <h2>Seguimiento</h2>
     <p class="subtitulo">Medicamentos programados para hoy</p>
@@ -1239,36 +1231,32 @@ document.getElementById("volver-seguimiento")
 
 <script>
 /* =========================
-   PASO 4.1 – LÓGICA TOTAL
+   PASO 4.1 – LÓGICA REAL
 ========================= */
 
-/* 🔴 SOBRESCRIBE CUALQUIER LÓGICA ANTERIOR DEL BOTÓN */
+// 🔴 PISA CUALQUIER LÓGICA ANTERIOR
 document.addEventListener('DOMContentLoaded', () => {
-  const btnSeguimiento = document.getElementById('btnSeguimiento');
-  if (btnSeguimiento) {
-    btnSeguimiento.onclick = abrirSeguimiento; // pisa todo lo anterior
+  const btn = document.getElementById('btnSeguimiento');
+  if (btn) {
+    btn.onclick = () => {
+      mostrarPantalla('seguimiento'); // 👈 TU SISTEMA REAL
+      cargarSeguimientoHoy();
+    };
   }
 });
 
-/* 🔹 FUNCIÓN DE ENTRADA REAL */
-function abrirSeguimiento(){
-  mostrarPantalla('pantalla-seguimiento');
-  cargarSeguimientoHoy();
-}
-
-/* 🔹 LÓGICA PASO 4.1 */
 function cargarSeguimientoHoy(){
   const contenedor = document.getElementById('listaSeguimiento');
+  if (!contenedor) return;
+
   contenedor.innerHTML = '';
 
   const medicamentos = JSON.parse(localStorage.getItem('medicamentos')) || [];
+  const hoy = new Date().getDay();
 
-  const hoy = new Date().getDay(); // 0=domingo, 6=sábado
-
-  const medsHoy = medicamentos.filter(m => {
-    if (!m.dias || !Array.isArray(m.dias)) return false;
-    return m.dias.includes(hoy);
-  });
+  const medsHoy = medicamentos.filter(m =>
+    Array.isArray(m.dias) && m.dias.includes(hoy)
+  );
 
   if (medsHoy.length === 0) {
     contenedor.innerHTML =
@@ -1283,7 +1271,7 @@ function cargarSeguimientoHoy(){
     item.innerHTML = `
       <div>
         <h4>${m.nombre}</h4>
-        <span>${m.hora ? 'Hora: ' + m.hora : 'Hora no definida'}</span>
+        <span>${m.hora || 'Hora no definida'}</span>
       </div>
       <span>⏰</span>
     `;
