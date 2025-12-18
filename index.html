@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori12 de Medicamentos</h1>
+  <h1>💊 Recordatori13 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1108,9 +1108,8 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
-
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO + TOMADO
+     BLOQUE 4 – SEGUIMIENTO COMPLETO
 ========================= -->
 
 <div id="seguimiento" style="
@@ -1134,7 +1133,11 @@ if ('serviceWorker' in navigator) {
         Medicamentos programados para hoy
       </p>
 
-      <div id="listaSeguimiento" style="margin-top:20px"></div>
+      <!-- PENDIENTES -->
+      <div id="pendientesHoy" style="margin-top:20px"></div>
+
+      <!-- TOMADOS -->
+      <div id="tomadosHoy" style="margin-top:26px"></div>
 
       <button id="volver-seguimiento" style="
         width:100%;
@@ -1144,7 +1147,7 @@ if ('serviceWorker' in navigator) {
         background:#bdbdbd;
         font-size:16px;
         font-weight:700;
-        margin-top:24px;
+        margin-top:26px;
       ">
         Volver
       </button>
@@ -1175,11 +1178,14 @@ document.getElementById("volver-seguimiento")
   });
 
 /* =========================
-   SEGUIMIENTO + TOMADO
+   SEGUIMIENTO HOY
 ========================= */
 function cargarSeguimientoHoy(){
-  const cont = document.getElementById("listaSeguimiento");
-  cont.innerHTML = "";
+  const contPend = document.getElementById("pendientesHoy");
+  const contTom = document.getElementById("tomadosHoy");
+
+  contPend.innerHTML = "";
+  contTom.innerHTML = "";
 
   const medicamentos = JSON.parse(
     localStorage.getItem("medicamentos_guardados_v1")
@@ -1192,96 +1198,99 @@ function cargarSeguimientoHoy(){
   const hoy = new Date();
   hoy.setHours(0,0,0,0);
   const claveHoy = hoy.toISOString().slice(0,10);
-
   const tomadosHoy = tomados[claveHoy] || [];
 
-  const medsHoy = medicamentos.filter(m => {
+  const activosHoy = medicamentos.filter(m => {
     if (!m.inicio || !m.fin) return false;
 
-    const inicio = new Date(m.inicio);
+    const ini = new Date(m.inicio);
     const fin = new Date(m.fin);
-
-    inicio.setHours(0,0,0,0);
+    ini.setHours(0,0,0,0);
     fin.setHours(23,59,59,999);
 
-    return hoy >= inicio && hoy <= fin && !tomadosHoy.includes(m.nombre);
+    return hoy >= ini && hoy <= fin;
   });
 
-  if (medsHoy.length === 0) {
-    cont.innerHTML = `
-      <p style="text-align:center;color:#777;margin-top:20px">
-        No hay medicamentos pendientes para hoy
+  const pendientes = activosHoy.filter(m => !tomadosHoy.includes(m.nombre));
+  const hechos = activosHoy.filter(m => tomadosHoy.includes(m.nombre));
+
+  /* ===== PENDIENTES ===== */
+  if (pendientes.length === 0) {
+    contPend.innerHTML = `
+      <p style="text-align:center;color:#777">
+        No hay medicamentos pendientes
       </p>
     `;
-    return;
+  } else {
+    pendientes.forEach(m => contPend.appendChild(cardPendiente(m)));
   }
 
-  medsHoy.forEach(m => {
-    const card = document.createElement("div");
-
-    card.style.background = "#f7f9fc";
-    card.style.borderRadius = "14px";
-    card.style.padding = "14px";
-    card.style.marginBottom = "12px";
-    card.style.boxShadow = "0 4px 10px rgba(0,0,0,.06)";
-
-    card.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <strong style="font-size:16px">${m.nombre}</strong>
-        <span style="
-          background:#e6f4ea;
-          color:#2e7d32;
-          font-size:12px;
-          padding:4px 8px;
-          border-radius:10px;
-          font-weight:600;
-        ">
-          Activo
-        </span>
-      </div>
-
-      <div style="margin-top:8px;font-size:14px;color:#555">
-        ⏰ <strong>Hora:</strong> ${m.hora || '—'}
-      </div>
-
-      <div style="margin-top:4px;font-size:13px;color:#777">
-        📅 ${formatearFecha(m.inicio)} → ${formatearFecha(m.fin)}
-      </div>
-
-      <button style="
-        margin-top:12px;
-        width:100%;
-        height:44px;
-        border:none;
-        border-radius:12px;
-        background:#4caf50;
-        color:#fff;
-        font-size:15px;
-        font-weight:700;
-      " onclick="marcarTomado('${m.nombre}')">
-        ✓ Tomado
-      </button>
+  /* ===== TOMADOS ===== */
+  if (hechos.length > 0) {
+    contTom.innerHTML = `
+      <h3 style="margin-bottom:10px;font-size:15px;color:#4caf50">
+        ✓ Tomados hoy
+      </h3>
     `;
-
-    cont.appendChild(card);
-  });
+    hechos.forEach(m => contTom.appendChild(cardTomado(m)));
+  }
 }
 
 /* =========================
-   MARCAR COMO TOMADO
+   CARDS
+========================= */
+function cardPendiente(m){
+  const div = document.createElement("div");
+  estiloCard(div);
+
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between">
+      <strong>${m.nombre}</strong>
+      <span class="badge-activo">Activo</span>
+    </div>
+    <div class="meta">⏰ ${m.hora || '—'}</div>
+    <div class="meta">📅 ${fmt(m.inicio)} → ${fmt(m.fin)}</div>
+    <button class="btn-ok" onclick="marcarTomado('${m.nombre}')">
+      ✓ Tomado
+    </button>
+  `;
+  return div;
+}
+
+function cardTomado(m){
+  const div = document.createElement("div");
+  estiloCard(div);
+  div.style.opacity = "0.7";
+
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between">
+      <strong>${m.nombre}</strong>
+      <span class="badge-tomado">Tomado</span>
+    </div>
+    <div class="meta">⏰ ${m.hora || '—'}</div>
+  `;
+  return div;
+}
+
+function estiloCard(div){
+  div.style.background = "#f7f9fc";
+  div.style.borderRadius = "14px";
+  div.style.padding = "14px";
+  div.style.marginBottom = "12px";
+  div.style.boxShadow = "0 4px 10px rgba(0,0,0,.06)";
+}
+
+/* =========================
+   MARCAR TOMADO
 ========================= */
 function marcarTomado(nombre){
   const hoy = new Date().toISOString().slice(0,10);
-
   const tomados = JSON.parse(
     localStorage.getItem("medicamentos_tomados_v1")
   ) || {};
 
   if (!tomados[hoy]) tomados[hoy] = [];
-
-  if (!tomados[hoy].includes(nombre)) {
-    tomados[hoy].push(nombre);
-  }
+  if (!tomados[hoy].includes(nombre)) tomados[hoy].push(nombre);
 
   localStorage.setItem(
     "medicamentos_tomados_v1",
@@ -1292,12 +1301,35 @@ function marcarTomado(nombre){
 }
 
 /* =========================
-   FORMATO FECHA
+   UTIL
 ========================= */
-function formatearFecha(fecha){
-  return new Date(fecha).toLocaleDateString('es-CL');
+function fmt(f){
+  return new Date(f).toLocaleDateString('es-CL');
 }
 </script>
+
+<style>
+.meta{font-size:13px;color:#666;margin-top:4px}
+.btn-ok{
+  margin-top:10px;
+  width:100%;
+  height:40px;
+  border:none;
+  border-radius:12px;
+  background:#4caf50;
+  color:#fff;
+  font-weight:700;
+}
+.badge-activo{
+  background:#e6f4ea;color:#2e7d32;
+  padding:4px 8px;border-radius:10px;font-size:12px
+}
+.badge-tomado{
+  background:#e0e0e0;color:#555;
+  padding:4px 8px;border-radius:10px;font-size:12px
+}
+</style>
+
 
 
 
