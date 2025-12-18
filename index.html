@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori7 de Medicamentos</h1>
+  <h1>💊 Recordatori8 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1108,9 +1108,13 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+
+
+
+
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO (SOLO CONEXIÓN)
-     ========================= -->
+     BLOQUE 4 – SEGUIMIENTO (FINAL)
+========================= -->
 
 <div id="seguimiento" style="
   display:none;
@@ -1128,10 +1132,11 @@ if ('serviceWorker' in navigator) {
       box-shadow:0 12px 28px rgba(0,0,0,.12);
     ">
       <h2 style="text-align:center">Seguimiento</h2>
-
       <p style="text-align:center;color:#555">
-        (Bloque 4 – en construcción)
+        Medicamentos programados para hoy
       </p>
+
+      <div id="listaSeguimiento" style="margin-top:20px"></div>
 
       <button id="volver-seguimiento" style="
         width:100%;
@@ -1150,86 +1155,38 @@ if ('serviceWorker' in navigator) {
 </div>
 
 <script>
-/* === CONECTOR BOTÓN SEGUIMIENTO (MISMA LÓGICA QUE LOS OTROS) === */
+/* =========================
+   ABRIR SEGUIMIENTO
+========================= */
 document.addEventListener("pointerdown", function(e){
   let el = e.target;
   while(el && el !== document.body){
     if ((el.textContent || "").trim().toLowerCase() === "seguimiento") {
-      document.getElementById("seguimiento").style.display = "block";
       e.preventDefault();
+      document.getElementById("seguimiento").style.display = "block";
+      cargarSeguimientoHoy();
       return;
     }
     el = el.parentElement;
   }
 }, true);
 
-/* === BOTÓN VOLVER === */
+/* =========================
+   VOLVER
+========================= */
 document.getElementById("volver-seguimiento")
   .addEventListener("click", function(){
     document.getElementById("seguimiento").style.display = "none";
   });
-</script>
 
-
-
-<!-- ==================================================
-     PASO 4.1 – SEGUIMIENTO (REEMPLAZO FORZADO)
-================================================== -->
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-
-  // 1️⃣ BUSCAR CUALQUIER BLOQUE QUE DIGA "Seguimiento"
-  const secciones = document.querySelectorAll('section');
-
-  secciones.forEach(sec => {
-    if (sec.innerText.includes('Bloque 4 – en construcción')) {
-
-      // 2️⃣ REEMPLAZAR COMPLETAMENTE SU CONTENIDO
-      sec.innerHTML = `
-        <div class="card">
-          <h2>Seguimiento</h2>
-          <p class="subtitulo">Medicamentos programados para hoy</p>
-          <div id="listaSeguimiento"></div>
-          <button class="btn-secundario" id="btnVolverSeguimiento">Volver</button>
-        </div>
-      `;
-
-      // 3️⃣ FORZAR VISIBILIDAD CONTROLADA
-      sec.style.display = 'none';
-      sec.id = 'seguimiento';
-    }
-  });
-
-  // 4️⃣ CONECTAR BOTONES
-  const btnSeguimiento = document.getElementById('btnSeguimiento');
-  const home = document.getElementById('home');
-  const seguimiento = document.getElementById('seguimiento');
-
-  if (btnSeguimiento && seguimiento) {
-    btnSeguimiento.onclick = () => {
-      if (home) home.style.display = 'none';
-      seguimiento.style.display = 'block';
-      cargarSeguimientoHoy();
-    };
-  }
-
-  document.addEventListener('click', e => {
-    if (e.target.id === 'btnVolverSeguimiento') {
-      seguimiento.style.display = 'none';
-      if (home) home.style.display = 'block';
-    }
-  });
-});
-
-// 5️⃣ LÓGICA REAL DEL SEGUIMIENTO
+/* =========================
+   LÓGICA REAL SEGUIMIENTO
+========================= */
 function cargarSeguimientoHoy(){
-  const contenedor = document.getElementById('listaSeguimiento');
-  if (!contenedor) return;
+  const cont = document.getElementById("listaSeguimiento");
+  cont.innerHTML = "";
 
-  contenedor.innerHTML = '';
-
-  const medicamentos = JSON.parse(localStorage.getItem('medicamentos')) || [];
+  const medicamentos = JSON.parse(localStorage.getItem("medicamentos")) || [];
   const hoy = new Date().getDay(); // jueves = 4
 
   const medsHoy = medicamentos.filter(m =>
@@ -1237,17 +1194,17 @@ function cargarSeguimientoHoy(){
   );
 
   if (medsHoy.length === 0) {
-    contenedor.innerHTML =
-      '<p style="text-align:center;color:#777;">No hay medicamentos para hoy</p>';
+    cont.innerHTML =
+      '<p style="text-align:center;color:#777">No hay medicamentos para hoy</p>';
     return;
   }
 
   medsHoy.forEach(m => {
-    const div = document.createElement('div');
-    div.style.padding = '12px';
-    div.style.borderBottom = '1px solid #ddd';
+    const div = document.createElement("div");
+    div.style.padding = "12px";
+    div.style.borderBottom = "1px solid #ddd";
     div.innerHTML = `<strong>${m.nombre}</strong> – ${m.hora}`;
-    contenedor.appendChild(div);
+    cont.appendChild(div);
   });
 }
 </script>
