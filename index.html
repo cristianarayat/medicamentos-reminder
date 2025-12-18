@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori9 de Medicamentos</h1>
+  <h1>💊 Recordatori10 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1110,9 +1110,9 @@ if ('serviceWorker' in navigator) {
 
 
 
-
 <!-- =========================
      BLOQUE 4 – SEGUIMIENTO (FINAL DEFINITIVO)
+     Basado en FECHAS (inicio / fin)
 ========================= -->
 
 <div id="seguimiento" style="
@@ -1131,6 +1131,7 @@ if ('serviceWorker' in navigator) {
       box-shadow:0 12px 28px rgba(0,0,0,.12);
     ">
       <h2 style="text-align:center">Seguimiento</h2>
+
       <p style="text-align:center;color:#555">
         Medicamentos programados para hoy
       </p>
@@ -1179,8 +1180,7 @@ document.getElementById("volver-seguimiento")
   });
 
 /* =========================
-   LÓGICA REAL SEGUIMIENTO
-   (CLAVE CORRECTA)
+   LÓGICA SEGUIMIENTO (FECHAS)
 ========================= */
 function cargarSeguimientoHoy(){
   const cont = document.getElementById("listaSeguimiento");
@@ -1190,11 +1190,20 @@ function cargarSeguimientoHoy(){
     localStorage.getItem("medicamentos_guardados_v1")
   ) || [];
 
-  const hoy = new Date().getDay(); // 0=domingo ... 4=jueves
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
 
-  const medsHoy = medicamentos.filter(m =>
-    Array.isArray(m.dias) && m.dias.includes(hoy)
-  );
+  const medsHoy = medicamentos.filter(m => {
+    if (!m.inicio || !m.fin) return false;
+
+    const inicio = new Date(m.inicio);
+    const fin = new Date(m.fin);
+
+    inicio.setHours(0,0,0,0);
+    fin.setHours(23,59,59,999);
+
+    return hoy >= inicio && hoy <= fin;
+  });
 
   if (medsHoy.length === 0) {
     cont.innerHTML =
@@ -1206,11 +1215,17 @@ function cargarSeguimientoHoy(){
     const div = document.createElement("div");
     div.style.padding = "12px";
     div.style.borderBottom = "1px solid #ddd";
-    div.innerHTML = `<strong>${m.nombre}</strong> – ${m.hora}`;
+    div.innerHTML = `
+      <strong>${m.nombre}</strong>
+      <div style="font-size:14px;color:#555">
+        ${m.hora || ''}
+      </div>
+    `;
     cont.appendChild(div);
   });
 }
 </script>
+
 
 
 
