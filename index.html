@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori48 de Medicamentos</h1>
+  <h1>💊 Recordatori49 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -464,7 +464,7 @@ window.addEventListener("focus", actualizarBienvenida);
 
      
 <!-- =========================
-     BLOQUE 3 – MEDICAMENTOS (FINAL)
+     BLOQUE 3 – MEDICAMENTOS (DEFINITIVO)
 ========================= -->
 
 <style>
@@ -490,9 +490,12 @@ window.addEventListener("focus", actualizarBienvenida);
   box-shadow:0 12px 28px rgba(0,0,0,.12);
 }
 
-.med-card h2{text-align:center}
+.med-card h2{
+  text-align:center;
+  margin-bottom:14px;
+}
 
-.med-group{margin-bottom:14px}
+.med-group{ margin-bottom:14px; }
 
 .med-group label{
   display:block;
@@ -511,36 +514,51 @@ window.addEventListener("focus", actualizarBienvenida);
   font-size:15px;
 }
 
-.row{display:flex;gap:10px}
-.row>div{flex:1}
+.row{ display:flex; gap:10px; }
+.row > div{ flex:1; }
 
-/* ===== DÍAS ===== */
-.dias-vertical{display:flex;flex-direction:column;gap:10px}
-.dia-row{display:flex;gap:10px;align-items:flex-start}
+/* DÍAS */
+.dias-vertical{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.dia-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
 
 .dia-btn{
-  width:44px;height:36px;
+  width:42px;
+  height:36px;
   border-radius:10px;
-  border:1px solid #ccc;
+  border:1px solid #cfcfcf;
   background:#e0e0e0;
   font-weight:700;
 }
-.dia-btn.on{background:#2f80ed;color:#fff}
 
-/* ===== HORAS ===== */
-.horas-dia{display:flex;flex-wrap:wrap;gap:6px}
+.dia-btn.on{
+  background:#2f80ed;
+  color:#fff;
+}
+
 .horas-dia input{
-  width:90px;
-  height:34px;
+  width:100px;
+  height:36px;
   border-radius:10px;
-  border:1px solid #ccc;
-  padding:0 6px;
 }
 
 /* FOTO */
-.foto-wrap{display:flex;gap:10px;align-items:center}
-.foto-wrap img{
-  width:60px;height:60px;
+.foto{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.foto img{
+  width:64px;
+  height:64px;
   border-radius:10px;
   object-fit:cover;
   border:1px solid #ccc;
@@ -548,21 +566,26 @@ window.addEventListener("focus", actualizarBienvenida);
 
 /* BOTONES */
 .btn{
-  width:100%;height:52px;
-  border:none;border-radius:16px;
-  font-size:16px;font-weight:700;
+  width:100%;
+  height:52px;
+  border:none;
+  border-radius:16px;
+  background:#2f80ed;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
 }
-.btn.guardar{background:#2f80ed;color:#fff}
-.btn.volver{background:#bdbdbd;margin-top:8px}
+.btn.volver{ background:#bdbdbd; margin-top:8px; }
 
-.med-error{
+/* MENSAJE ERROR */
+#med-error{
   display:none;
   background:#fdecea;
   color:#b71c1c;
   padding:10px;
-  border-radius:12px;
-  font-size:14px;
-  margin-bottom:12px;
+  border-radius:10px;
+  font-size:13px;
+  margin-bottom:10px;
 }
 </style>
 
@@ -572,7 +595,7 @@ window.addEventListener("focus", actualizarBienvenida);
 
       <h2>Medicamentos</h2>
 
-      <div id="med-error" class="med-error"></div>
+      <div id="med-error"></div>
 
       <div class="med-group">
         <label>Nombre del medicamento</label>
@@ -586,7 +609,7 @@ window.addEventListener("focus", actualizarBienvenida);
         </div>
         <div class="med-group">
           <label>Ubicación del remedio</label>
-          <input id="m-lugar" placeholder="Ej: velador, cocina">
+          <input id="m-lugar" placeholder="Ej: velador">
         </div>
       </div>
 
@@ -604,7 +627,12 @@ window.addEventListener("focus", actualizarBienvenida);
 
       <div class="med-group">
         <label>Días y horas</label>
-        <div class="dias-vertical" id="dias-grid"></div>
+        <div id="dias-grid" class="dias-vertical"></div>
+      </div>
+
+      <div class="med-group">
+        <label>Días del tratamiento</label>
+        <input id="m-dias" type="number" min="1">
       </div>
 
       <div class="row">
@@ -614,119 +642,121 @@ window.addEventListener("focus", actualizarBienvenida);
         </div>
         <div class="med-group">
           <label>Fin</label>
-          <input id="m-fin" type="date">
+          <input id="m-fin" type="date" disabled>
         </div>
       </div>
 
-      <div class="med-group foto-wrap">
+      <div class="med-group foto">
         <input id="m-foto" type="file" accept="image/*">
         <img id="m-prev">
       </div>
 
-      <button class="btn guardar" onclick="guardarMedicamento()">Guardar medicamento</button>
-      <button class="btn volver" onclick="document.getElementById('medicamentos').style.display='none'">Volver</button>
+      <button class="btn" id="btn-guardar-med">Guardar medicamento</button>
+      <button class="btn volver" id="btn-volver-med">Volver</button>
 
     </div>
   </div>
 </div>
 
 <script>
-/* === ABRIR MEDICAMENTOS === */
+/* ===== ABRIR ===== */
 document.addEventListener("pointerdown", e=>{
-  let el=e.target;
-  while(el){
-    if(el.textContent?.trim().toLowerCase()==="medicamentos"){
-      document.getElementById("medicamentos").style.display="block";
-      return;
-    }
-    el=el.parentElement;
+  if((e.target.textContent||"").trim().toLowerCase()==="medicamentos"){
+    document.getElementById("medicamentos").style.display="block";
   }
 });
 
-/* === DÍAS + HORAS (NO SE BORRAN) === */
-const dias=["L","M","X","J","V","S","D"];
-const horasPorDia={};
+/* ===== VOLVER ===== */
+document.getElementById("btn-volver-med").onclick =
+  ()=> document.getElementById("medicamentos").style.display="none";
+
+/* ===== DÍAS ===== */
+const dias = ["L","M","X","J","V","S","D"];
+const horasPorDia = {};
 
 function crearDias(){
-  const grid=document.getElementById("dias-grid");
+  const grid = document.getElementById("dias-grid");
   grid.innerHTML="";
   dias.forEach(d=>{
-    horasPorDia[d]=[];
+    horasPorDia[d]=horasPorDia[d]||["20:00"];
     const row=document.createElement("div");
     row.className="dia-row";
 
     const btn=document.createElement("button");
-    btn.type="button";
-    btn.className="dia-btn";
+    btn.className="dia-btn on";
     btn.textContent=d;
 
-    const horas=document.createElement("div");
-    horas.className="horas-dia";
+    const cont=document.createElement("div");
+    cont.className="horas-dia";
 
-    btn.onclick=()=>{
-      btn.classList.toggle("on");
-      if(btn.classList.contains("on")){
-        agregarHora(d,horas);
-      }else{
-        horas.innerHTML="";
-        horasPorDia[d]=[];
-      }
-    };
+    horasPorDia[d].forEach(h=>{
+      const i=document.createElement("input");
+      i.type="time"; i.value=h;
+      i.onchange=()=> horasPorDia[d]=[i.value];
+      cont.appendChild(i);
+    });
 
-    row.appendChild(btn);
-    row.appendChild(horas);
+    row.append(btn,cont);
     grid.appendChild(row);
   });
 }
 
-function agregarHora(dia, cont){
-  const t=document.createElement("input");
-  t.type="time";
-  t.onchange=()=> horasPorDia[dia]=[...cont.querySelectorAll("input")].map(i=>i.value);
-  cont.appendChild(t);
+/* ===== FECHAS ===== */
+function recalcularFin(){
+  const dias=+mDias.value;
+  if(!mInicio.value||!dias) return;
+  const d=new Date(mInicio.value);
+  d.setDate(d.getDate()+dias);
+  mFin.value=d.toISOString().slice(0,10);
 }
 
-document.addEventListener("DOMContentLoaded",crearDias);
+const mInicio=document.getElementById("m-inicio");
+const mDias=document.getElementById("m-dias");
+const mFin=document.getElementById("m-fin");
 
-/* === FOTO PREVIEW === */
+mInicio.onchange=recalcularFin;
+mDias.oninput=recalcularFin;
+
+/* ===== PERMANENTE ===== */
+document.getElementById("m-periodicidad").onchange=e=>{
+  const perma=e.target.value==="0";
+  [mDias,mInicio,mFin].forEach(i=>{i.disabled=perma; i.value="";});
+};
+
+/* ===== FOTO ===== */
 document.getElementById("m-foto").onchange=e=>{
   const f=e.target.files[0];
   if(!f) return;
   const r=new FileReader();
-  r.onload=()=>document.getElementById("m-prev").src=r.result;
+  r.onload=()=> mPrev.src=r.result;
   r.readAsDataURL(f);
 };
 
-/* === GUARDAR === */
-function guardarMedicamento(){
+/* ===== GUARDAR ===== */
+document.getElementById("btn-guardar-med").onclick=()=>{
   const err=document.getElementById("med-error");
-  err.style.display="none";
-
-  const nombre=m("m-nombre");
-  const dosis=m("m-dosis");
-  const lugar=m("m-lugar");
-  const inicio=m("m-inicio");
-
-  if(!nombre||!dosis||!lugar||!inicio){
-    err.textContent="No se puede guardar. Faltan datos obligatorios.";
+  if(!mNombre.value||!mLugar.value||!mInicio.value){
     err.style.display="block";
+    err.textContent="Completa los campos obligatorios";
     return;
   }
+  err.style.display="none";
 
-  const meds=JSON.parse(localStorage.getItem("medicamentos_guardados_v1")||"[]");
-  meds.push({
-    nombre,inicio,
-    fin:m("m-fin"),
-    foto:document.getElementById("m-prev").src||"",
-    horas:horasPorDia
+  const arr=JSON.parse(localStorage.getItem("medicamentos_guardados_v1")||"[]");
+  arr.push({
+    nombre:mNombre.value,
+    inicio:mInicio.value,
+    fin:mFin.value,
+    horas:horasPorDia,
+    foto:mPrev.src||""
   });
+  localStorage.setItem("medicamentos_guardados_v1",JSON.stringify(arr));
+  alert("Medicamento guardado correctamente");
+};
 
-  localStorage.setItem("medicamentos_guardados_v1",JSON.stringify(meds));
-  document.getElementById("medicamentos").style.display="none";
-}
-
-function m(id){return document.getElementById(id).value}
+crearDias();
 </script>
+
 
 
 
