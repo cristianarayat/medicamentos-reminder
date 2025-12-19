@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori27 de Medicamentos</h1>
+  <h1>💊 Recordatori28 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1110,9 +1110,8 @@ if ('serviceWorker' in navigator) {
 
 
 
-
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO AVANZADO
+     BLOQUE 4 – SEGUIMIENTO AVANZADO (ESTABLE)
 ========================= -->
 
 <div id="seguimiento" style="
@@ -1124,54 +1123,32 @@ if ('serviceWorker' in navigator) {
   overflow:auto;
 ">
   <div style="max-width:480px;margin:0 auto;padding:20px">
-    <div style="
-      background:#fff;
-      border-radius:18px;
-      padding:20px;
-      box-shadow:0 12px 28px rgba(0,0,0,.12);
-    ">
-      <h2 style="text-align:center;margin-bottom:6px">Seguimiento</h2>
+    <div class="card-seg">
 
-      <p style="text-align:center;color:#666;font-size:14px">
-        Medicamentos programados para hoy
-      </p>
+      <h2 class="titulo">Seguimiento</h2>
+      <p class="subtitulo">Medicamentos programados para hoy</p>
 
       <!-- HOY -->
-      <div id="listaHoy" style="margin-top:20px"></div>
+      <div id="listaHoy"></div>
 
       <!-- HISTORIAL -->
-      <div style="margin-top:30px;border-top:1px solid #eee;padding-top:20px">
-        <h3 style="font-size:16px;margin-bottom:10px">📅 Historial</h3>
-        <input type="date" id="fechaHistorial" style="
-          width:100%;
-          height:42px;
-          border-radius:10px;
-          border:1px solid #ccc;
-          padding:0 12px;
-          font-size:15px;
-        ">
-        <div id="listaHistorial" style="margin-top:12px"></div>
+      <div class="bloque">
+        <h3>📅 Historial</h3>
+        <input type="date" id="fechaHistorial">
+        <div id="listaHistorial"></div>
       </div>
 
-      <button id="volver-seguimiento" style="
-        width:100%;
-        height:52px;
-        border:none;
-        border-radius:14px;
-        background:#bdbdbd;
-        font-size:16px;
-        font-weight:700;
-        margin-top:26px;
-      ">
+      <button id="volver-seguimiento" class="btn-volver">
         Volver
       </button>
+
     </div>
   </div>
 </div>
 
 <script>
 /* =========================
-   ABRIR / CERRAR
+   ABRIR / CERRAR (SEGURO)
 ========================= */
 document.addEventListener("pointerdown", function(e){
   let el = e.target;
@@ -1191,7 +1168,7 @@ document.getElementById("volver-seguimiento")
   .onclick = () => document.getElementById("seguimiento").style.display = "none";
 
 /* =========================
-   HOY – ORDEN + ESTADO
+   HOY – FILTRO ESTABLE
 ========================= */
 function cargarHoy(){
   const cont = document.getElementById("listaHoy");
@@ -1218,7 +1195,6 @@ function cargarHoy(){
     return ahora >= ini && ahora <= fin;
   });
 
-  // ORDENAR POR HORA
   activosHoy.sort((a,b)=>{
     if(!a.hora) return 1;
     if(!b.hora) return -1;
@@ -1226,7 +1202,8 @@ function cargarHoy(){
   });
 
   if (activosHoy.length === 0) {
-    cont.innerHTML = `<p style="text-align:center;color:#777">No hay medicamentos hoy</p>`;
+    cont.innerHTML =
+      `<p class="vacio">No hay medicamentos hoy</p>`;
     return;
   }
 
@@ -1249,42 +1226,34 @@ function calcularEstado(m, tomadosHoy, ahora){
 }
 
 /* =========================
-   CARDS HOY
+   CARD HOY
 ========================= */
 function cardHoy(m, estado){
   const div = document.createElement("div");
-  estiloCard(div);
+  div.className = "card-med";
 
-  const map = {
-    pendiente: {txt:"Pendiente", cls:"badge-pendiente"},
-    atrasado: {txt:"Atrasado", cls:"badge-atrasado"},
-    tomado: {txt:"Tomado", cls:"badge-tomado"}
+  const badge = {
+    pendiente: "badge-pendiente",
+    atrasado: "badge-atrasado",
+    tomado: "badge-tomado"
   };
 
   div.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center">
+    <div class="fila">
       <strong>${m.nombre}</strong>
-      <span class="${map[estado].cls}">${map[estado].txt}</span>
+      <span class="${badge[estado]}">${estado}</span>
     </div>
     <div class="meta">⏰ ${m.hora || '—'}</div>
     <div class="meta">📅 ${fmt(m.inicio)} → ${fmt(m.fin)}</div>
-    ${estado!=="tomado"
+    ${estado !== "tomado"
       ? `<button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>`
       : ``}
   `;
   return div;
 }
 
-function estiloCard(div){
-  div.style.background = "#f7f9fc";
-  div.style.borderRadius = "14px";
-  div.style.padding = "14px";
-  div.style.marginBottom = "12px";
-  div.style.boxShadow = "0 4px 10px rgba(0,0,0,.06)";
-}
-
 /* =========================
-   TOMADO
+   MARCAR TOMADO (SEGURO)
 ========================= */
 function marcarTomado(nombre){
   const hoy = new Date().toISOString().slice(0,10);
@@ -1300,6 +1269,7 @@ function marcarTomado(nombre){
     JSON.stringify(tomados)
   );
   cargarHoy();
+  mostrarHistorial(hoy);
 }
 
 /* =========================
@@ -1316,20 +1286,22 @@ function prepararHistorial(){
 function mostrarHistorial(fecha){
   const cont = document.getElementById("listaHistorial");
   cont.innerHTML = "";
+
   const tomados = JSON.parse(
     localStorage.getItem("medicamentos_tomados_v1")
   ) || {};
+
   const lista = tomados[fecha] || [];
 
   if (lista.length === 0) {
-    cont.innerHTML = `<p style="color:#777;text-align:center">No hay registros</p>`;
+    cont.innerHTML =
+      `<p class="vacio">No hay registros</p>`;
     return;
   }
 
   lista.forEach(n=>{
     const d = document.createElement("div");
-    d.style.padding="8px";
-    d.style.borderBottom="1px solid #eee";
+    d.className = "item-hist";
     d.innerHTML = `✓ ${n}`;
     cont.appendChild(d);
   });
@@ -1344,25 +1316,37 @@ function fmt(f){
 </script>
 
 <style>
+.card-seg{
+  background:#fff;border-radius:18px;padding:20px;
+  box-shadow:0 12px 28px rgba(0,0,0,.12)
+}
+.titulo{text-align:center;margin-bottom:6px}
+.subtitulo{text-align:center;color:#666;font-size:14px}
+.card-med{
+  background:#f7f9fc;border-radius:14px;
+  padding:14px;margin-bottom:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.06)
+}
+.fila{display:flex;justify-content:space-between;align-items:center}
 .meta{font-size:13px;color:#666;margin-top:4px}
 .btn-ok{
   margin-top:10px;width:100%;height:40px;
   border:none;border-radius:12px;
   background:#4caf50;color:#fff;font-weight:700
 }
-.badge-pendiente{
-  background:#fff3cd;color:#8a6d3b;
-  padding:4px 8px;border-radius:10px;font-size:12px
+.btn-volver{
+  width:100%;height:52px;border:none;
+  border-radius:14px;background:#bdbdbd;
+  font-size:16px;font-weight:700;margin-top:26px
 }
-.badge-atrasado{
-  background:#fdecea;color:#b71c1c;
-  padding:4px 8px;border-radius:10px;font-size:12px
-}
-.badge-tomado{
-  background:#e0e0e0;color:#555;
-  padding:4px 8px;border-radius:10px;font-size:12px
-}
+.bloque{margin-top:30px;border-top:1px solid #eee;padding-top:20px}
+.badge-pendiente{background:#fff3cd;color:#8a6d3b;padding:4px 8px;border-radius:10px;font-size:12px}
+.badge-atrasado{background:#fdecea;color:#b71c1c;padding:4px 8px;border-radius:10px;font-size:12px}
+.badge-tomado{background:#e0e0e0;color:#555;padding:4px 8px;border-radius:10px;font-size:12px}
+.item-hist{padding:8px;border-bottom:1px solid #eee}
+.vacio{text-align:center;color:#777}
 </style>
+
 
 
 
