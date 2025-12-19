@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori16 de Medicamentos</h1>
+  <h1>💊 Recordatori17 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1114,7 +1114,7 @@ if ('serviceWorker' in navigator) {
 
 
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO UX MEJORADO
+     BLOQUE 4 – SEGUIMIENTO DEFINITIVO
 ========================= -->
 
 <div id="seguimiento" style="
@@ -1133,125 +1133,164 @@ if ('serviceWorker' in navigator) {
       box-shadow:0 12px 28px rgba(0,0,0,.12);
     ">
       <h2 style="text-align:center;margin-bottom:6px">Seguimiento</h2>
+
       <p style="text-align:center;color:#666;font-size:14px">
         Medicamentos programados para hoy
       </p>
 
+      <!-- HOY -->
       <div id="listaHoy" style="margin-top:20px"></div>
 
       <!-- HISTORIAL -->
       <div style="margin-top:30px;border-top:1px solid #eee;padding-top:20px">
         <h3 style="font-size:16px;margin-bottom:10px">📅 Historial</h3>
+
         <input type="date" id="fechaHistorial" style="
-          width:100%;height:42px;
-          border-radius:10px;border:1px solid #ccc;
-          padding:0 12px;font-size:15px
+          width:100%;
+          height:42px;
+          border-radius:10px;
+          border:1px solid #ccc;
+          padding:0 12px;
+          font-size:15px;
         ">
+
         <div id="listaHistorial" style="margin-top:12px"></div>
       </div>
 
       <button id="volver-seguimiento" style="
-        width:100%;height:52px;
-        border:none;border-radius:14px;
+        width:100%;
+        height:52px;
+        border:none;
+        border-radius:14px;
         background:#bdbdbd;
-        font-size:16px;font-weight:700;
-        margin-top:26px
-      ">Volver</button>
+        font-size:16px;
+        font-weight:700;
+        margin-top:26px;
+      ">
+        Volver
+      </button>
     </div>
   </div>
 </div>
 
 <script>
 /* =========================
-   ABRIR / CERRAR
+   CONEXIÓN SEGURA BOTÓN SEGUIMIENTO
 ========================= */
-document.addEventListener("pointerdown", e=>{
-  let el=e.target;
-  while(el&&el!==document.body){
-    if((el.textContent||"").trim().toLowerCase()==="seguimiento"){
-      e.preventDefault();
-      seguimiento.style.display="block";
+document.addEventListener("DOMContentLoaded", () => {
+  const btnSeguimiento = document.getElementById("btnSeguimiento");
+  const pantallaSeguimiento = document.getElementById("seguimiento");
+  const home = document.getElementById("home"); // si existe
+
+  if (btnSeguimiento && pantallaSeguimiento) {
+    btnSeguimiento.onclick = () => {
+      if (home) home.style.display = "none";
+      pantallaSeguimiento.style.display = "block";
       cargarHoy();
       prepararHistorial();
-      return;
-    }
-    el=el.parentElement;
+    };
   }
-},true);
 
-volver-seguimiento.onclick=()=>seguimiento.style.display="none";
+  const btnVolver = document.getElementById("volver-seguimiento");
+  if (btnVolver) {
+    btnVolver.onclick = () => {
+      pantallaSeguimiento.style.display = "none";
+      if (home) home.style.display = "block";
+    };
+  }
+});
 
 /* =========================
-   HOY
+   HOY – ORDEN + ESTADOS
 ========================= */
 function cargarHoy(){
-  const cont=listaHoy;
-  cont.innerHTML="";
+  const cont = document.getElementById("listaHoy");
+  cont.innerHTML = "";
 
-  const meds=JSON.parse(localStorage.getItem("medicamentos_guardados_v1"))||[];
-  const tomados=JSON.parse(localStorage.getItem("medicamentos_tomados_v1"))||{};
-  const ahora=new Date();
-  const hoy=ahora.toISOString().slice(0,10);
-  const tomadosHoy=tomados[hoy]||[];
+  const medicamentos = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
 
-  const activos=meds.filter(m=>{
-    if(!m.inicio||!m.fin)return false;
-    const i=new Date(m.inicio),f=new Date(m.fin);
-    i.setHours(0,0,0,0);f.setHours(23,59,59,999);
-    return ahora>=i&&ahora<=f;
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  const ahora = new Date();
+  const hoyClave = ahora.toISOString().slice(0,10);
+  const tomadosHoy = tomados[hoyClave] || [];
+
+  const activosHoy = medicamentos.filter(m => {
+    if (!m.inicio || !m.fin) return false;
+    const ini = new Date(m.inicio);
+    const fin = new Date(m.fin);
+    ini.setHours(0,0,0,0);
+    fin.setHours(23,59,59,999);
+    return ahora >= ini && ahora <= fin;
   });
 
-  activos.sort((a,b)=>a.hora?.localeCompare(b.hora)||1);
+  activosHoy.sort((a,b)=>{
+    if(!a.hora) return 1;
+    if(!b.hora) return -1;
+    return a.hora.localeCompare(b.hora);
+  });
 
-  if(!activos.length){
-    cont.innerHTML='<p style="text-align:center;color:#777">No hay medicamentos hoy</p>';
+  if (activosHoy.length === 0) {
+    cont.innerHTML =
+      '<p style="text-align:center;color:#777">No hay medicamentos hoy</p>';
     return;
   }
 
-  activos.forEach(m=>{
-    const estado=estadoHoy(m,tomadosHoy,ahora);
-    cont.appendChild(cardHoy(m,estado,tomadosHoy));
+  activosHoy.forEach(m => {
+    const estado = estadoHoy(m, tomadosHoy, ahora);
+    cont.appendChild(cardHoy(m, estado, tomadosHoy));
   });
 }
 
-function estadoHoy(m,tomadosHoy,ahora){
-  if(tomadosHoy.find(t=>t.nombre===m.nombre))return"tomado";
-  if(!m.hora)return"pendiente";
-  const[h,min]=m.hora.split(":");
-  const hm=new Date(ahora);hm.setHours(h,min,0,0);
-  return ahora>hm?"atrasado":"pendiente";
+function estadoHoy(m, tomadosHoy, ahora){
+  if (tomadosHoy.some(t => t.nombre === m.nombre)) return "tomado";
+  if (!m.hora) return "pendiente";
+
+  const [h,min] = m.hora.split(":");
+  const hm = new Date(ahora);
+  hm.setHours(h, min, 0, 0);
+
+  return ahora > hm ? "atrasado" : "pendiente";
 }
 
 /* =========================
    CARDS
 ========================= */
-function cardHoy(m,estado,tomadosHoy){
-  const div=document.createElement("div");
-  div.className="card fade-in";
+function cardHoy(m, estado, tomadosHoy){
+  const div = document.createElement("div");
+  div.className = "card fade-in";
 
-  let badge="",btn="",extra="";
+  let badge="", boton="", extra="";
 
-  if(estado==="tomado"){
-    const reg=tomadosHoy.find(t=>t.nombre===m.nombre);
-    badge=`<span class="badge tomado">Tomado</span>`;
-    extra=`<div class="meta">✓ a las ${reg.hora}</div>`;
-  }
-  if(estado==="pendiente"){
-    badge=`<span class="badge pendiente">Pendiente</span>`;
-    btn=`<button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>`;
-  }
-  if(estado==="atrasado"){
-    badge=`<span class="badge atrasado">Atrasado</span>`;
-    btn=`<button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>`;
+  if (estado === "tomado") {
+    const reg = tomadosHoy.find(t => t.nombre === m.nombre);
+    badge = '<span class="badge tomado">Tomado</span>';
+    extra = `<div class="meta">✓ a las ${reg.hora}</div>`;
   }
 
-  div.innerHTML=`
+  if (estado === "pendiente") {
+    badge = '<span class="badge pendiente">Pendiente</span>';
+    boton = `<button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>`;
+  }
+
+  if (estado === "atrasado") {
+    badge = '<span class="badge atrasado">Atrasado</span>';
+    boton = `<button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>`;
+  }
+
+  div.innerHTML = `
     <div class="row">
-      <strong>${m.nombre}</strong>${badge}
+      <strong>${m.nombre}</strong>
+      ${badge}
     </div>
-    <div class="meta">⏰ ${m.hora||'—'}</div>
+    <div class="meta">⏰ ${m.hora || '—'}</div>
     <div class="meta">📅 ${fmt(m.inicio)} → ${fmt(m.fin)}</div>
-    ${extra}${btn}
+    ${extra}
+    ${boton}
   `;
   return div;
 }
@@ -1260,14 +1299,26 @@ function cardHoy(m,estado,tomadosHoy){
    MARCAR TOMADO
 ========================= */
 function marcarTomado(nombre){
-  const hoy=new Date().toISOString().slice(0,10);
-  const hora=new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
-  const tomados=JSON.parse(localStorage.getItem("medicamentos_tomados_v1"))||{};
-  if(!tomados[hoy])tomados[hoy]=[];
-  if(!tomados[hoy].some(t=>t.nombre===nombre)){
-    tomados[hoy].push({nombre,hora});
+  const hoy = new Date().toISOString().slice(0,10);
+  const hora = new Date().toLocaleTimeString('es-CL', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  if (!tomados[hoy]) tomados[hoy] = [];
+  if (!tomados[hoy].some(t => t.nombre === nombre)) {
+    tomados[hoy].push({ nombre, hora });
   }
-  localStorage.setItem("medicamentos_tomados_v1",JSON.stringify(tomados));
+
+  localStorage.setItem(
+    "medicamentos_tomados_v1",
+    JSON.stringify(tomados)
+  );
+
   cargarHoy();
 }
 
@@ -1275,64 +1326,100 @@ function marcarTomado(nombre){
    HISTORIAL
 ========================= */
 function prepararHistorial(){
-  const hoy=new Date().toISOString().slice(0,10);
-  fechaHistorial.value=hoy;
+  const input = document.getElementById("fechaHistorial");
+  const hoy = new Date().toISOString().slice(0,10);
+  input.value = hoy;
   mostrarHistorial(hoy);
-  fechaHistorial.onchange=()=>mostrarHistorial(fechaHistorial.value);
+  input.onchange = () => mostrarHistorial(input.value);
 }
 
 function mostrarHistorial(fecha){
-  listaHistorial.innerHTML="";
-  const tomados=JSON.parse(localStorage.getItem("medicamentos_tomados_v1"))||{};
-  const lista=tomados[fecha]||[];
-  if(!lista.length){
-    listaHistorial.innerHTML='<p style="text-align:center;color:#777">No hay registros</p>';
+  const cont = document.getElementById("listaHistorial");
+  cont.innerHTML = "";
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  const lista = tomados[fecha] || [];
+
+  if (lista.length === 0) {
+    cont.innerHTML =
+      '<p style="text-align:center;color:#777">No hay registros</p>';
     return;
   }
-  lista.forEach(t=>{
-    const d=document.createElement("div");
-    d.className="hist";
-    d.innerHTML=`✓ ${t.nombre} <span>${t.hora}</span>`;
-    listaHistorial.appendChild(d);
+
+  lista.forEach(t => {
+    const d = document.createElement("div");
+    d.className = "hist";
+    d.innerHTML = `✓ ${t.nombre} <span>${t.hora}</span>`;
+    cont.appendChild(d);
   });
 }
 
 /* =========================
    UTIL
 ========================= */
-function fmt(f){return new Date(f).toLocaleDateString('es-CL');}
+function fmt(f){
+  return new Date(f).toLocaleDateString('es-CL');
+}
 </script>
 
 <style>
 .card{
-  background:#f7f9fc;border-radius:14px;
-  padding:14px;margin-bottom:12px;
+  background:#f7f9fc;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
   box-shadow:0 4px 10px rgba(0,0,0,.06)
 }
-.row{display:flex;justify-content:space-between;align-items:center}
-.meta{font-size:13px;color:#666;margin-top:4px}
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+.meta{
+  font-size:13px;
+  color:#666;
+  margin-top:4px
+}
 .btn-ok{
-  margin-top:10px;width:100%;height:40px;
-  border:none;border-radius:12px;
-  background:#4caf50;color:#fff;font-weight:700
+  margin-top:10px;
+  width:100%;
+  height:40px;
+  border:none;
+  border-radius:12px;
+  background:#4caf50;
+  color:#fff;
+  font-weight:700
 }
 .badge{
-  padding:4px 8px;border-radius:10px;font-size:12px
+  padding:4px 8px;
+  border-radius:10px;
+  font-size:12px
 }
 .badge.pendiente{background:#fff3cd;color:#8a6d3b}
 .badge.atrasado{background:#fdecea;color:#b71c1c}
 .badge.tomado{background:#e6f4ea;color:#2e7d32}
-.fade-in{animation:fade .3s ease}
+.fade-in{
+  animation:fade .3s ease
+}
 @keyframes fade{
   from{opacity:0;transform:translateY(6px)}
   to{opacity:1;transform:none}
 }
 .hist{
-  padding:8px;border-bottom:1px solid #eee;
-  font-size:14px;color:#333
+  padding:8px;
+  border-bottom:1px solid #eee;
+  font-size:14px;
+  color:#333
 }
-.hist span{float:right;color:#666}
+.hist span{
+  float:right;
+  color:#666
+}
 </style>
+
 
 
 
