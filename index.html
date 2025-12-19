@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori19 de Medicamentos</h1>
+  <h1>💊 Recordatori20 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1461,6 +1461,161 @@ window.addEventListener("load", () => {
 });
 </script>
 
+<!-- =========================
+     PASO 5 – RESUMEN AVANZADO
+     (F + H + G)
+     SOLO COMPLEMENTO
+========================= -->
+
+<script>
+/* =========================
+   CONFIGURACIÓN
+========================= */
+const MODO_CUIDADOR = false; // true = solo lectura
+
+/* =========================
+   INYECTAR UI EN SEGUIMIENTO
+========================= */
+window.addEventListener("load", () => {
+  const seg = document.getElementById("seguimiento");
+  if (!seg) return;
+
+  const cont = document.createElement("div");
+  cont.id = "resumenAvanzado";
+  cont.style.marginTop = "30px";
+  cont.innerHTML = `
+    <div style="border-top:1px solid #eee;padding-top:20px">
+      <h3 style="font-size:16px;margin-bottom:10px">📊 Resumen semanal</h3>
+      <div id="vistaSemanal"></div>
+
+      <div style="margin-top:20px">
+        <h3 style="font-size:16px;margin-bottom:6px">📈 Adherencia</h3>
+        <div id="adherencia"></div>
+      </div>
+
+      ${MODO_CUIDADOR ? `
+        <div style="margin-top:20px;padding:12px;
+          background:#fff3cd;border-radius:12px;color:#8a6d3b">
+          👪 Modo cuidador activo (solo lectura)
+        </div>` : ``}
+    </div>
+  `;
+
+  seg.querySelector(".card, div > div")?.appendChild(cont);
+  generarResumen();
+});
+
+/* =========================
+   LÓGICA PRINCIPAL
+========================= */
+function generarResumen(){
+  generarVistaSemanal();
+  generarAdherencia();
+}
+
+/* =========================
+   F) VISTA SEMANAL
+========================= */
+function generarVistaSemanal(){
+  const cont = document.getElementById("vistaSemanal");
+  if (!cont) return;
+
+  cont.innerHTML = "";
+
+  const meds = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(hoy);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+
+    const programados = meds.filter(m => {
+      if (!m.inicio || !m.fin) return false;
+      const ini = new Date(m.inicio);
+      const fin = new Date(m.fin);
+      ini.setHours(0,0,0,0);
+      fin.setHours(23,59,59,999);
+      return d >= ini && d <= fin;
+    }).length;
+
+    const tom = (tomados[key] || []).length;
+
+    const div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.justifyContent = "space-between";
+    div.style.padding = "6px 0";
+    div.style.fontSize = "14px";
+
+    div.innerHTML = `
+      <span>${d.toLocaleDateString('es-CL',{weekday:'short',day:'numeric'})}</span>
+      <span>${tom}/${programados}</span>
+    `;
+    cont.appendChild(div);
+  }
+}
+
+/* =========================
+   H) ADHERENCIA
+========================= */
+function generarAdherencia(){
+  const cont = document.getElementById("adherencia");
+  if (!cont) return;
+
+  const meds = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  let total = 0, hechos = 0;
+
+  Object.keys(tomados).forEach(fecha => {
+    hechos += tomados[fecha].length;
+  });
+
+  const hoy = new Date();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(hoy);
+    d.setDate(d.getDate() - i);
+    meds.forEach(m => {
+      if (!m.inicio || !m.fin) return;
+      const ini = new Date(m.inicio);
+      const fin = new Date(m.fin);
+      if (d >= ini && d <= fin) total++;
+    });
+  }
+
+  const pct = total ? Math.round((hechos / total) * 100) : 100;
+
+  cont.innerHTML = `
+    <div style="font-size:22px;font-weight:700">${pct}%</div>
+    <div style="font-size:13px;color:#666">
+      ${hechos} de ${total} dosis tomadas
+    </div>
+    <div style="margin-top:6px;font-size:13px">
+      ${mensajeAdherencia(pct)}
+    </div>
+  `;
+}
+
+function mensajeAdherencia(p){
+  if (p >= 90) return "Excelente adherencia 👏";
+  if (p >= 70) return "Buen progreso, sigue así 👍";
+  if (p >= 50) return "Puedes mejorar 💪";
+  return "Revisa tus horarios ⏰";
+}
+</script>
 
 
 
