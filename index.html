@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori25 de Medicamentos</h1>
+  <h1>💊 Recordatori26 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1113,227 +1113,65 @@ if ('serviceWorker' in navigator) {
 
 
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO (FINAL)
+     PASO 5 – RESUMEN AVANZADO
+     (F + H + G)
+     SOLO COMPLEMENTO
 ========================= -->
-
-<div id="seguimiento" style="
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#eef1f4;
-  z-index:1000;
-  overflow:auto;
-">
-  <div style="max-width:480px;margin:0 auto;padding:20px">
-    <div style="
-      background:#fff;
-      border-radius:18px;
-      padding:20px;
-      box-shadow:0 12px 28px rgba(0,0,0,.12);
-    ">
-
-      <h2 style="text-align:center">Seguimiento</h2>
-      <p style="text-align:center;color:#555">
-        Medicamentos programados para hoy
-      </p>
-
-      <!-- HOY -->
-      <div id="listaHoy"></div>
-
-      <hr style="margin:20px 0">
-
-      <!-- HISTORIAL -->
-      <h3>📅 Historial</h3>
-      <input type="date" id="fechaHistorial" style="
-        width:100%;
-        height:44px;
-        margin-bottom:10px;
-      ">
-      <div id="listaHistorial" style="font-size:14px;color:#555">
-        No hay registros
-      </div>
-
-      <hr style="margin:20px 0">
-
-      <!-- RESUMEN -->
-      <h3>📊 Resumen semanal</h3>
-      <div id="resumenSemanal" style="font-size:14px"></div>
-
-      <h3 style="margin-top:10px">📈 Adherencia</h3>
-      <div id="adherencia" style="font-weight:700"></div>
-
-      <button id="volverSeguimiento" style="
-        width:100%;
-        height:52px;
-        border:none;
-        border-radius:14px;
-        background:#bdbdbd;
-        font-size:16px;
-        font-weight:700;
-        margin-top:20px;
-      ">
-        Volver
-      </button>
-
-    </div>
-  </div>
-</div>
 
 <script>
 /* =========================
-   UTILIDADES
+   CONFIGURACIÓN
 ========================= */
-const diasMap = {
-  domingo: 0,
-  lunes: 1,
-  martes: 2,
-  miércoles: 3,
-  miercoles: 3,
-  jueves: 4,
-  viernes: 5,
-  sábado: 6,
-  sabado: 6
-};
-
-function hoyISO(){
-  return new Date().toISOString().slice(0,10);
-}
+const MODO_CUIDADOR = false; // true = solo lectura
 
 /* =========================
-   ABRIR / CERRAR
+   INYECTAR UI EN SEGUIMIENTO
 ========================= */
-document.addEventListener("pointerdown", e => {
-  let el = e.target;
-  while (el && el !== document.body) {
-    if ((el.textContent || "").trim().toLowerCase() === "seguimiento") {
-      document.getElementById("seguimiento").style.display = "block";
-      cargarHoy();
-      cargarResumen();
-      e.preventDefault();
-      return;
-    }
-    el = el.parentElement;
-  }
-}, true);
+window.addEventListener("load", () => {
+  const seg = document.getElementById("seguimiento");
+  if (!seg) return;
 
-document.getElementById("volverSeguimiento").onclick = () => {
-  document.getElementById("seguimiento").style.display = "none";
-};
+  const cont = document.createElement("div");
+  cont.id = "resumenAvanzado";
+  cont.style.marginTop = "30px";
+  cont.innerHTML = `
+    <div style="border-top:1px solid #eee;padding-top:20px">
+      <h3 style="font-size:16px;margin-bottom:10px">📊 Resumen semanal</h3>
+      <div id="vistaSemanal"></div>
 
-/* =========================
-   CARGAR MEDICAMENTOS HOY
-========================= */
-function cargarHoy(){
-  const cont = document.getElementById("listaHoy");
-  cont.innerHTML = "";
-
-  const medicamentos = JSON.parse(
-    localStorage.getItem("medicamentos_guardados_v1")
-  ) || [];
-
-  const tomados = JSON.parse(
-    localStorage.getItem("medicamentos_tomados_v1")
-  ) || [];
-
-  const hoy = hoyISO();
-  const diaHoy = new Date().getDay();
-
-  const activosHoy = medicamentos.filter(m => {
-    if (hoy < m.inicio || hoy > m.fin) return false;
-
-    if (!Array.isArray(m.dias) || m.dias.length === 0) return true;
-
-    return m.dias.some(d => diasMap[d.toLowerCase()] === diaHoy);
-  });
-
-  if (!activosHoy.length) {
-    cont.innerHTML =
-      "<p style='text-align:center;color:#777'>No hay medicamentos para hoy</p>";
-    return;
-  }
-
-  activosHoy.forEach(m => {
-    const tomado = tomados.some(t =>
-      t.nombre === m.nombre && t.fecha === hoy
-    );
-
-    const card = document.createElement("div");
-    card.style.margin = "12px 0";
-    card.style.padding = "16px";
-    card.style.borderRadius = "14px";
-    card.style.background = "#f8fafc";
-
-    card.innerHTML = `
-      <strong>${m.nombre}</strong>
-      <div style="font-size:13px;color:#555">
-        ⏰ ${m.hora || "--"}<br>
-        📅 ${m.inicio} → ${m.fin}
+      <div style="margin-top:20px">
+        <h3 style="font-size:16px;margin-bottom:6px">📈 Adherencia</h3>
+        <div id="adherencia"></div>
       </div>
-      <button
-        ${tomado ? "disabled" : ""}
-        onclick="marcarTomado('${m.nombre}')"
-        style="
-          margin-top:8px;
-          width:100%;
-          height:44px;
-          border:none;
-          border-radius:10px;
-          background:${tomado ? "#ccc" : "#4caf50"};
-          color:#fff;
-          font-weight:700;
-        ">
-        ${tomado ? "✔ Tomado" : "✔ Tomado"}
-      </button>
-    `;
-    cont.appendChild(card);
-  });
+
+      ${MODO_CUIDADOR ? `
+        <div style="margin-top:20px;padding:12px;
+          background:#fff3cd;border-radius:12px;color:#8a6d3b">
+          👪 Modo cuidador activo (solo lectura)
+        </div>` : ``}
+    </div>
+  `;
+
+  seg.querySelector(".card, div > div")?.appendChild(cont);
+  generarResumen();
+});
+
+/* =========================
+   LÓGICA PRINCIPAL
+========================= */
+function generarResumen(){
+  generarVistaSemanal();
+  generarAdherencia();
 }
 
 /* =========================
-   MARCAR TOMADO
+   F) VISTA SEMANAL
 ========================= */
-function marcarTomado(nombre){
-  const hoy = hoyISO();
+function generarVistaSemanal(){
+  const cont = document.getElementById("vistaSemanal");
+  if (!cont) return;
 
-  const tomados = JSON.parse(
-    localStorage.getItem("medicamentos_tomados_v1")
-  ) || [];
-
-  tomados.push({ nombre, fecha: hoy });
-
-  localStorage.setItem(
-    "medicamentos_tomados_v1",
-    JSON.stringify(tomados)
-  );
-
-  cargarHoy();
-  cargarResumen();
-}
-
-/* =========================
-   HISTORIAL
-========================= */
-document.getElementById("fechaHistorial").onchange = e => {
-  const fecha = e.target.value;
-  const lista = document.getElementById("listaHistorial");
-
-  const tomados = JSON.parse(
-    localStorage.getItem("medicamentos_tomados_v1")
-  ) || [];
-
-  const delDia = tomados.filter(t => t.fecha === fecha);
-
-  lista.innerHTML = delDia.length
-    ? delDia.map(t => `✔ ${t.nombre}`).join("<br>")
-    : "No hay registros";
-};
-
-/* =========================
-   RESUMEN + ADHERENCIA
-========================= */
-function cargarResumen(){
-  const resumen = document.getElementById("resumenSemanal");
-  const adh = document.getElementById("adherencia");
+  cont.innerHTML = "";
 
   const meds = JSON.parse(
     localStorage.getItem("medicamentos_guardados_v1")
@@ -1341,34 +1179,95 @@ function cargarResumen(){
 
   const tomados = JSON.parse(
     localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(hoy);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+
+    const programados = meds.filter(m => {
+      if (!m.inicio || !m.fin) return false;
+      const ini = new Date(m.inicio);
+      const fin = new Date(m.fin);
+      ini.setHours(0,0,0,0);
+      fin.setHours(23,59,59,999);
+      return d >= ini && d <= fin;
+    }).length;
+
+    const tom = (tomados[key] || []).length;
+
+    const div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.justifyContent = "space-between";
+    div.style.padding = "6px 0";
+    div.style.fontSize = "14px";
+
+    div.innerHTML = `
+      <span>${d.toLocaleDateString('es-CL',{weekday:'short',day:'numeric'})}</span>
+      <span>${tom}/${programados}</span>
+    `;
+    cont.appendChild(div);
+  }
+}
+
+/* =========================
+   H) ADHERENCIA
+========================= */
+function generarAdherencia(){
+  const cont = document.getElementById("adherencia");
+  if (!cont) return;
+
+  const meds = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
   ) || [];
 
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
   let total = 0, hechos = 0;
-  resumen.innerHTML = "";
 
+  Object.keys(tomados).forEach(fecha => {
+    hechos += tomados[fecha].length;
+  });
+
+  const hoy = new Date();
   for (let i = 0; i < 7; i++) {
-    const d = new Date();
+    const d = new Date(hoy);
     d.setDate(d.getDate() - i);
-    const fecha = d.toISOString().slice(0,10);
-    const dia = d.getDay();
-
-    const activos = meds.filter(m => {
-      if (fecha < m.inicio || fecha > m.fin) return false;
-      if (!Array.isArray(m.dias) || m.dias.length === 0) return true;
-      return m.dias.some(x => diasMap[x.toLowerCase()] === dia);
+    meds.forEach(m => {
+      if (!m.inicio || !m.fin) return;
+      const ini = new Date(m.inicio);
+      const fin = new Date(m.fin);
+      if (d >= ini && d <= fin) total++;
     });
-
-    const tom = tomados.filter(t => t.fecha === fecha);
-
-    total += activos.length;
-    hechos += tom.length;
-
-    resumen.innerHTML += `${fecha}: ${tom.length}/${activos.length}<br>`;
   }
 
-  adh.innerText = total ? Math.round((hechos / total) * 100) + "%" : "0%";
+  const pct = total ? Math.round((hechos / total) * 100) : 100;
+
+  cont.innerHTML = `
+    <div style="font-size:22px;font-weight:700">${pct}%</div>
+    <div style="font-size:13px;color:#666">
+      ${hechos} de ${total} dosis tomadas
+    </div>
+    <div style="margin-top:6px;font-size:13px">
+      ${mensajeAdherencia(pct)}
+    </div>
+  `;
+}
+
+function mensajeAdherencia(p){
+  if (p >= 90) return "Excelente adherencia 👏";
+  if (p >= 70) return "Buen progreso, sigue así 👍";
+  if (p >= 50) return "Puedes mejorar 💪";
+  return "Revisa tus horarios ⏰";
 }
 </script>
+
 
 
 
