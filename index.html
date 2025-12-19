@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori33 de Medicamentos</h1>
+  <h1>💊 Recordatori34 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1460,6 +1460,89 @@ function generarResumenSemanal(){
 </script>
 
 
+<script>
+/* =========================
+   PASO 4D – ADHERENCIA
+   (COMPLEMENTO SEGURO)
+========================= */
+
+window.addEventListener("load", () => {
+  const seg = document.getElementById("seguimiento");
+  if (!seg) return;
+
+  const cont = document.createElement("div");
+  cont.className = "bloque";
+  cont.innerHTML = `
+    <h3>📈 Adherencia</h3>
+    <div id="adhPorcentaje" style="font-size:26px;font-weight:700;margin-top:6px">—</div>
+    <div id="adhDetalle" style="font-size:13px;color:#666;margin-top:4px"></div>
+    <div id="adhMensaje" style="margin-top:8px;font-size:14px"></div>
+  `;
+
+  seg.querySelector(".card-seg")?.insertBefore(
+    cont,
+    document.getElementById("volver-seguimiento")
+  );
+
+  calcularAdherencia();
+});
+
+/* =========================
+   LÓGICA ADHERENCIA
+========================= */
+function calcularAdherencia(){
+  const meds = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  let total = 0;
+  let hechos = 0;
+
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(hoy);
+    d.setDate(d.getDate() - i);
+    const clave = d.toISOString().slice(0,10);
+
+    meds.forEach(m => {
+      if (!m.inicio || !m.fin) return;
+
+      const ini = new Date(m.inicio);
+      const fin = new Date(m.fin);
+      ini.setHours(0,0,0,0);
+      fin.setHours(23,59,59,999);
+
+      if (d >= ini && d <= fin) {
+        total++;
+        if ((tomados[clave] || []).includes(m.nombre)) {
+          hechos++;
+        }
+      }
+    });
+  }
+
+  const pct = total ? Math.round((hechos / total) * 100) : 100;
+
+  document.getElementById("adhPorcentaje").textContent = `${pct}%`;
+  document.getElementById("adhDetalle").textContent =
+    `${hechos} de ${total} dosis tomadas (últimos 7 días)`;
+  document.getElementById("adhMensaje").textContent =
+    mensajeAdherencia(pct);
+}
+
+function mensajeAdherencia(p){
+  if (p >= 90) return "Excelente adherencia 👏";
+  if (p >= 70) return "Buen progreso, sigue así 👍";
+  if (p >= 50) return "Puedes mejorar 💪";
+  return "Revisa tus horarios ⏰";
+}
+</script>
 
 
 
