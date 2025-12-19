@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori40 de Medicamentos</h1>
+  <h1>💊 Recordatori41 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1709,6 +1709,42 @@ window.marcarTomado = function(nombre){
 };
 </script>
 
+
+
+<script>
+/* =========================
+   PASO 4G – MENSAJE INTELIGENTE
+   (SOLO LECTURA – SEGURO)
+========================= */
+
+window.addEventListener("load", () => {
+  const cont = document.querySelector("#seguimiento");
+  if (!cont) return;
+
+  const bloqueAdh = document.querySelector(".adherencia-msg");
+  if (bloqueAdh) return; // evita duplicar
+
+  const txt = document.querySelector(".adherencia-texto");
+  if (!txt) return;
+
+  const porcentaje = parseInt(txt.dataset.valor || "0", 10);
+
+  let mensaje = "";
+  if (porcentaje >= 90) mensaje = "Excelente adherencia 👏";
+  else if (porcentaje >= 70) mensaje = "Buen progreso 👍";
+  else if (porcentaje >= 50) mensaje = "Puedes mejorar 💪";
+  else mensaje = "Revisa tus horarios ⏰";
+
+  const p = document.createElement("div");
+  p.className = "adherencia-msg";
+  p.style.marginTop = "6px";
+  p.style.fontSize = "13px";
+  p.style.color = "#555";
+  p.textContent = mensaje;
+
+  txt.parentElement.appendChild(p);
+});
+</script>
 
 
      
