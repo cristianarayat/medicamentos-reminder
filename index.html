@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori28 de Medicamentos</h1>
+  <h1>💊 Recordatori29 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1347,6 +1347,65 @@ function fmt(f){
 .vacio{text-align:center;color:#777}
 </style>
 
+     
+<script>
+/* =========================
+   PASO 4B – ESTADOS AVANZADOS
+   (COMPLEMENTO SEGURO)
+========================= */
+
+function estadoMedicamento(m, tomadosHoy){
+  if (tomadosHoy.includes(m.nombre)) return "tomado";
+  if (!m.hora) return "pendiente";
+
+  const ahora = new Date();
+  const [h,min] = m.hora.split(":");
+  const horaMed = new Date(ahora);
+  horaMed.setHours(h, min, 0, 0);
+
+  if (ahora > horaMed) return "atrasado";
+  return "pendiente";
+}
+
+/* Reemplaza solo la función cardHoy, no toca nada más */
+const _cardHoyOriginal = window.cardHoy;
+
+window.cardHoy = function(m){
+  const hoy = new Date().toISOString().slice(0,10);
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+  const tomadosHoy = tomados[hoy] || [];
+
+  const estado = estadoMedicamento(m, tomadosHoy);
+
+  const map = {
+    pendiente: {txt:"Pendiente", cls:"badge-pendiente"},
+    atrasado: {txt:"Atrasado", cls:"badge-atrasado"},
+    tomado: {txt:"Tomado", cls:"badge-tomado"}
+  };
+
+  const div = document.createElement("div");
+  div.style.background = "#f7f9fc";
+  div.style.borderRadius = "14px";
+  div.style.padding = "14px";
+  div.style.marginBottom = "12px";
+  div.style.boxShadow = "0 4px 10px rgba(0,0,0,.06)";
+
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong>${m.nombre}</strong>
+      <span class="${map[estado].cls}">${map[estado].txt}</span>
+    </div>
+    <div class="meta">⏰ ${m.hora || '—'}</div>
+    <div class="meta">📅 ${fmt(m.inicio)} → ${fmt(m.fin)}</div>
+    ${estado!=="tomado"
+      ? `<button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>`
+      : ``}
+  `;
+  return div;
+};
+</script>
 
 
 
