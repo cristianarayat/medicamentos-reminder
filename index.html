@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori22 de Medicamentos</h1>
+  <h1>💊 Recordatori23 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1335,9 +1335,17 @@ function cargarResumen(){
     d.setDate(hoy.getDate()-i);
     const fecha = d.toISOString().slice(0,10);
 
-    const activos = meds.filter(m =>
-      fecha >= m.inicio && fecha <= m.fin
-    );
+   const diaHoy = new Date().getDay(); // 0=dom, 1=lun...
+
+const activos = meds.filter(m =>
+  hoy >= m.inicio &&
+  hoy <= m.fin &&
+  (
+    !Array.isArray(m.dias) ||   // por si viene antiguo
+    m.dias.includes(diaHoy)
+  )
+);
+
 
     const tom = tomados.filter(t => t.fecha === fecha);
 
