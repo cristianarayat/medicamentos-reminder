@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori32 de Medicamentos</h1>
+  <h1>💊 Recordatori33 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1383,6 +1383,81 @@ function fmt(f){
 .vacio{text-align:center;color:#777}
 </style>
 
+<script>
+/* =========================
+   PASO 4C – RESUMEN SEMANAL
+   (SOLO LECTURA – SEGURO)
+========================= */
+
+window.addEventListener("load", () => {
+  const seg = document.getElementById("seguimiento");
+  if (!seg) return;
+
+  const bloqueHist = seg.querySelector(".bloque");
+  if (!bloqueHist) return;
+
+  const resumen = document.createElement("div");
+  resumen.className = "bloque";
+  resumen.innerHTML = `
+    <h3>📊 Resumen semanal</h3>
+    <div id="resumenSemanal"></div>
+  `;
+
+  bloqueHist.after(resumen);
+  generarResumenSemanal();
+});
+
+function generarResumenSemanal(){
+  const cont = document.getElementById("resumenSemanal");
+  if (!cont) return;
+
+  cont.innerHTML = "";
+
+  const meds = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(hoy);
+    d.setDate(d.getDate() - i);
+
+    const key = d.toISOString().slice(0,10);
+
+    let programados = 0;
+    meds.forEach(m => {
+      if (!m.inicio || !m.fin) return;
+      const ini = new Date(m.inicio);
+      const fin = new Date(m.fin);
+      ini.setHours(0,0,0,0);
+      fin.setHours(23,59,59,999);
+      if (d >= ini && d <= fin) programados++;
+    });
+
+    const hechos = (tomados[key] || []).length;
+
+    const fila = document.createElement("div");
+    fila.style.display = "flex";
+    fila.style.justifyContent = "space-between";
+    fila.style.fontSize = "14px";
+    fila.style.padding = "6px 0";
+    fila.style.borderBottom = "1px solid #eee";
+
+    fila.innerHTML = `
+      <span>${d.toLocaleDateString('es-CL',{weekday:'short',day:'numeric'})}</span>
+      <strong>${hechos}/${programados}</strong>
+    `;
+
+    cont.appendChild(fila);
+  }
+}
+</script>
 
 
 
