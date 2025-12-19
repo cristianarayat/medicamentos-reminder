@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori23 de Medicamentos</h1>
+  <h1>💊 Recordatori24 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1112,7 +1112,6 @@ if ('serviceWorker' in navigator) {
 
 
 
-
 <!-- =========================
      BLOQUE 4 – SEGUIMIENTO
 ========================= -->
@@ -1126,7 +1125,6 @@ if ('serviceWorker' in navigator) {
   overflow:auto;
 ">
   <div style="max-width:480px;margin:0 auto;padding:20px">
-
     <div style="
       background:#fff;
       border-radius:18px;
@@ -1183,6 +1181,25 @@ if ('serviceWorker' in navigator) {
 
 <script>
 /* =========================
+   UTILIDADES
+========================= */
+const mapaDias = {
+  domingo: 0,
+  lunes: 1,
+  martes: 2,
+  miércoles: 3,
+  miercoles: 3,
+  jueves: 4,
+  viernes: 5,
+  sábado: 6,
+  sabado: 6
+};
+
+function hoyISO(){
+  return new Date().toISOString().slice(0,10);
+}
+
+/* =========================
    CONEXIÓN BOTÓN SEGUIMIENTO
 ========================= */
 document.addEventListener("pointerdown", e => {
@@ -1221,11 +1238,20 @@ function cargarHoy(){
     localStorage.getItem("medicamentos_tomados_v1")
   ) || [];
 
-  const hoy = new Date().toISOString().slice(0,10);
+  const hoy = hoyISO();
+  const diaHoy = new Date().getDay();
 
-  const activos = meds.filter(m =>
-    hoy >= m.inicio && hoy <= m.fin
-  );
+  const activos = meds.filter(m => {
+    if (hoy < m.inicio || hoy > m.fin) return false;
+
+    if (!Array.isArray(m.dias) || m.dias.length === 0) return true;
+
+    return m.dias.some(d =>
+      typeof d === "number"
+        ? d === diaHoy
+        : mapaDias[d.toLowerCase()] === diaHoy
+    );
+  });
 
   if (!activos.length) {
     cont.innerHTML =
@@ -1273,12 +1299,13 @@ function cargarHoy(){
    MARCAR TOMADO
 ========================= */
 function marcarTomado(nombre){
-  const hoy = new Date().toISOString().slice(0,10);
+  const hoy = hoyISO();
   const tomados = JSON.parse(
     localStorage.getItem("medicamentos_tomados_v1")
   ) || [];
 
   tomados.push({ nombre, fecha: hoy });
+
   localStorage.setItem(
     "medicamentos_tomados_v1",
     JSON.stringify(tomados)
@@ -1306,9 +1333,7 @@ document.getElementById("fechaHistorial").onchange = e => {
     return;
   }
 
-  lista.innerHTML = delDia
-    .map(t => `✔ ${t.nombre}`)
-    .join("<br>");
+  lista.innerHTML = delDia.map(t => `✔ ${t.nombre}`).join("<br>");
 };
 
 /* =========================
@@ -1321,6 +1346,7 @@ function cargarResumen(){
   const meds = JSON.parse(
     localStorage.getItem("medicamentos_guardados_v1")
   ) || [];
+
   const tomados = JSON.parse(
     localStorage.getItem("medicamentos_tomados_v1")
   ) || [];
@@ -1334,33 +1360,33 @@ function cargarResumen(){
     const d = new Date(hoy);
     d.setDate(hoy.getDate()-i);
     const fecha = d.toISOString().slice(0,10);
+    const dia = d.getDay();
 
-   const diaHoy = new Date().getDay(); // 0=dom, 1=lun...
+    const activos = meds.filter(m => {
+      if (fecha < m.inicio || fecha > m.fin) return false;
+      if (!Array.isArray(m.dias) || m.dias.length === 0) return true;
 
-const activos = meds.filter(m =>
-  hoy >= m.inicio &&
-  hoy <= m.fin &&
-  (
-    !Array.isArray(m.dias) ||   // por si viene antiguo
-    m.dias.includes(diaHoy)
-  )
-);
-
+      return m.dias.some(x =>
+        typeof x === "number"
+          ? x === dia
+          : mapaDias[x.toLowerCase()] === dia
+      );
+    });
 
     const tom = tomados.filter(t => t.fecha === fecha);
 
     total += activos.length;
     hechos += tom.length;
 
-    resumen.innerHTML += `
-      ${fecha}: ${tom.length}/${activos.length}<br>
-    `;
+    resumen.innerHTML += `${fecha}: ${tom.length}/${activos.length}<br>`;
   }
 
-  adh.innerText =
-    total ? `${Math.round((hechos/total)*100)}%` : "0%";
+  adh.innerText = total
+    ? Math.round((hechos/total)*100) + "%"
+    : "0%";
 }
 </script>
+
 
 
 
