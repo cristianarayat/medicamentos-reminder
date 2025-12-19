@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori21 de Medicamentos</h1>
+  <h1>💊 Recordatori22 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1114,7 +1114,7 @@ if ('serviceWorker' in navigator) {
 
 
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO (FINAL)
+     BLOQUE 4 – SEGUIMIENTO
 ========================= -->
 
 <div id="seguimiento" style="
@@ -1126,33 +1126,43 @@ if ('serviceWorker' in navigator) {
   overflow:auto;
 ">
   <div style="max-width:480px;margin:0 auto;padding:20px">
-    <div class="card" style="
+
+    <div style="
       background:#fff;
       border-radius:18px;
       padding:20px;
       box-shadow:0 12px 28px rgba(0,0,0,.12);
     ">
+
       <h2 style="text-align:center">Seguimiento</h2>
-      <p style="text-align:center;color:#666">
+      <p style="text-align:center;color:#555">
         Medicamentos programados para hoy
       </p>
 
+      <!-- LISTA HOY -->
       <div id="listaHoy"></div>
 
       <hr style="margin:20px 0">
 
-      <h3 style="font-size:16px">📅 Historial</h3>
-      <input type="date" id="fechaHistorial"
-        style="width:100%;margin:8px 0;padding:10px;border-radius:10px;border:1px solid #ccc">
-      <div id="listaHistorial" style="font-size:14px;color:#444"></div>
+      <!-- HISTORIAL -->
+      <h3>📅 Historial</h3>
+      <input type="date" id="fechaHistorial" style="
+        width:100%;
+        height:44px;
+        margin-bottom:10px;
+      ">
+      <div id="listaHistorial" style="font-size:14px;color:#555">
+        No hay registros
+      </div>
 
       <hr style="margin:20px 0">
 
-      <h3 style="font-size:16px">📊 Resumen semanal</h3>
+      <!-- RESUMEN -->
+      <h3>📊 Resumen semanal</h3>
       <div id="resumenSemanal" style="font-size:14px"></div>
 
-      <h3 style="font-size:16px;margin-top:16px">📈 Adherencia</h3>
-      <div id="adherencia"></div>
+      <h3 style="margin-top:10px">📈 Adherencia</h3>
+      <div id="adherencia" style="font-weight:700"></div>
 
       <button id="volverSeguimiento" style="
         width:100%;
@@ -1166,152 +1176,184 @@ if ('serviceWorker' in navigator) {
       ">
         Volver
       </button>
+
     </div>
   </div>
 </div>
 
 <script>
 /* =========================
-   UTILIDADES
-========================= */
-const hoyISO = () => new Date().toISOString().slice(0,10);
-
-function getLS(k){ return JSON.parse(localStorage.getItem(k)) || [] }
-function setLS(k,v){ localStorage.setItem(k, JSON.stringify(v)) }
-
-/* =========================
-   ABRIR / CERRAR
+   CONEXIÓN BOTÓN SEGUIMIENTO
 ========================= */
 document.addEventListener("pointerdown", e => {
   let el = e.target;
-  while(el){
-    if ((el.textContent||"").trim()==="Seguimiento"){
-      document.getElementById("seguimiento").style.display="block";
-      cargarSeguimiento();
+  while (el && el !== document.body) {
+    if ((el.textContent || "").trim().toLowerCase() === "seguimiento") {
+      document.getElementById("seguimiento").style.display = "block";
+      cargarHoy();
+      cargarResumen();
+      e.preventDefault();
       return;
     }
     el = el.parentElement;
   }
 }, true);
 
+/* =========================
+   VOLVER
+========================= */
 document.getElementById("volverSeguimiento").onclick = () => {
-  document.getElementById("seguimiento").style.display="none";
+  document.getElementById("seguimiento").style.display = "none";
 };
 
 /* =========================
-   CARGA PRINCIPAL
-========================= */
-function cargarSeguimiento(){
-  cargarHoy();
-  cargarHistorial(hoyISO());
-  generarResumen();
-  document.getElementById("fechaHistorial").value = hoyISO();
-}
-
-document.getElementById("fechaHistorial").onchange = e =>
-  cargarHistorial(e.target.value);
-
-/* =========================
-   HOY
+   CARGAR MEDICAMENTOS HOY
 ========================= */
 function cargarHoy(){
   const cont = document.getElementById("listaHoy");
   cont.innerHTML = "";
 
-  const meds = getLS("medicamentos_guardados_v1");
-  const tomados = getLS("medicamentos_tomados_v1");
-  const hoy = hoyISO();
+  const meds = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
 
-  const activos = meds.filter(m=>{
-    if(!m.inicio||!m.fin) return false;
-    return hoy>=m.inicio && hoy<=m.fin;
-  });
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || [];
 
-  if(!activos.length){
-    cont.innerHTML="<p style='text-align:center;color:#777'>No hay medicamentos para hoy</p>";
+  const hoy = new Date().toISOString().slice(0,10);
+
+  const activos = meds.filter(m =>
+    hoy >= m.inicio && hoy <= m.fin
+  );
+
+  if (!activos.length) {
+    cont.innerHTML =
+      "<p style='text-align:center;color:#777'>No hay medicamentos para hoy</p>";
     return;
   }
 
-  activos.forEach(m=>{
-    const ya = tomados.some(t=>t.nombre===m.nombre && t.fecha===hoy);
-    const div = document.createElement("div");
-    div.style.margin="10px 0";
-    div.style.padding="14px";
-    div.style.borderRadius="14px";
-    div.style.background="#f8fafc";
+  activos.forEach(m => {
+    const tomadoHoy = tomados.some(t =>
+      t.nombre === m.nombre && t.fecha === hoy
+    );
 
-    div.innerHTML=`
+    const div = document.createElement("div");
+    div.style.margin = "12px 0";
+    div.style.padding = "16px";
+    div.style.borderRadius = "14px";
+    div.style.background = "#f8fafc";
+
+    div.innerHTML = `
       <strong>${m.nombre}</strong>
       <div style="font-size:13px;color:#555">
         📅 ${m.inicio} → ${m.fin}
       </div>
-      <button ${ya?"disabled":""}
-        style="margin-top:8px;width:100%;height:44px;border:none;
-        border-radius:10px;background:${ya?"#ccc":"#4caf50"};
-        color:#fff;font-weight:700"
-        onclick="marcarTomado('${m.nombre}')">
-        ${ya?"✔ Tomado":"✔ Tomado"}
+      <button
+        ${tomadoHoy ? "disabled" : ""}
+        onclick="marcarTomado('${m.nombre}')"
+        style="
+          margin-top:8px;
+          width:100%;
+          height:44px;
+          border:none;
+          border-radius:10px;
+          background:${tomadoHoy ? "#ccc" : "#4caf50"};
+          color:#fff;
+          font-weight:700;
+        ">
+        ${tomadoHoy ? "✔ Tomado" : "✔ Tomado"}
       </button>
     `;
     cont.appendChild(div);
   });
 }
 
+/* =========================
+   MARCAR TOMADO
+========================= */
 function marcarTomado(nombre){
-  const lista = getLS("medicamentos_tomados_v1");
-  lista.push({
-    nombre,
-    fecha: hoyISO(),
-    hora: new Date().toLocaleTimeString("es-CL",{hour:'2-digit',minute:'2-digit'})
-  });
-  setLS("medicamentos_tomados_v1", lista);
-  cargarSeguimiento();
+  const hoy = new Date().toISOString().slice(0,10);
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || [];
+
+  tomados.push({ nombre, fecha: hoy });
+  localStorage.setItem(
+    "medicamentos_tomados_v1",
+    JSON.stringify(tomados)
+  );
+
+  cargarHoy();
+  cargarResumen();
 }
 
 /* =========================
    HISTORIAL
 ========================= */
-function cargarHistorial(fecha){
-  const cont = document.getElementById("listaHistorial");
-  const lista = getLS("medicamentos_tomados_v1")
-    .filter(t=>t.fecha===fecha);
+document.getElementById("fechaHistorial").onchange = e => {
+  const fecha = e.target.value;
+  const lista = document.getElementById("listaHistorial");
 
-  cont.innerHTML = lista.length
-    ? lista.map(t=>`✔ ${t.nombre} – ${t.hora}`).join("<br>")
-    : "<p style='color:#777'>No hay registros</p>";
-}
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || [];
+
+  const delDia = tomados.filter(t => t.fecha === fecha);
+
+  if (!delDia.length) {
+    lista.innerHTML = "No hay registros";
+    return;
+  }
+
+  lista.innerHTML = delDia
+    .map(t => `✔ ${t.nombre}`)
+    .join("<br>");
+};
 
 /* =========================
    RESUMEN + ADHERENCIA
 ========================= */
-function generarResumen(){
-  const meds = getLS("medicamentos_guardados_v1");
-  const tomados = getLS("medicamentos_tomados_v1");
+function cargarResumen(){
+  const resumen = document.getElementById("resumenSemanal");
+  const adh = document.getElementById("adherencia");
 
-  let total=0, hechos=0;
-  const cont = document.getElementById("resumenSemanal");
-  cont.innerHTML="";
+  const meds = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || [];
 
-  for(let i=6;i>=0;i--){
-    const d=new Date(); d.setDate(d.getDate()-i);
-    const f=d.toISOString().slice(0,10);
-    const prog = meds.filter(m=>f>=m.inicio&&f<=m.fin).length;
-    const he = tomados.filter(t=>t.fecha===f).length;
-    total+=prog; hechos+=he;
-    cont.innerHTML+=`
-      <div style="display:flex;justify-content:space-between">
-        ${d.toLocaleDateString('es-CL',{weekday:'short',day:'numeric'})}
-        <span>${he}/${prog}</span>
-      </div>`;
+  const hoy = new Date();
+  let total = 0, hechos = 0;
+
+  resumen.innerHTML = "";
+
+  for (let i=0;i<7;i++){
+    const d = new Date(hoy);
+    d.setDate(hoy.getDate()-i);
+    const fecha = d.toISOString().slice(0,10);
+
+    const activos = meds.filter(m =>
+      fecha >= m.inicio && fecha <= m.fin
+    );
+
+    const tom = tomados.filter(t => t.fecha === fecha);
+
+    total += activos.length;
+    hechos += tom.length;
+
+    resumen.innerHTML += `
+      ${fecha}: ${tom.length}/${activos.length}<br>
+    `;
   }
 
-  const pct = total?Math.round((hechos/total)*100):100;
-  document.getElementById("adherencia").innerHTML=`
-    <strong>${pct}%</strong><br>
-    ${hechos} de ${total} dosis tomadas
-  `;
+  adh.innerText =
+    total ? `${Math.round((hechos/total)*100)}%` : "0%";
 }
 </script>
+
 
 
 
