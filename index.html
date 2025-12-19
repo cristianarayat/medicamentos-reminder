@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori30 de Medicamentos</h1>
+  <h1>💊 Recordatori31 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1462,6 +1462,20 @@ function mostrarToast(txt){
 </script>
 
 
+/* =========================
+   PASO 4B – ESTADO VISUAL
+========================= */
+function calcularEstado(m, tomadosHoy, ahora){
+  if (tomadosHoy.includes(m.nombre)) return "tomado";
+  if (!m.hora) return "pendiente";
+
+  const [h,min] = m.hora.split(":");
+  const horaMed = new Date(ahora);
+  horaMed.setHours(h, min, 0, 0);
+
+  if (ahora > horaMed) return "atrasado";
+  return "pendiente";
+}
 
 
 
