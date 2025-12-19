@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori14 de Medicamentos</h1>
+  <h1>💊 Recordatori15 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1107,9 +1107,8 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js');
 }
 </script>
-
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO + HISTORIAL
+     BLOQUE 4 – SEGUIMIENTO AVANZADO
 ========================= -->
 
 <div id="seguimiento" style="
@@ -1134,13 +1133,11 @@ if ('serviceWorker' in navigator) {
       </p>
 
       <!-- HOY -->
-      <div id="pendientesHoy" style="margin-top:20px"></div>
-      <div id="tomadosHoy" style="margin-top:26px"></div>
+      <div id="listaHoy" style="margin-top:20px"></div>
 
       <!-- HISTORIAL -->
       <div style="margin-top:30px;border-top:1px solid #eee;padding-top:20px">
         <h3 style="font-size:16px;margin-bottom:10px">📅 Historial</h3>
-
         <input type="date" id="fechaHistorial" style="
           width:100%;
           height:42px;
@@ -1149,7 +1146,6 @@ if ('serviceWorker' in navigator) {
           padding:0 12px;
           font-size:15px;
         ">
-
         <div id="listaHistorial" style="margin-top:12px"></div>
       </div>
 
@@ -1179,7 +1175,7 @@ document.addEventListener("pointerdown", function(e){
     if ((el.textContent || "").trim().toLowerCase() === "seguimiento") {
       e.preventDefault();
       document.getElementById("seguimiento").style.display = "block";
-      cargarSeguimientoHoy();
+      cargarHoy();
       prepararHistorial();
       return;
     }
@@ -1188,21 +1184,16 @@ document.addEventListener("pointerdown", function(e){
 }, true);
 
 document.getElementById("volver-seguimiento")
-  .addEventListener("click", () => {
-    document.getElementById("seguimiento").style.display = "none";
-  });
+  .onclick = () => document.getElementById("seguimiento").style.display = "none";
 
 /* =========================
-   SEGUIMIENTO HOY
+   HOY – ORDEN + ESTADO
 ========================= */
-function cargarSeguimientoHoy(){
-  const contPend = document.getElementById("pendientesHoy");
-  const contTom = document.getElementById("tomadosHoy");
+function cargarHoy(){
+  const cont = document.getElementById("listaHoy");
+  cont.innerHTML = "";
 
-  contPend.innerHTML = "";
-  contTom.innerHTML = "";
-
-  const medicamentos = JSON.parse(
+  const meds = JSON.parse(
     localStorage.getItem("medicamentos_guardados_v1")
   ) || [];
 
@@ -1210,99 +1201,72 @@ function cargarSeguimientoHoy(){
     localStorage.getItem("medicamentos_tomados_v1")
   ) || {};
 
-  const hoy = new Date();
-  hoy.setHours(0,0,0,0);
-  const claveHoy = hoy.toISOString().slice(0,10);
-  const tomadosHoy = tomados[claveHoy] || [];
+  const ahora = new Date();
+  const hoyClave = ahora.toISOString().slice(0,10);
+  const tomadosHoy = tomados[hoyClave] || [];
 
-  const activosHoy = medicamentos.filter(m => {
+  const activosHoy = meds.filter(m => {
     if (!m.inicio || !m.fin) return false;
     const ini = new Date(m.inicio);
     const fin = new Date(m.fin);
     ini.setHours(0,0,0,0);
     fin.setHours(23,59,59,999);
-    return hoy >= ini && hoy <= fin;
+    return ahora >= ini && ahora <= fin;
   });
 
-  const pendientes = activosHoy.filter(m => !tomadosHoy.includes(m.nombre));
-  const hechos = activosHoy.filter(m => tomadosHoy.includes(m.nombre));
+  // ORDENAR POR HORA
+  activosHoy.sort((a,b)=>{
+    if(!a.hora) return 1;
+    if(!b.hora) return -1;
+    return a.hora.localeCompare(b.hora);
+  });
 
-  if (pendientes.length === 0) {
-    contPend.innerHTML = `<p style="text-align:center;color:#777">No hay medicamentos pendientes</p>`;
-  } else {
-    pendientes.forEach(m => contPend.appendChild(cardPendiente(m)));
-  }
-
-  if (hechos.length > 0) {
-    contTom.innerHTML = `<h3 style="margin-bottom:10px;font-size:15px;color:#4caf50">✓ Tomados hoy</h3>`;
-    hechos.forEach(m => contTom.appendChild(cardTomado(m)));
-  }
-}
-
-/* =========================
-   HISTORIAL
-========================= */
-function prepararHistorial(){
-  const input = document.getElementById("fechaHistorial");
-  const hoy = new Date().toISOString().slice(0,10);
-  input.value = hoy;
-  mostrarHistorial(hoy);
-
-  input.onchange = () => mostrarHistorial(input.value);
-}
-
-function mostrarHistorial(fecha){
-  const cont = document.getElementById("listaHistorial");
-  cont.innerHTML = "";
-
-  const tomados = JSON.parse(
-    localStorage.getItem("medicamentos_tomados_v1")
-  ) || {};
-
-  const lista = tomados[fecha] || [];
-
-  if (lista.length === 0) {
-    cont.innerHTML = `<p style="color:#777;text-align:center">No hay registros este día</p>`;
+  if (activosHoy.length === 0) {
+    cont.innerHTML = `<p style="text-align:center;color:#777">No hay medicamentos hoy</p>`;
     return;
   }
 
-  lista.forEach(n => {
-    const div = document.createElement("div");
-    div.style.padding = "10px";
-    div.style.borderBottom = "1px solid #eee";
-    div.innerHTML = `✓ ${n}`;
-    cont.appendChild(div);
+  activosHoy.forEach(m => {
+    const estado = calcularEstado(m, tomadosHoy, ahora);
+    cont.appendChild(cardHoy(m, estado));
   });
 }
 
+function calcularEstado(m, tomadosHoy, ahora){
+  if (tomadosHoy.includes(m.nombre)) return "tomado";
+  if (!m.hora) return "pendiente";
+
+  const [h,min] = m.hora.split(":");
+  const horaMed = new Date(ahora);
+  horaMed.setHours(h, min, 0, 0);
+
+  if (ahora > horaMed) return "atrasado";
+  return "pendiente";
+}
+
 /* =========================
-   CARDS
+   CARDS HOY
 ========================= */
-function cardPendiente(m){
+function cardHoy(m, estado){
   const div = document.createElement("div");
   estiloCard(div);
+
+  const map = {
+    pendiente: {txt:"Pendiente", cls:"badge-pendiente"},
+    atrasado: {txt:"Atrasado", cls:"badge-atrasado"},
+    tomado: {txt:"Tomado", cls:"badge-tomado"}
+  };
+
   div.innerHTML = `
-    <div style="display:flex;justify-content:space-between">
+    <div style="display:flex;justify-content:space-between;align-items:center">
       <strong>${m.nombre}</strong>
-      <span class="badge-activo">Activo</span>
+      <span class="${map[estado].cls}">${map[estado].txt}</span>
     </div>
     <div class="meta">⏰ ${m.hora || '—'}</div>
     <div class="meta">📅 ${fmt(m.inicio)} → ${fmt(m.fin)}</div>
-    <button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>
-  `;
-  return div;
-}
-
-function cardTomado(m){
-  const div = document.createElement("div");
-  estiloCard(div);
-  div.style.opacity = "0.7";
-  div.innerHTML = `
-    <div style="display:flex;justify-content:space-between">
-      <strong>${m.nombre}</strong>
-      <span class="badge-tomado">Tomado</span>
-    </div>
-    <div class="meta">⏰ ${m.hora || '—'}</div>
+    ${estado!=="tomado"
+      ? `<button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>`
+      : ``}
   `;
   return div;
 }
@@ -1316,7 +1280,7 @@ function estiloCard(div){
 }
 
 /* =========================
-   MARCAR TOMADO
+   TOMADO
 ========================= */
 function marcarTomado(nombre){
   const hoy = new Date().toISOString().slice(0,10);
@@ -1331,8 +1295,40 @@ function marcarTomado(nombre){
     "medicamentos_tomados_v1",
     JSON.stringify(tomados)
   );
+  cargarHoy();
+}
 
-  cargarSeguimientoHoy();
+/* =========================
+   HISTORIAL
+========================= */
+function prepararHistorial(){
+  const input = document.getElementById("fechaHistorial");
+  const hoy = new Date().toISOString().slice(0,10);
+  input.value = hoy;
+  mostrarHistorial(hoy);
+  input.onchange = () => mostrarHistorial(input.value);
+}
+
+function mostrarHistorial(fecha){
+  const cont = document.getElementById("listaHistorial");
+  cont.innerHTML = "";
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+  const lista = tomados[fecha] || [];
+
+  if (lista.length === 0) {
+    cont.innerHTML = `<p style="color:#777;text-align:center">No hay registros</p>`;
+    return;
+  }
+
+  lista.forEach(n=>{
+    const d = document.createElement("div");
+    d.style.padding="8px";
+    d.style.borderBottom="1px solid #eee";
+    d.innerHTML = `✓ ${n}`;
+    cont.appendChild(d);
+  });
 }
 
 /* =========================
@@ -1346,17 +1342,16 @@ function fmt(f){
 <style>
 .meta{font-size:13px;color:#666;margin-top:4px}
 .btn-ok{
-  margin-top:10px;
-  width:100%;
-  height:40px;
-  border:none;
-  border-radius:12px;
-  background:#4caf50;
-  color:#fff;
-  font-weight:700;
+  margin-top:10px;width:100%;height:40px;
+  border:none;border-radius:12px;
+  background:#4caf50;color:#fff;font-weight:700
 }
-.badge-activo{
-  background:#e6f4ea;color:#2e7d32;
+.badge-pendiente{
+  background:#fff3cd;color:#8a6d3b;
+  padding:4px 8px;border-radius:10px;font-size:12px
+}
+.badge-atrasado{
+  background:#fdecea;color:#b71c1c;
   padding:4px 8px;border-radius:10px;font-size:12px
 }
 .badge-tomado{
@@ -1364,6 +1359,7 @@ function fmt(f){
   padding:4px 8px;border-radius:10px;font-size:12px
 }
 </style>
+
 
 
 
