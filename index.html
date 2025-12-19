@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori45 de Medicamentos</h1>
+  <h1>💊 Recordatori46 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -641,6 +641,35 @@ function guardarMedicamentoValidado(){
 }
 </script>
 
+
+     
+<script>
+/* =========================
+   CONECTOR BOTÓN MEDICAMENTOS
+   (SEGURO – SOLO ABRE BLOQUE 3)
+========================= */
+
+document.addEventListener("pointerdown", function(e){
+  let el = e.target;
+
+  while (el && el !== document.body) {
+    if (
+      el.tagName === "BUTTON" &&
+      (el.textContent || "").trim().toLowerCase() === "medicamentos"
+    ) {
+      e.preventDefault();
+
+      const bloque = document.getElementById("medicamentos");
+      if (bloque) {
+        bloque.style.display = "block";
+      }
+
+      return;
+    }
+    el = el.parentElement;
+  }
+}, true);
+</script>
 
 
 
