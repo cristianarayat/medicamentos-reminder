@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori18 de Medicamentos</h1>
+  <h1>💊 Recordatori19 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1444,6 +1444,22 @@ window.addEventListener("load", () => {
 });
 </script>
 
+<script>
+window.addEventListener("load", () => {
+  const botones = document.querySelectorAll("button");
+
+  botones.forEach(btn => {
+    if (btn.textContent.trim().toLowerCase() === "seguimiento") {
+      btn.addEventListener("click", e => {
+        e.preventDefault();
+        document.getElementById("seguimiento").style.display = "block";
+        cargarHoy();
+        prepararHistorial();
+      });
+    }
+  });
+});
+</script>
 
 
 
