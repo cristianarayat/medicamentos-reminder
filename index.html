@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori36 de Medicamentos</h1>
+  <h1>💊 Recordatori37 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1546,6 +1546,61 @@ function mensajeAdherencia(p){
 
 
 
+<script>
+/* =========================
+   PASO 4E – HISTORIAL CORREGIDO
+   (SIN undefined)
+========================= */
+
+/*
+  Estructura esperada:
+  medicamentos_tomados_v1 = {
+    "2025-12-19": ["Finasteride","Dipirona"]
+  }
+*/
+
+function mostrarHistorial(fecha){
+  const cont = document.getElementById("listaHistorial");
+  if (!cont) return;
+
+  cont.innerHTML = "";
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  const lista = Array.isArray(tomados[fecha])
+    ? tomados[fecha]
+    : [];
+
+  if (lista.length === 0) {
+    cont.innerHTML =
+      `<p class="vacio">No hay registros</p>`;
+    return;
+  }
+
+  lista.forEach(nombre => {
+    if (!nombre) return; // 🔒 evita undefined
+
+    const d = document.createElement("div");
+    d.className = "item-hist";
+    d.textContent = `✓ ${nombre}`;
+    cont.appendChild(d);
+  });
+}
+
+/* Reenganche seguro del input fecha */
+(function(){
+  const input = document.getElementById("fechaHistorial");
+  if (!input) return;
+
+  const hoy = new Date().toISOString().slice(0,10);
+  input.value = hoy;
+  mostrarHistorial(hoy);
+
+  input.onchange = () => mostrarHistorial(input.value);
+})();
+</script>
 
 
 
