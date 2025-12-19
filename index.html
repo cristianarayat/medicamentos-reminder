@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori39 de Medicamentos</h1>
+  <h1>💊 Recordatori40 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1678,6 +1678,36 @@ window.marcarTomado = function(nombre){
 };
 </script>
 
+
+
+<script>
+/* =========================
+   PASO 4F – BLOQUEO POR DÍA
+   (NO DUPLICAR TOMAS)
+========================= */
+
+// respaldo por seguridad
+const marcarTomado_4F_original = window.marcarTomado;
+
+window.marcarTomado = function(nombre){
+  const hoy = new Date().toISOString().slice(0,10);
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  if (!tomados[hoy]) tomados[hoy] = [];
+
+  // ⛔ ya fue tomado hoy
+  if (tomados[hoy].includes(nombre)) {
+    mostrarToast(`⚠ ${nombre} ya fue registrado hoy`);
+    return;
+  }
+
+  // ✅ registrar normalmente
+  marcarTomado_4F_original(nombre);
+};
+</script>
 
 
 
