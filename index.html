@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori24 de Medicamentos</h1>
+  <h1>💊 Recordatori25 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1113,7 +1113,7 @@ if ('serviceWorker' in navigator) {
 
 
 <!-- =========================
-     BLOQUE 4 – SEGUIMIENTO
+     BLOQUE 4 – SEGUIMIENTO (FINAL)
 ========================= -->
 
 <div id="seguimiento" style="
@@ -1137,7 +1137,7 @@ if ('serviceWorker' in navigator) {
         Medicamentos programados para hoy
       </p>
 
-      <!-- LISTA HOY -->
+      <!-- HOY -->
       <div id="listaHoy"></div>
 
       <hr style="margin:20px 0">
@@ -1183,7 +1183,7 @@ if ('serviceWorker' in navigator) {
 /* =========================
    UTILIDADES
 ========================= */
-const mapaDias = {
+const diasMap = {
   domingo: 0,
   lunes: 1,
   martes: 2,
@@ -1200,7 +1200,7 @@ function hoyISO(){
 }
 
 /* =========================
-   CONEXIÓN BOTÓN SEGUIMIENTO
+   ABRIR / CERRAR
 ========================= */
 document.addEventListener("pointerdown", e => {
   let el = e.target;
@@ -1216,9 +1216,6 @@ document.addEventListener("pointerdown", e => {
   }
 }, true);
 
-/* =========================
-   VOLVER
-========================= */
 document.getElementById("volverSeguimiento").onclick = () => {
   document.getElementById("seguimiento").style.display = "none";
 };
@@ -1230,7 +1227,7 @@ function cargarHoy(){
   const cont = document.getElementById("listaHoy");
   cont.innerHTML = "";
 
-  const meds = JSON.parse(
+  const medicamentos = JSON.parse(
     localStorage.getItem("medicamentos_guardados_v1")
   ) || [];
 
@@ -1241,42 +1238,39 @@ function cargarHoy(){
   const hoy = hoyISO();
   const diaHoy = new Date().getDay();
 
-  const activos = meds.filter(m => {
+  const activosHoy = medicamentos.filter(m => {
     if (hoy < m.inicio || hoy > m.fin) return false;
 
     if (!Array.isArray(m.dias) || m.dias.length === 0) return true;
 
-    return m.dias.some(d =>
-      typeof d === "number"
-        ? d === diaHoy
-        : mapaDias[d.toLowerCase()] === diaHoy
-    );
+    return m.dias.some(d => diasMap[d.toLowerCase()] === diaHoy);
   });
 
-  if (!activos.length) {
+  if (!activosHoy.length) {
     cont.innerHTML =
       "<p style='text-align:center;color:#777'>No hay medicamentos para hoy</p>";
     return;
   }
 
-  activos.forEach(m => {
-    const tomadoHoy = tomados.some(t =>
+  activosHoy.forEach(m => {
+    const tomado = tomados.some(t =>
       t.nombre === m.nombre && t.fecha === hoy
     );
 
-    const div = document.createElement("div");
-    div.style.margin = "12px 0";
-    div.style.padding = "16px";
-    div.style.borderRadius = "14px";
-    div.style.background = "#f8fafc";
+    const card = document.createElement("div");
+    card.style.margin = "12px 0";
+    card.style.padding = "16px";
+    card.style.borderRadius = "14px";
+    card.style.background = "#f8fafc";
 
-    div.innerHTML = `
+    card.innerHTML = `
       <strong>${m.nombre}</strong>
       <div style="font-size:13px;color:#555">
+        ⏰ ${m.hora || "--"}<br>
         📅 ${m.inicio} → ${m.fin}
       </div>
       <button
-        ${tomadoHoy ? "disabled" : ""}
+        ${tomado ? "disabled" : ""}
         onclick="marcarTomado('${m.nombre}')"
         style="
           margin-top:8px;
@@ -1284,14 +1278,14 @@ function cargarHoy(){
           height:44px;
           border:none;
           border-radius:10px;
-          background:${tomadoHoy ? "#ccc" : "#4caf50"};
+          background:${tomado ? "#ccc" : "#4caf50"};
           color:#fff;
           font-weight:700;
         ">
-        ${tomadoHoy ? "✔ Tomado" : "✔ Tomado"}
+        ${tomado ? "✔ Tomado" : "✔ Tomado"}
       </button>
     `;
-    cont.appendChild(div);
+    cont.appendChild(card);
   });
 }
 
@@ -1300,6 +1294,7 @@ function cargarHoy(){
 ========================= */
 function marcarTomado(nombre){
   const hoy = hoyISO();
+
   const tomados = JSON.parse(
     localStorage.getItem("medicamentos_tomados_v1")
   ) || [];
@@ -1328,12 +1323,9 @@ document.getElementById("fechaHistorial").onchange = e => {
 
   const delDia = tomados.filter(t => t.fecha === fecha);
 
-  if (!delDia.length) {
-    lista.innerHTML = "No hay registros";
-    return;
-  }
-
-  lista.innerHTML = delDia.map(t => `✔ ${t.nombre}`).join("<br>");
+  lista.innerHTML = delDia.length
+    ? delDia.map(t => `✔ ${t.nombre}`).join("<br>")
+    : "No hay registros";
 };
 
 /* =========================
@@ -1351,26 +1343,19 @@ function cargarResumen(){
     localStorage.getItem("medicamentos_tomados_v1")
   ) || [];
 
-  const hoy = new Date();
   let total = 0, hechos = 0;
-
   resumen.innerHTML = "";
 
-  for (let i=0;i<7;i++){
-    const d = new Date(hoy);
-    d.setDate(hoy.getDate()-i);
+  for (let i = 0; i < 7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
     const fecha = d.toISOString().slice(0,10);
     const dia = d.getDay();
 
     const activos = meds.filter(m => {
       if (fecha < m.inicio || fecha > m.fin) return false;
       if (!Array.isArray(m.dias) || m.dias.length === 0) return true;
-
-      return m.dias.some(x =>
-        typeof x === "number"
-          ? x === dia
-          : mapaDias[x.toLowerCase()] === dia
-      );
+      return m.dias.some(x => diasMap[x.toLowerCase()] === dia);
     });
 
     const tom = tomados.filter(t => t.fecha === fecha);
@@ -1381,11 +1366,10 @@ function cargarResumen(){
     resumen.innerHTML += `${fecha}: ${tom.length}/${activos.length}<br>`;
   }
 
-  adh.innerText = total
-    ? Math.round((hechos/total)*100) + "%"
-    : "0%";
+  adh.innerText = total ? Math.round((hechos / total) * 100) + "%" : "0%";
 }
 </script>
+
 
 
 
