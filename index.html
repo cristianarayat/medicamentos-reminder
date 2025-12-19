@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori38 de Medicamentos</h1>
+  <h1>💊 Recordatori39 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1652,6 +1652,31 @@ function mostrarHistorial(fecha){
 </script>
 
 
+<script>
+/* =========================
+   PASO 4E – OPCIÓN A
+   CONFIRMACIÓN VISUAL SEGURA
+========================= */
+
+// Guardamos la función original
+const _marcarTomadoBase = window.marcarTomado;
+
+window.marcarTomado = function(nombre){
+  // Evita doble click rápido
+  const btn = [...document.querySelectorAll(".btn-ok")]
+    .find(b => b.innerText.includes("Tomado"));
+
+  if (btn) btn.disabled = true;
+
+  // Ejecuta lógica original
+  _marcarTomadoBase(nombre);
+
+  // Feedback visual inmediato
+  setTimeout(() => {
+    cargarHoy(); // refresca tarjetas
+  }, 50);
+};
+</script>
 
 
 
