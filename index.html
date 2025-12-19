@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori37 de Medicamentos</h1>
+  <h1>💊 Recordatori38 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1603,6 +1603,53 @@ function mostrarHistorial(fecha){
 </script>
 
 
+<script>
+/* =========================
+   PASO 4E – HISTORIAL ROBUSTO
+   (COMPLEMENTO SEGURO)
+========================= */
+
+(function(){
+
+  // Reemplazo seguro de mostrarHistorial
+  const _mostrarHistorialOriginal = window.mostrarHistorial;
+
+  window.mostrarHistorial = function(fecha){
+    const cont = document.getElementById("listaHistorial");
+    if (!cont) return;
+
+    cont.innerHTML = "";
+
+    const meds = JSON.parse(
+      localStorage.getItem("medicamentos_guardados_v1")
+    ) || [];
+
+    const tomados = JSON.parse(
+      localStorage.getItem("medicamentos_tomados_v1")
+    ) || {};
+
+    const lista = tomados[fecha] || [];
+
+    // Filtrar solo medicamentos existentes
+    const nombresValidos = meds.map(m => m.nombre);
+    const listaLimpia = lista.filter(n => nombresValidos.includes(n));
+
+    if (listaLimpia.length === 0) {
+      cont.innerHTML =
+        `<p class="vacio">No hay registros</p>`;
+      return;
+    }
+
+    listaLimpia.forEach(nombre => {
+      const d = document.createElement("div");
+      d.className = "item-hist";
+      d.innerHTML = `✓ ${nombre}`;
+      cont.appendChild(d);
+    });
+  };
+
+})();
+</script>
 
 
 
