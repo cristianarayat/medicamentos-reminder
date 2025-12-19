@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori29 de Medicamentos</h1>
+  <h1>💊 Recordatori30 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1408,6 +1408,58 @@ window.cardHoy = function(m){
 </script>
 
 
+<script>
+/* =========================
+   PASO 4B – FEEDBACK TOMADO
+========================= */
+
+// Reemplazo suave de marcarTomado
+const marcarTomadoOriginal = marcarTomado;
+
+window.marcarTomado = function(nombre){
+  const btns = document.querySelectorAll(".btn-ok");
+  btns.forEach(b => b.disabled = true);
+
+  marcarTomadoOriginal(nombre);
+
+  mostrarToast(`✔ ${nombre} marcado como tomado`);
+
+  setTimeout(() => {
+    btns.forEach(b => b.disabled = false);
+  }, 800);
+};
+
+/* =========================
+   TOAST SIMPLE
+========================= */
+function mostrarToast(txt){
+  let t = document.getElementById("toastSeguimiento");
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "toastSeguimiento";
+    t.style.position = "fixed";
+    t.style.bottom = "20px";
+    t.style.left = "50%";
+    t.style.transform = "translateX(-50%)";
+    t.style.background = "#323232";
+    t.style.color = "#fff";
+    t.style.padding = "10px 16px";
+    t.style.borderRadius = "20px";
+    t.style.fontSize = "14px";
+    t.style.opacity = "0";
+    t.style.transition = "opacity .3s";
+    t.style.zIndex = "2000";
+    document.body.appendChild(t);
+  }
+
+  t.textContent = txt;
+  t.style.opacity = "1";
+
+  setTimeout(() => {
+    t.style.opacity = "0";
+  }, 1400);
+}
+</script>
 
 
 
