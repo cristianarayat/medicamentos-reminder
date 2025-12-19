@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori35 de Medicamentos</h1>
+  <h1>💊 Recordatori36 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1546,94 +1546,8 @@ function mensajeAdherencia(p){
 
 
 
-<script>
-/* =========================
-   PASO 4E – CONTROL AVANZADO DE TOMA
-   (COMPLEMENTO SEGURO)
-========================= */
 
-/*
-Estructura nueva:
-medicamentos_tomados_v1 = {
-  "2025-12-19": [
-    { nombre: "Finasteride", hora: "09:12" },
-    { nombre: "Dipirona", hora: "21:05" }
-  ]
-}
-*/
 
-// Sobrescribimos marcarTomado de forma segura
-const _marcarTomadoBase = window.marcarTomado;
-
-window.marcarTomado = function(nombre){
-  const hoy = new Date().toISOString().slice(0,10);
-  const ahora = new Date();
-  const horaReal = ahora.toTimeString().slice(0,5);
-
-  let tomados = JSON.parse(
-    localStorage.getItem("medicamentos_tomados_v1")
-  ) || {};
-
-  if (!Array.isArray(tomados[hoy])) {
-    tomados[hoy] = [];
-  }
-
-  // 🔒 Evitar duplicados el mismo día
-  const yaTomado = tomados[hoy].some(t => t.nombre === nombre);
-  if (yaTomado) {
-    mostrarToast(`ℹ️ ${nombre} ya fue marcado hoy`);
-    return;
-  }
-
-  // Guardar con hora real
-  tomados[hoy].push({
-    nombre,
-    hora: horaReal
-  });
-
-  localStorage.setItem(
-    "medicamentos_tomados_v1",
-    JSON.stringify(tomados)
-  );
-
-  // Refrescar vistas
-  cargarHoy();
-  mostrarHistorial(hoy);
-
-  mostrarToast(`✔ ${nombre} tomado a las ${horaReal}`);
-};
-
-/* =========================
-   HISTORIAL CON HORA REAL
-========================= */
-
-// Reemplazo suave de mostrarHistorial
-const _mostrarHistorialBase = window.mostrarHistorial;
-
-window.mostrarHistorial = function(fecha){
-  const cont = document.getElementById("listaHistorial");
-  cont.innerHTML = "";
-
-  const tomados = JSON.parse(
-    localStorage.getItem("medicamentos_tomados_v1")
-  ) || {};
-
-  const lista = tomados[fecha] || [];
-
-  if (lista.length === 0) {
-    cont.innerHTML =
-      `<p class="vacio">No hay registros</p>`;
-    return;
-  }
-
-  lista.forEach(item => {
-    const d = document.createElement("div");
-    d.className = "item-hist";
-    d.innerHTML = `✓ ${item.nombre} <span style="float:right;color:#666">${item.hora || ""}</span>`;
-    cont.appendChild(d);
-  });
-};
-</script>
 
 
 
