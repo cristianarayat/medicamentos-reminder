@@ -99,7 +99,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori26 de Medicamentos</h1>
+  <h1>💊 Recordatori27 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1111,66 +1111,90 @@ if ('serviceWorker' in navigator) {
 
 
 
-
 <!-- =========================
-     PASO 5 – RESUMEN AVANZADO
-     (F + H + G)
-     SOLO COMPLEMENTO
+     BLOQUE 4 – SEGUIMIENTO AVANZADO
 ========================= -->
+
+<div id="seguimiento" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#eef1f4;
+  z-index:1000;
+  overflow:auto;
+">
+  <div style="max-width:480px;margin:0 auto;padding:20px">
+    <div style="
+      background:#fff;
+      border-radius:18px;
+      padding:20px;
+      box-shadow:0 12px 28px rgba(0,0,0,.12);
+    ">
+      <h2 style="text-align:center;margin-bottom:6px">Seguimiento</h2>
+
+      <p style="text-align:center;color:#666;font-size:14px">
+        Medicamentos programados para hoy
+      </p>
+
+      <!-- HOY -->
+      <div id="listaHoy" style="margin-top:20px"></div>
+
+      <!-- HISTORIAL -->
+      <div style="margin-top:30px;border-top:1px solid #eee;padding-top:20px">
+        <h3 style="font-size:16px;margin-bottom:10px">📅 Historial</h3>
+        <input type="date" id="fechaHistorial" style="
+          width:100%;
+          height:42px;
+          border-radius:10px;
+          border:1px solid #ccc;
+          padding:0 12px;
+          font-size:15px;
+        ">
+        <div id="listaHistorial" style="margin-top:12px"></div>
+      </div>
+
+      <button id="volver-seguimiento" style="
+        width:100%;
+        height:52px;
+        border:none;
+        border-radius:14px;
+        background:#bdbdbd;
+        font-size:16px;
+        font-weight:700;
+        margin-top:26px;
+      ">
+        Volver
+      </button>
+    </div>
+  </div>
+</div>
 
 <script>
 /* =========================
-   CONFIGURACIÓN
+   ABRIR / CERRAR
 ========================= */
-const MODO_CUIDADOR = false; // true = solo lectura
+document.addEventListener("pointerdown", function(e){
+  let el = e.target;
+  while(el && el !== document.body){
+    if ((el.textContent || "").trim().toLowerCase() === "seguimiento") {
+      e.preventDefault();
+      document.getElementById("seguimiento").style.display = "block";
+      cargarHoy();
+      prepararHistorial();
+      return;
+    }
+    el = el.parentElement;
+  }
+}, true);
+
+document.getElementById("volver-seguimiento")
+  .onclick = () => document.getElementById("seguimiento").style.display = "none";
 
 /* =========================
-   INYECTAR UI EN SEGUIMIENTO
+   HOY – ORDEN + ESTADO
 ========================= */
-window.addEventListener("load", () => {
-  const seg = document.getElementById("seguimiento");
-  if (!seg) return;
-
-  const cont = document.createElement("div");
-  cont.id = "resumenAvanzado";
-  cont.style.marginTop = "30px";
-  cont.innerHTML = `
-    <div style="border-top:1px solid #eee;padding-top:20px">
-      <h3 style="font-size:16px;margin-bottom:10px">📊 Resumen semanal</h3>
-      <div id="vistaSemanal"></div>
-
-      <div style="margin-top:20px">
-        <h3 style="font-size:16px;margin-bottom:6px">📈 Adherencia</h3>
-        <div id="adherencia"></div>
-      </div>
-
-      ${MODO_CUIDADOR ? `
-        <div style="margin-top:20px;padding:12px;
-          background:#fff3cd;border-radius:12px;color:#8a6d3b">
-          👪 Modo cuidador activo (solo lectura)
-        </div>` : ``}
-    </div>
-  `;
-
-  seg.querySelector(".card, div > div")?.appendChild(cont);
-  generarResumen();
-});
-
-/* =========================
-   LÓGICA PRINCIPAL
-========================= */
-function generarResumen(){
-  generarVistaSemanal();
-  generarAdherencia();
-}
-
-/* =========================
-   F) VISTA SEMANAL
-========================= */
-function generarVistaSemanal(){
-  const cont = document.getElementById("vistaSemanal");
-  if (!cont) return;
-
+function cargarHoy(){
+  const cont = document.getElementById("listaHoy");
   cont.innerHTML = "";
 
   const meds = JSON.parse(
@@ -1181,92 +1205,165 @@ function generarVistaSemanal(){
     localStorage.getItem("medicamentos_tomados_v1")
   ) || {};
 
-  const hoy = new Date();
-  hoy.setHours(0,0,0,0);
+  const ahora = new Date();
+  const hoyClave = ahora.toISOString().slice(0,10);
+  const tomadosHoy = tomados[hoyClave] || [];
 
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(hoy);
-    d.setDate(d.getDate() - i);
-    const key = d.toISOString().slice(0,10);
+  const activosHoy = meds.filter(m => {
+    if (!m.inicio || !m.fin) return false;
+    const ini = new Date(m.inicio);
+    const fin = new Date(m.fin);
+    ini.setHours(0,0,0,0);
+    fin.setHours(23,59,59,999);
+    return ahora >= ini && ahora <= fin;
+  });
 
-    const programados = meds.filter(m => {
-      if (!m.inicio || !m.fin) return false;
-      const ini = new Date(m.inicio);
-      const fin = new Date(m.fin);
-      ini.setHours(0,0,0,0);
-      fin.setHours(23,59,59,999);
-      return d >= ini && d <= fin;
-    }).length;
+  // ORDENAR POR HORA
+  activosHoy.sort((a,b)=>{
+    if(!a.hora) return 1;
+    if(!b.hora) return -1;
+    return a.hora.localeCompare(b.hora);
+  });
 
-    const tom = (tomados[key] || []).length;
-
-    const div = document.createElement("div");
-    div.style.display = "flex";
-    div.style.justifyContent = "space-between";
-    div.style.padding = "6px 0";
-    div.style.fontSize = "14px";
-
-    div.innerHTML = `
-      <span>${d.toLocaleDateString('es-CL',{weekday:'short',day:'numeric'})}</span>
-      <span>${tom}/${programados}</span>
-    `;
-    cont.appendChild(div);
+  if (activosHoy.length === 0) {
+    cont.innerHTML = `<p style="text-align:center;color:#777">No hay medicamentos hoy</p>`;
+    return;
   }
+
+  activosHoy.forEach(m => {
+    const estado = calcularEstado(m, tomadosHoy, ahora);
+    cont.appendChild(cardHoy(m, estado));
+  });
+}
+
+function calcularEstado(m, tomadosHoy, ahora){
+  if (tomadosHoy.includes(m.nombre)) return "tomado";
+  if (!m.hora) return "pendiente";
+
+  const [h,min] = m.hora.split(":");
+  const horaMed = new Date(ahora);
+  horaMed.setHours(h, min, 0, 0);
+
+  if (ahora > horaMed) return "atrasado";
+  return "pendiente";
 }
 
 /* =========================
-   H) ADHERENCIA
+   CARDS HOY
 ========================= */
-function generarAdherencia(){
-  const cont = document.getElementById("adherencia");
-  if (!cont) return;
+function cardHoy(m, estado){
+  const div = document.createElement("div");
+  estiloCard(div);
 
-  const meds = JSON.parse(
-    localStorage.getItem("medicamentos_guardados_v1")
-  ) || [];
+  const map = {
+    pendiente: {txt:"Pendiente", cls:"badge-pendiente"},
+    atrasado: {txt:"Atrasado", cls:"badge-atrasado"},
+    tomado: {txt:"Tomado", cls:"badge-tomado"}
+  };
 
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <strong>${m.nombre}</strong>
+      <span class="${map[estado].cls}">${map[estado].txt}</span>
+    </div>
+    <div class="meta">⏰ ${m.hora || '—'}</div>
+    <div class="meta">📅 ${fmt(m.inicio)} → ${fmt(m.fin)}</div>
+    ${estado!=="tomado"
+      ? `<button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>`
+      : ``}
+  `;
+  return div;
+}
+
+function estiloCard(div){
+  div.style.background = "#f7f9fc";
+  div.style.borderRadius = "14px";
+  div.style.padding = "14px";
+  div.style.marginBottom = "12px";
+  div.style.boxShadow = "0 4px 10px rgba(0,0,0,.06)";
+}
+
+/* =========================
+   TOMADO
+========================= */
+function marcarTomado(nombre){
+  const hoy = new Date().toISOString().slice(0,10);
   const tomados = JSON.parse(
     localStorage.getItem("medicamentos_tomados_v1")
   ) || {};
 
-  let total = 0, hechos = 0;
+  if (!tomados[hoy]) tomados[hoy] = [];
+  if (!tomados[hoy].includes(nombre)) tomados[hoy].push(nombre);
 
-  Object.keys(tomados).forEach(fecha => {
-    hechos += tomados[fecha].length;
-  });
+  localStorage.setItem(
+    "medicamentos_tomados_v1",
+    JSON.stringify(tomados)
+  );
+  cargarHoy();
+}
 
-  const hoy = new Date();
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(hoy);
-    d.setDate(d.getDate() - i);
-    meds.forEach(m => {
-      if (!m.inicio || !m.fin) return;
-      const ini = new Date(m.inicio);
-      const fin = new Date(m.fin);
-      if (d >= ini && d <= fin) total++;
-    });
+/* =========================
+   HISTORIAL
+========================= */
+function prepararHistorial(){
+  const input = document.getElementById("fechaHistorial");
+  const hoy = new Date().toISOString().slice(0,10);
+  input.value = hoy;
+  mostrarHistorial(hoy);
+  input.onchange = () => mostrarHistorial(input.value);
+}
+
+function mostrarHistorial(fecha){
+  const cont = document.getElementById("listaHistorial");
+  cont.innerHTML = "";
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+  const lista = tomados[fecha] || [];
+
+  if (lista.length === 0) {
+    cont.innerHTML = `<p style="color:#777;text-align:center">No hay registros</p>`;
+    return;
   }
 
-  const pct = total ? Math.round((hechos / total) * 100) : 100;
-
-  cont.innerHTML = `
-    <div style="font-size:22px;font-weight:700">${pct}%</div>
-    <div style="font-size:13px;color:#666">
-      ${hechos} de ${total} dosis tomadas
-    </div>
-    <div style="margin-top:6px;font-size:13px">
-      ${mensajeAdherencia(pct)}
-    </div>
-  `;
+  lista.forEach(n=>{
+    const d = document.createElement("div");
+    d.style.padding="8px";
+    d.style.borderBottom="1px solid #eee";
+    d.innerHTML = `✓ ${n}`;
+    cont.appendChild(d);
+  });
 }
 
-function mensajeAdherencia(p){
-  if (p >= 90) return "Excelente adherencia 👏";
-  if (p >= 70) return "Buen progreso, sigue así 👍";
-  if (p >= 50) return "Puedes mejorar 💪";
-  return "Revisa tus horarios ⏰";
+/* =========================
+   UTIL
+========================= */
+function fmt(f){
+  return new Date(f).toLocaleDateString('es-CL');
 }
 </script>
+
+<style>
+.meta{font-size:13px;color:#666;margin-top:4px}
+.btn-ok{
+  margin-top:10px;width:100%;height:40px;
+  border:none;border-radius:12px;
+  background:#4caf50;color:#fff;font-weight:700
+}
+.badge-pendiente{
+  background:#fff3cd;color:#8a6d3b;
+  padding:4px 8px;border-radius:10px;font-size:12px
+}
+.badge-atrasado{
+  background:#fdecea;color:#b71c1c;
+  padding:4px 8px;border-radius:10px;font-size:12px
+}
+.badge-tomado{
+  background:#e0e0e0;color:#555;
+  padding:4px 8px;border-radius:10px;font-size:12px
+}
+</style>
+
 
 
 
