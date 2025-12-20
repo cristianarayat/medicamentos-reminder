@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori60 de Medicamentos</h1>
+  <h1>💊 Recordatori61 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -462,85 +462,143 @@ window.addEventListener("focus", actualizarBienvenida);
 
 
 
-     
-<!-- =========================
-     INICIO BLOQUE 3 – MEDICAMENTOS
-     (MARCADOR + CONECTOR)
-========================= -->
+ <!-- ==================================================
+     BLOQUE 3 – MEDICAMENTOS (BASE LIMPIA)
+     INICIO
+================================================== -->
+
+<style>
+#medicamentos{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#eef1f4;
+  z-index:1000;
+  overflow:auto;
+}
+
+.med-container{
+  max-width:480px;
+  margin:0 auto;
+  padding:16px;
+}
+
+.med-card{
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+
+.med-card h2{
+  text-align:center;
+  margin-bottom:16px;
+}
+
+.med-group{
+  margin-bottom:14px;
+}
+
+.med-group label{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.med-group input{
+  width:100%;
+  height:48px;
+  border-radius:14px;
+  border:1px solid #cfcfcf;
+  padding:0 14px;
+  font-size:15px;
+}
+
+.btn-primario{
+  width:100%;
+  height:52px;
+  border:none;
+  border-radius:16px;
+  background:#2f80ed;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  margin-top:12px;
+}
+
+.btn-volver{
+  background:#bdbdbd;
+  margin-top:8px;
+}
+</style>
+
+<div id="medicamentos">
+  <div class="med-container">
+    <div class="med-card">
+
+      <h2>Medicamentos</h2>
+
+      <div class="med-group">
+        <label>Nombre del medicamento</label>
+        <input id="med-nombre" placeholder="Ej: Paracetamol">
+      </div>
+
+      <button class="btn-primario" id="btn-guardar-med">
+        Guardar medicamento
+      </button>
+
+      <button class="btn-primario btn-volver" id="btn-volver-med">
+        Volver
+      </button>
+
+    </div>
+  </div>
+</div>
 
 <script>
-/*
-  Este bloque SOLO se encarga de:
-  - Conectar el botón "Medicamentos" del Home
-  - Mostrar el contenedor #medicamentos
-  - NO toca estilos ni lógica interna
-*/
+/* ==================================================
+   CONEXIÓN BOTÓN "MEDICAMENTOS" – GARANTIZADA
+================================================== */
 
 document.addEventListener("pointerdown", function(e){
   let el = e.target;
-
   while (el && el !== document.body) {
-    if (
-      (el.textContent || "")
-        .trim()
-        .toLowerCase() === "medicamentos"
-    ) {
+    if ((el.textContent || "").trim().toLowerCase() === "medicamentos") {
       e.preventDefault();
-
-      const pantalla = document.getElementById("medicamentos");
-      if (pantalla) {
-        pantalla.style.display = "block";
-      } else {
-        console.warn("⚠ No existe #medicamentos en el DOM");
-      }
+      document.getElementById("medicamentos").style.display = "block";
       return;
     }
     el = el.parentElement;
   }
 }, true);
-</script>
 
-<!-- =========================
-     FIN CONECTOR BLOQUE 3
-========================= -->
+/* =========================
+   BOTÓN VOLVER
+========================= */
+document.getElementById("btn-volver-med").onclick = () => {
+  document.getElementById("medicamentos").style.display = "none";
+};
 
-<!-- =========================
-     INICIO BLOQUE 3 – CONECTOR MEDICAMENTOS
-     (NO BORRAR ESTE MARCADOR)
-========================= -->
-
-<script>
-(function(){
-  function abrirMedicamentos(){
-    const mod = document.getElementById("medicamentos");
-    if (!mod) {
-      console.warn("❌ No existe #medicamentos");
-      return;
-    }
-    mod.style.display = "block";
+/* =========================
+   GUARDADO BASE (TEST)
+========================= */
+document.getElementById("btn-guardar-med").onclick = () => {
+  const nombre = document.getElementById("med-nombre").value.trim();
+  if (!nombre) {
+    alert("Falta el nombre del medicamento");
+    return;
   }
 
-  // Detecta cualquier botón o texto que diga "Medicamentos"
-  document.addEventListener("click", function(e){
-    let el = e.target;
-    while (el && el !== document.body) {
-      const txt = (el.textContent || "").trim().toLowerCase();
-      if (txt === "medicamentos") {
-        e.preventDefault();
-        abrirMedicamentos();
-        return;
-      }
-      el = el.parentElement;
-    }
-  }, true);
-
-  console.log("✅ Conector BLOQUE 3 activo");
-})();
+  alert("Medicamento guardado (prueba OK)");
+};
 </script>
 
-<!-- =========================
-     FIN BLOQUE 3 – CONECTOR MEDICAMENTOS
-========================= -->
+<!-- ==================================================
+     BLOQUE 3 – MEDICAMENTOS
+     FIN
+================================================== -->
+
 
 
 
