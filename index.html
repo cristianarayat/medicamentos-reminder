@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori62 de Medicamentos</h1>
+  <h1>💊 Recordatori63 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -600,237 +600,85 @@ document.getElementById("btn-guardar-med").onclick = () => {
 ================================================== -->
 
 
-<!-- =========================
-     BLOQUE 3 – MEDICAMENTOS (BASE)
-========================= -->
 
-<style>
-#medicamentos{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#eef1f4;
-  z-index:1000;
-  overflow:auto;
-}
 
-.med-container{
-  max-width:480px;
-  margin:0 auto;
-  padding:16px;
-}
+     <!-- ===== CAMPOS COMPLEMENTARIOS MEDICAMENTOS ===== -->
 
-.med-card{
-  background:#fff;
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 12px 28px rgba(0,0,0,.12);
-}
+<div class="med-group">
+  <label>Dosis por día</label>
+  <input id="m-dosis" type="number" min="1" value="1">
+</div>
 
-.med-card h2{
-  text-align:center;
-  margin-bottom:16px;
-}
+<div class="med-group">
+  <label>Periodicidad</label>
+  <select id="m-periodicidad">
+    <option value="1">Cada 1 día</option>
+    <option value="2">Cada 2 días</option>
+    <option value="5">Cada 5 días</option>
+    <option value="7">Cada 7 días</option>
+    <option value="14">Cada 14 días</option>
+    <option value="30">Cada 30 días</option>
+    <option value="0">Permanente</option>
+  </select>
+</div>
 
-.med-group{
-  margin-bottom:14px;
-}
+<div class="med-group">
+  <label>Días de tratamiento</label>
+  <input id="m-dias-trat" type="number" min="1" placeholder="Ej: 10">
+</div>
 
-.med-group label{
-  display:block;
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:6px;
-}
-
-.med-group input,
-.med-group select{
-  width:100%;
-  height:46px;
-  border-radius:14px;
-  border:1px solid #cfcfcf;
-  padding:0 14px;
-  font-size:15px;
-}
-
-.btn{
-  width:100%;
-  height:52px;
-  border:none;
-  border-radius:16px;
-  background:#2f80ed;
-  color:#fff;
-  font-size:16px;
-  font-weight:700;
-}
-
-.btn.volver{
-  background:#bdbdbd;
-  margin-top:8px;
-}
-
-.msg-error{
-  display:none;
-  color:#b00020;
-  font-size:13px;
-  margin-bottom:10px;
-}
-</style>
-
-<div id="medicamentos">
-  <div class="med-container">
-    <div class="med-card">
-
-      <h2>Medicamentos</h2>
-
-      <div class="msg-error" id="med-error"></div>
-
-      <div class="med-group">
-        <label>Nombre del medicamento</label>
-        <input id="med-nombre">
-      </div>
-
-      <div class="med-group">
-        <label>Dosis por día</label>
-        <input id="med-dosis" type="number" min="1" value="1">
-      </div>
-
-      <div class="med-group">
-        <label>Periodicidad</label>
-        <select id="med-periodicidad">
-          <option value="1">Cada 1 día</option>
-          <option value="2">Cada 2 días</option>
-          <option value="5">Cada 5 días</option>
-          <option value="7">Cada 7 días</option>
-          <option value="14">Cada 14 días</option>
-          <option value="30">Cada 30 días</option>
-          <option value="0">Permanente</option>
-        </select>
-      </div>
-
-      <div class="med-group">
-        <label>Días de tratamiento</label>
-        <input id="med-dias" type="number" min="1">
-      </div>
-
-      <div class="med-group">
-        <label>Fecha inicio</label>
-        <input id="med-inicio" type="date">
-      </div>
-
-      <div class="med-group">
-        <label>Fecha término</label>
-        <input id="med-fin" type="date" disabled>
-      </div>
-
-      <button class="btn" id="guardar-med">Guardar medicamento</button>
-      <button class="btn volver" id="volver-med">Volver</button>
-
-    </div>
+<div class="row">
+  <div class="med-group">
+    <label>Inicio del tratamiento</label>
+    <input id="m-inicio" type="date">
+  </div>
+  <div class="med-group">
+    <label>Final del tratamiento</label>
+    <input id="m-final" type="date" disabled>
   </div>
 </div>
 
+
+
+
 <script>
-/* =========================
-   CONEXIÓN BOTÓN MEDICAMENTOS
-========================= */
-document.addEventListener("pointerdown", e=>{
-  let el=e.target;
-  while(el && el!==document.body){
-    if((el.textContent||"").trim().toLowerCase()==="medicamentos"){
-      document.getElementById("medicamentos").style.display="block";
-      e.preventDefault();
-      return;
-    }
-    el=el.parentElement;
-  }
-}, true);
+/* ===== FECHA FINAL AUTOMÁTICA ===== */
+function recalcularFechaFinal() {
+  const inicio = document.getElementById("m-inicio").value;
+  const dias = Number(document.getElementById("m-dias-trat").value);
+  const perma = document.getElementById("m-periodicidad").value === "0";
+  const fin = document.getElementById("m-final");
 
-document.getElementById("volver-med").onclick = ()=>{
-  document.getElementById("medicamentos").style.display="none";
-};
-
-/* =========================
-   FECHA FIN AUTOMÁTICA
-========================= */
-function recalcularFin(){
-  const dias = Number(document.getElementById("med-dias").value);
-  const inicio = document.getElementById("med-inicio").value;
-  const fin = document.getElementById("med-fin");
-
-  if(!dias || !inicio){
-    fin.value="";
+  if (perma || !inicio || !dias || dias <= 0) {
+    fin.value = "";
     return;
   }
 
-  const d = new Date(inicio);
-  d.setDate(d.getDate() + dias);
-  fin.value = d.toISOString().slice(0,10);
+  const f = new Date(inicio);
+  f.setDate(f.getDate() + dias);
+  fin.value = f.toISOString().slice(0,10);
 }
 
-document.getElementById("med-dias").addEventListener("input", recalcularFin);
-document.getElementById("med-inicio").addEventListener("change", recalcularFin);
+/* ===== EVENTOS ===== */
+document.getElementById("m-inicio")?.addEventListener("change", recalcularFechaFinal);
+document.getElementById("m-dias-trat")?.addEventListener("input", recalcularFechaFinal);
 
-/* =========================
-   PERMANENTE
-========================= */
-document.getElementById("med-periodicidad").addEventListener("change", ()=>{
-  const perma = document.getElementById("med-periodicidad").value === "0";
+/* ===== PERIODICIDAD PERMANENTE ===== */
+document.getElementById("m-periodicidad")?.addEventListener("change", e => {
+  const perma = e.target.value === "0";
 
-  ["med-dias","med-inicio","med-fin"].forEach(id=>{
-    const el = document.getElementById(id);
+  const dias = document.getElementById("m-dias-trat");
+  const inicio = document.getElementById("m-inicio");
+  const fin = document.getElementById("m-final");
+
+  [dias, inicio, fin].forEach(el => {
     el.disabled = perma;
-    if(perma) el.value="";
+    if (perma) el.value = "";
   });
 });
-
-/* =========================
-   GUARDAR (BASE)
-========================= */
-document.getElementById("guardar-med").onclick = ()=>{
-  const nombre = document.getElementById("med-nombre").value.trim();
-  const dosis = document.getElementById("med-dosis").value;
-  const peri = document.getElementById("med-periodicidad").value;
-  const dias = document.getElementById("med-dias").value;
-  const inicio = document.getElementById("med-inicio").value;
-
-  const error = document.getElementById("med-error");
-  error.style.display="none";
-
-  if(!nombre){
-    error.textContent="Debe ingresar el nombre del medicamento";
-    error.style.display="block";
-    return;
-  }
-
-  if(peri !== "0" && (!dias || !inicio)){
-    error.textContent="Debe completar días de tratamiento y fecha de inicio";
-    error.style.display="block";
-    return;
-  }
-
-  // Guardado mínimo correcto
-  const meds = JSON.parse(localStorage.getItem("medicamentos_guardados_v1")) || [];
-  meds.push({
-    nombre,
-    dosis,
-    periodicidad: peri,
-    diasTratamiento: dias || null,
-    inicio: inicio || null,
-    fin: document.getElementById("med-fin").value || null
-  });
-
-  localStorage.setItem("medicamentos_guardados_v1", JSON.stringify(meds));
-
-  // Reset
-  document.querySelectorAll("#medicamentos input").forEach(i=>i.value="");
-  document.getElementById("med-periodicidad").value="1";
-  document.getElementById("med-dias").disabled=false;
-  document.getElementById("med-inicio").disabled=false;
-
-  alert("Medicamento guardado correctamente");
-};
 </script>
+
+
 
 
 
