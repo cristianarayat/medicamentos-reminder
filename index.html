@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori63 de Medicamentos</h1>
+  <h1>💊 Recordatori64 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -601,17 +601,62 @@ document.getElementById("btn-guardar-med").onclick = () => {
 
 
 
+<!-- =========================
+     BLOQUE 3 – COMPLEMENTO
+     DOSIS / PERIODICIDAD / FECHAS
+========================= -->
 
-     <!-- ===== CAMPOS COMPLEMENTARIOS MEDICAMENTOS ===== -->
+<style>
+.med-extra {
+  margin-top:16px;
+}
 
-<div class="med-group">
+.med-extra label{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.med-extra input,
+.med-extra select{
+  width:100%;
+  height:46px;
+  border-radius:14px;
+  border:1px solid #cfcfcf;
+  padding:0 14px;
+  font-size:15px;
+  margin-bottom:12px;
+}
+
+.med-row{
+  display:flex;
+  gap:10px;
+}
+.med-row > div{ flex:1; }
+
+.med-error{
+  display:none;
+  background:#fdecea;
+  color:#b71c1c;
+  padding:10px;
+  border-radius:12px;
+  font-size:14px;
+  margin-bottom:12px;
+}
+</style>
+
+<div class="med-extra">
+
+  <div id="med-error" class="med-error">
+    Falta completar datos obligatorios
+  </div>
+
   <label>Dosis por día</label>
-  <input id="m-dosis" type="number" min="1" value="1">
-</div>
+  <input id="med-dosis" type="number" min="1" value="1">
 
-<div class="med-group">
   <label>Periodicidad</label>
-  <select id="m-periodicidad">
+  <select id="med-periodicidad">
     <option value="1">Cada 1 día</option>
     <option value="2">Cada 2 días</option>
     <option value="5">Cada 5 días</option>
@@ -620,63 +665,85 @@ document.getElementById("btn-guardar-med").onclick = () => {
     <option value="30">Cada 30 días</option>
     <option value="0">Permanente</option>
   </select>
-</div>
 
-<div class="med-group">
   <label>Días de tratamiento</label>
-  <input id="m-dias-trat" type="number" min="1" placeholder="Ej: 10">
-</div>
+  <input id="med-dias" type="number" min="1" placeholder="Ej: 10">
 
-<div class="row">
-  <div class="med-group">
-    <label>Inicio del tratamiento</label>
-    <input id="m-inicio" type="date">
+  <div class="med-row">
+    <div>
+      <label>Inicio del tratamiento</label>
+      <input id="med-inicio" type="date">
+    </div>
+    <div>
+      <label>Final del tratamiento</label>
+      <input id="med-fin" type="date" disabled>
+    </div>
   </div>
-  <div class="med-group">
-    <label>Final del tratamiento</label>
-    <input id="m-final" type="date" disabled>
-  </div>
+
 </div>
-
-
-
 
 <script>
-/* ===== FECHA FINAL AUTOMÁTICA ===== */
-function recalcularFechaFinal() {
-  const inicio = document.getElementById("m-inicio").value;
-  const dias = Number(document.getElementById("m-dias-trat").value);
-  const perma = document.getElementById("m-periodicidad").value === "0";
-  const fin = document.getElementById("m-final");
+(function(){
 
-  if (perma || !inicio || !dias || dias <= 0) {
-    fin.value = "";
-    return;
+  const periodicidad = document.getElementById("med-periodicidad");
+  const dias = document.getElementById("med-dias");
+  const inicio = document.getElementById("med-inicio");
+  const fin = document.getElementById("med-fin");
+  const error = document.getElementById("med-error");
+
+  function recalcularFin(){
+    if(!inicio.value || !dias.value) {
+      fin.value = "";
+      return;
+    }
+    const d = new Date(inicio.value);
+    d.setDate(d.getDate() + Number(dias.value));
+    fin.value = d.toISOString().slice(0,10);
   }
 
-  const f = new Date(inicio);
-  f.setDate(f.getDate() + dias);
-  fin.value = f.toISOString().slice(0,10);
-}
+  inicio.addEventListener("change", recalcularFin);
+  dias.addEventListener("input", recalcularFin);
 
-/* ===== EVENTOS ===== */
-document.getElementById("m-inicio")?.addEventListener("change", recalcularFechaFinal);
-document.getElementById("m-dias-trat")?.addEventListener("input", recalcularFechaFinal);
+  periodicidad.addEventListener("change", ()=>{
+    const permanente = periodicidad.value === "0";
+    dias.disabled = permanente;
+    inicio.disabled = permanente;
+    fin.disabled = permanente;
 
-/* ===== PERIODICIDAD PERMANENTE ===== */
-document.getElementById("m-periodicidad")?.addEventListener("change", e => {
-  const perma = e.target.value === "0";
-
-  const dias = document.getElementById("m-dias-trat");
-  const inicio = document.getElementById("m-inicio");
-  const fin = document.getElementById("m-final");
-
-  [dias, inicio, fin].forEach(el => {
-    el.disabled = perma;
-    if (perma) el.value = "";
+    if(permanente){
+      dias.value = "";
+      inicio.value = "";
+      fin.value = "";
+    }
   });
-});
+
+  // Intercepta el botón guardar existente
+  document.querySelectorAll("button").forEach(btn=>{
+    if(btn.textContent.toLowerCase().includes("guardar")){
+      btn.addEventListener("click", e=>{
+        const nombre = document.querySelector("input[placeholder*='Paracetamol']")?.value.trim();
+        const perma = periodicidad.value === "0";
+
+        if(!nombre){
+          error.style.display="block";
+          e.preventDefault();
+          return;
+        }
+
+        if(!perma && (!dias.value || !inicio.value)){
+          error.style.display="block";
+          e.preventDefault();
+          return;
+        }
+
+        error.style.display="none";
+      });
+    }
+  });
+
+})();
 </script>
+
 
 
 
