@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori59 de Medicamentos</h1>
+  <h1>💊 Recordatori60 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -504,6 +504,43 @@ document.addEventListener("pointerdown", function(e){
      FIN CONECTOR BLOQUE 3
 ========================= -->
 
+<!-- =========================
+     INICIO BLOQUE 3 – CONECTOR MEDICAMENTOS
+     (NO BORRAR ESTE MARCADOR)
+========================= -->
+
+<script>
+(function(){
+  function abrirMedicamentos(){
+    const mod = document.getElementById("medicamentos");
+    if (!mod) {
+      console.warn("❌ No existe #medicamentos");
+      return;
+    }
+    mod.style.display = "block";
+  }
+
+  // Detecta cualquier botón o texto que diga "Medicamentos"
+  document.addEventListener("click", function(e){
+    let el = e.target;
+    while (el && el !== document.body) {
+      const txt = (el.textContent || "").trim().toLowerCase();
+      if (txt === "medicamentos") {
+        e.preventDefault();
+        abrirMedicamentos();
+        return;
+      }
+      el = el.parentElement;
+    }
+  }, true);
+
+  console.log("✅ Conector BLOQUE 3 activo");
+})();
+</script>
+
+<!-- =========================
+     FIN BLOQUE 3 – CONECTOR MEDICAMENTOS
+========================= -->
 
 
 
