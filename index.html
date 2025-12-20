@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori58 de Medicamentos</h1>
+  <h1>💊 Recordatori59 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -464,369 +464,45 @@ window.addEventListener("focus", actualizarBienvenida);
 
      
 <!-- =========================
-     BLOQUE 3 – MEDICAMENTOS (ESTABLE)
+     INICIO BLOQUE 3 – MEDICAMENTOS
+     (MARCADOR + CONECTOR)
 ========================= -->
 
-<style>
-#medicamentos{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:#eef1f4;
-  z-index:1000;
-  overflow:auto;
-}
-
-.med-container{
-  max-width:480px;
-  margin:0 auto;
-  padding:20px 16px 120px;
-}
-
-.med-card{
-  background:#fff;
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 12px 28px rgba(0,0,0,.12);
-}
-
-.med-card h2{
-  text-align:center;
-  margin-bottom:16px;
-}
-
-.med-group{
-  margin-bottom:14px;
-}
-
-.med-group label{
-  display:block;
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:6px;
-}
-
-.med-group input,
-.med-group select{
-  width:100%;
-  height:46px;
-  border-radius:14px;
-  border:1px solid #cfcfcf;
-  padding:0 14px;
-  font-size:15px;
-}
-
-.row{ display:flex; gap:10px; }
-.row > div{ flex:1; }
-
-/* ===== DÍAS ===== */
-.dias-vertical{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.dia-row{
-  display:flex;
-  gap:10px;
-  align-items:flex-start;
-}
-
-.dia-btn{
-  width:42px;
-  height:38px;
-  border-radius:10px;
-  border:1px solid #cfcfcf;
-  background:#e0e0e0;
-  font-weight:700;
-}
-
-.dia-btn.on{
-  background:#27ae60;
-  color:#fff;
-  border-color:#27ae60;
-}
-
-.horas-dia{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-
-.horas-dia input{
-  width:90px;
-  height:38px;
-  border-radius:10px;
-  border:1px solid #cfcfcf;
-  padding:0 8px;
-}
-
-/* ===== FOTO ===== */
-.foto{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.foto img{
-  width:64px;
-  height:64px;
-  border-radius:12px;
-  border:1px solid #ccc;
-  object-fit:cover;
-}
-
-/* ===== BOTONES ===== */
-.btn{
-  width:100%;
-  height:52px;
-  border:none;
-  border-radius:16px;
-  background:#2f80ed;
-  color:#fff;
-  font-size:16px;
-  font-weight:700;
-}
-
-.btn.volver{
-  background:#bdbdbd;
-  margin-top:10px;
-}
-
-/* ===== LISTA ===== */
-.lista-meds{ margin-top:20px; }
-
-.med-item{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  padding:12px;
-  border-radius:14px;
-  margin-bottom:10px;
-}
-
-.med-item.activo{
-  background:#e9f7ef;
-  border:1px solid #27ae60;
-}
-
-.med-item.caducado{
-  background:#e0e0e0;
-  border:1px solid #9e9e9e;
-}
-
-.med-item img{
-  width:48px;
-  height:48px;
-  border-radius:10px;
-  object-fit:cover;
-}
-
-.med-info{ flex:1; }
-
-.eliminar{
-  background:#d32f2f;
-  color:#fff;
-  border:none;
-  border-radius:10px;
-  padding:6px 10px;
-  font-weight:700;
-}
-
-.mensaje{
-  text-align:center;
-  font-size:14px;
-  margin-top:10px;
-}
-.mensaje.error{ color:#b00020; }
-.mensaje.ok{ color:#2e7d32; }
-</style>
-
-<div id="medicamentos">
-  <div class="med-container">
-    <div class="med-card">
-
-      <h2>Medicamentos</h2>
-
-      <div class="med-group">
-        <label>Nombre</label>
-        <input id="m-nombre">
-      </div>
-
-      <div class="row">
-        <div class="med-group">
-          <label>Dosis por día</label>
-          <input id="m-dosis" type="number" min="1" value="1">
-        </div>
-        <div class="med-group">
-          <label>Periodicidad</label>
-          <select id="m-periodicidad">
-            <option value="1">Cada 1 día</option>
-            <option value="2">Cada 2 días</option>
-            <option value="7">Cada 7 días</option>
-            <option value="14">Cada 14 días</option>
-            <option value="21">Cada 21 días</option>
-            <option value="30">Cada 30 días</option>
-            <option value="0">Permanente</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="med-group">
-        <label>Días y horas</label>
-        <div class="dias-vertical" id="dias-grid"></div>
-      </div>
-
-      <div class="row">
-        <div class="med-group">
-          <label>Días de tratamiento</label>
-          <input id="m-dias" type="number" min="1">
-        </div>
-        <div class="med-group">
-          <label>Inicio</label>
-          <input id="m-inicio" type="date">
-        </div>
-      </div>
-
-      <div class="med-group foto">
-        <input id="m-foto" type="file" accept="image/*">
-        <img id="m-prev">
-      </div>
-
-      <div id="mensajeMedicamento" class="mensaje"></div>
-
-      <button class="btn" id="guardarMed">Guardar medicamento</button>
-      <button class="btn volver" id="volverMed">Volver</button>
-
-      <div class="lista-meds" id="listaMeds"></div>
-
-    </div>
-  </div>
-</div>
-
 <script>
-const MED_KEY = "medicamentos_guardados_v1";
-const dias = ["L","M","X","J","V","S","D"];
-const seleccionados = {};
-dias.forEach(d=> seleccionados[d]=[]);
+/*
+  Este bloque SOLO se encarga de:
+  - Conectar el botón "Medicamentos" del Home
+  - Mostrar el contenedor #medicamentos
+  - NO toca estilos ni lógica interna
+*/
 
-function crearDias(){
-  const grid = document.getElementById("dias-grid");
-  grid.innerHTML="";
-  dias.forEach(d=>{
-    const row=document.createElement("div");
-    row.className="dia-row";
+document.addEventListener("pointerdown", function(e){
+  let el = e.target;
 
-    const btn=document.createElement("button");
-    btn.type="button";
-    btn.className="dia-btn";
-    btn.textContent=d;
+  while (el && el !== document.body) {
+    if (
+      (el.textContent || "")
+        .trim()
+        .toLowerCase() === "medicamentos"
+    ) {
+      e.preventDefault();
 
-    const horas=document.createElement("div");
-    horas.className="horas-dia";
-
-    btn.onclick=()=>{
-      btn.classList.toggle("on");
-      horas.innerHTML="";
-      if(btn.classList.contains("on")){
-        for(let i=0;i<Number(mDosis.value);i++){
-          const t=document.createElement("input");
-          t.type="time";
-          horas.appendChild(t);
-        }
+      const pantalla = document.getElementById("medicamentos");
+      if (pantalla) {
+        pantalla.style.display = "block";
+      } else {
+        console.warn("⚠ No existe #medicamentos en el DOM");
       }
-    };
-
-    row.appendChild(btn);
-    row.appendChild(horas);
-    grid.appendChild(row);
-  });
-}
-
-const mDosis = document.getElementById("m-dosis");
-mDosis.onchange=crearDias;
-
-document.getElementById("m-foto").onchange=e=>{
-  const f=e.target.files[0];
-  if(!f) return;
-  const r=new FileReader();
-  r.onload=()=> document.getElementById("m-prev").src=r.result;
-  r.readAsDataURL(f);
-};
-
-document.getElementById("m-periodicidad").onchange=e=>{
-  const perma = e.target.value==="0";
-  document.getElementById("m-dias").disabled = perma;
-  document.getElementById("m-inicio").disabled = perma;
-};
-
-document.getElementById("guardarMed").onclick=()=>{
-  const msg=document.getElementById("mensajeMedicamento");
-  msg.className="mensaje";
-
-  const nombre=mNombre.value.trim();
-  if(!nombre){ msg.textContent="Falta nombre"; msg.classList.add("error"); return; }
-
-  const med={
-    id:Date.now(),
-    nombre,
-    inicio:mInicio.value || null,
-    fin:null,
-    foto:mPrev.src||"",
-  };
-
-  const arr=JSON.parse(localStorage.getItem(MED_KEY)||"[]");
-  arr.push(med);
-  localStorage.setItem(MED_KEY,JSON.stringify(arr));
-
-  msg.textContent="Medicamento guardado";
-  msg.classList.add("ok");
-
-  document.querySelector("form")?.reset?.();
-  crearDias();
-  renderLista();
-};
-
-function renderLista(){
-  const cont=document.getElementById("listaMeds");
-  cont.innerHTML="";
-  const arr=JSON.parse(localStorage.getItem(MED_KEY)||"[]");
-  arr.forEach(m=>{
-    const d=document.createElement("div");
-    d.className="med-item activo";
-    d.innerHTML=`
-      ${m.foto?`<img src="${m.foto}">`:``}
-      <div class="med-info"><strong>${m.nombre}</strong></div>
-      <button class="eliminar" onclick="eliminar(${m.id})">Eliminar</button>
-    `;
-    cont.appendChild(d);
-  });
-}
-function eliminar(id){
-  let arr=JSON.parse(localStorage.getItem(MED_KEY)||"[]");
-  arr=arr.filter(m=>m.id!==id);
-  localStorage.setItem(MED_KEY,JSON.stringify(arr));
-  renderLista();
-}
-
-document.addEventListener("pointerdown",e=>{
-  let el=e.target;
-  while(el && el!==document.body){
-    if((el.textContent||"").toLowerCase()==="medicamentos"){
-      document.getElementById("medicamentos").style.display="block";
-      renderLista();
-      e.preventDefault(); return;
+      return;
     }
-    el=el.parentElement;
+    el = el.parentElement;
   }
-},true);
-
-document.getElementById("volverMed").onclick=()=>{
-  document.getElementById("medicamentos").style.display="none";
-};
-
-document.addEventListener("DOMContentLoaded", crearDias);
+}, true);
 </script>
+
+<!-- =========================
+     FIN CONECTOR BLOQUE 3
+========================= -->
 
 
 
