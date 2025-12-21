@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori86 de Medicamentos</h1>
+  <h1>💊 Recordatori87 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1293,22 +1293,42 @@ document.addEventListener("DOMContentLoaded", () => {
       card.style.padding = "12px";
       card.style.marginBottom = "10px";
 
-      card.innerHTML = `
-        <strong>${m.nombre}</strong><br>
-        Dosis: ${m.dosis} por día<br>
-        Periodicidad: ${m.periodicidad === "0" ? "Permanente" : "Cada " + m.periodicidad + " días"}<br>
-        ${m.inicio ? `Inicio: ${m.inicio}<br>` : ""}
-        ${m.fin ? `Fin: ${m.fin}<br>` : ""}
-        ${m.fotoURL ? `<img src="${m.fotoURL}" style="width:70px;border-radius:8px;margin-top:6px;">` : ""}
-        <button data-i="${index}" style="
-          margin-top:8px;
-          background:#e53935;
-          color:#fff;
-          border:none;
-          padding:6px 10px;
-          border-radius:8px;
-        ">Eliminar</button>
-      `;
+     // ===== calcular estado =====
+const estado = obtenerEstadoMedicamento(
+  m.fin,
+  m.periodicidad === "0"
+);
+
+// ===== render =====
+card.innerHTML = `
+  <strong>${m.nombre}</strong><br>
+  Dosis: ${m.dosis} por día<br>
+  Periodicidad: ${m.periodicidad === "0"
+    ? "Permanente"
+    : "Cada " + m.periodicidad + " días"}<br>
+
+  ${m.inicio ? `Inicio: ${m.inicio}<br>` : ""}
+  ${m.fin ? `Fin: ${m.fin}<br>` : ""}
+
+  <div class="${estado.clase}" style="margin-top:6px;">
+    Estado: ${estado.texto}
+  </div>
+
+  ${m.fotoURL
+    ? `<img src="${m.fotoURL}"
+         style="width:70px;border-radius:8px;margin-top:6px;">`
+    : ""}
+
+  <button data-i="${index}" style="
+    margin-top:8px;
+    background:#e53935;
+    color:#fff;
+    border:none;
+    padding:6px 10px;
+    border-radius:8px;
+  ">Eliminar</button>
+`;
+
 
       card.querySelector("button").onclick = ()=>{
         medicamentosGuardados.splice(index,1);
