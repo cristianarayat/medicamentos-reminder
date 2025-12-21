@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori95 de Medicamentos</h1>
+  <h1>💊 Recordatori96 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -472,7 +472,7 @@ window.addEventListener("focus", actualizarBienvenida);
 
 
 <!-- ==================================================
-     BLOQUE 3 – MEDICAMENTOS (FORMULARIO CONTROLADO)
+     BLOQUE 3 – MEDICAMENTOS (FORMULARIO LIMPIO)
 ================================================== -->
 
 <style>
@@ -498,7 +498,14 @@ window.addEventListener("focus", actualizarBienvenida);
   box-shadow:0 12px 28px rgba(0,0,0,.12);
 }
 
-.med-group{ margin-bottom:14px; }
+.med-card h2{
+  text-align:center;
+  margin-bottom:16px;
+}
+
+.med-group{
+  margin-bottom:14px;
+}
 
 .med-group label{
   display:block;
@@ -529,12 +536,13 @@ window.addEventListener("focus", actualizarBienvenida);
   margin-top:12px;
 }
 
-.btn-primario:disabled{
-  background:#9bbcf5;
+.btn-primario[disabled]{
+  background:#90baf2;
 }
 
 .btn-volver{
   background:#bdbdbd;
+  margin-top:8px;
 }
 </style>
 
@@ -542,7 +550,7 @@ window.addEventListener("focus", actualizarBienvenida);
   <div class="med-container">
     <div class="med-card">
 
-      <h2 style="text-align:center;margin-bottom:16px;">Medicamentos</h2>
+      <h2>Medicamentos</h2>
 
       <div class="med-group">
         <label>Nombre del medicamento</label>
@@ -550,19 +558,21 @@ window.addEventListener("focus", actualizarBienvenida);
       </div>
 
       <div class="med-group">
-        <label>Dosis por día</label>
-        <input id="m-dosis" type="number" min="1" value="1">
-      </div>
-
-      <div class="med-group">
         <label>Periodicidad</label>
         <select id="m-periodicidad">
           <option value="">Seleccionar</option>
           <option value="1">Cada 1 día</option>
-          <option value="2">Cada 2 días</option>
-          <option value="7">Cada 7 días</option>
+          <option value="5">Cada 5 días</option>
+          <option value="14">Cada 14 días</option>
+          <option value="21">Cada 21 días</option>
+          <option value="30">Cada 30 días</option>
           <option value="0">Permanente</option>
         </select>
+      </div>
+
+      <div class="med-group">
+        <label>Días de tratamiento</label>
+        <input id="m-dias" type="number" min="1" placeholder="Ej: 10">
       </div>
 
       <div class="med-group">
@@ -572,11 +582,11 @@ window.addEventListener("focus", actualizarBienvenida);
 
       <div class="med-group">
         <label>Final del tratamiento</label>
-        <input id="m-fin" type="date" readonly>
+        <input id="m-fin" type="date" disabled>
       </div>
 
       <button class="btn-primario" id="btn-guardar-med" disabled>
-        Guardar medicamento
+        Guardar (desactivado)
       </button>
 
       <button class="btn-primario btn-volver" id="btn-volver-med">
@@ -588,69 +598,59 @@ window.addEventListener("focus", actualizarBienvenida);
 </div>
 
 <script>
-/* =========================
-   ABRIR / CERRAR
-========================= */
+/* ==================================================
+   BLOQUE 3 – LÓGICA BÁSICA (SIN GUARDAR)
+================================================== */
+
+const medBox = document.getElementById("medicamentos");
+const periodicidad = document.getElementById("m-periodicidad");
+const dias = document.getElementById("m-dias");
+const inicio = document.getElementById("m-inicio");
+const fin = document.getElementById("m-fin");
+
+/* Abrir */
 document.addEventListener("pointerdown", e=>{
-  let el = e.target;
-  while(el){
-    if(el.textContent?.trim()==="Medicamentos"){
-      document.getElementById("medicamentos").style.display="block";
-      return;
-    }
-    el = el.parentElement;
+  if ((e.target.textContent||"").trim()==="Medicamentos") {
+    medBox.style.display="block";
   }
 });
 
-document.getElementById("btn-volver-med").onclick = () => {
-  document.getElementById("medicamentos").style.display="none";
+/* Volver */
+document.getElementById("btn-volver-med").onclick = ()=>{
+  medBox.style.display="none";
 };
 
-/* =========================
-   LÓGICA FECHA FINAL
-========================= */
-function recalcularFin(){
-  const inicio = mInicio.value;
-  const dias = 7;
-  if(!inicio){ mFin.value=""; return; }
-  const d = new Date(inicio);
-  d.setDate(d.getDate()+dias);
-  mFin.value = d.toISOString().slice(0,10);
-}
+/* Permanente */
+periodicidad.addEventListener("change", ()=>{
+  const permanente = periodicidad.value === "0";
 
-/* =========================
-   VALIDACIÓN MÍNIMA
-========================= */
-function validar(){
-  const ok =
-    medNombre.value.trim() &&
-    Number(mDosis.value) > 0 &&
-    mPeriodicidad.value &&
-    mInicio.value;
-
-  btnGuardar.disabled = !ok;
-}
-
-/* =========================
-   REFERENCIAS
-========================= */
-const medNombre = document.getElementById("med-nombre");
-const mDosis = document.getElementById("m-dosis");
-const mPeriodicidad = document.getElementById("m-periodicidad");
-const mInicio = document.getElementById("m-inicio");
-const mFin = document.getElementById("m-fin");
-const btnGuardar = document.getElementById("btn-guardar-med");
-
-/* =========================
-   EVENTOS
-========================= */
-[medNombre,mDosis,mPeriodicidad,mInicio].forEach(el=>{
-  el.addEventListener("input", validar);
-  el.addEventListener("change", validar);
+  [dias, inicio, fin].forEach(el=>{
+    el.disabled = permanente;
+    if (permanente) el.value = "";
+  });
 });
 
-mInicio.addEventListener("change", recalcularFin);
+/* Fecha final automática */
+function calcularFin(){
+  if (periodicidad.value === "0") return;
+
+  const d = parseInt(dias.value);
+  const i = inicio.value;
+
+  if (!d || !i) {
+    fin.value = "";
+    return;
+  }
+
+  const fecha = new Date(i);
+  fecha.setDate(fecha.getDate() + d);
+  fin.value = fecha.toISOString().slice(0,10);
+}
+
+dias.addEventListener("input", calcularFin);
+inicio.addEventListener("change", calcularFin);
 </script>
+
 
 
 
