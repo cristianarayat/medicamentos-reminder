@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori69 de Medicamentos</h1>
+  <h1>💊 Recordatori70 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -825,6 +825,65 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+<script>
+
+
+
+/* =========================
+   BLOQUE 3 – PASO 2
+   Fecha final automática + Permanente
+========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const diasInput   = document.querySelector("#dias-tratamiento, #m-dias-trat, input[placeholder='Ej: 10']");
+  const inicioInput = document.querySelector("input[type='date']");
+  const finInput    = document.querySelectorAll("input[type='date']")[1];
+  const periodicidad = document.querySelector("select");
+
+  if (!diasInput || !inicioInput || !finInput || !periodicidad) return;
+
+  // Bloquear edición manual de fecha final
+  finInput.readOnly = true;
+
+  function calcularFechaFinal() {
+    if (!diasInput.value || !inicioInput.value) {
+      finInput.value = "";
+      return;
+    }
+
+    const dias = parseInt(diasInput.value, 10);
+    if (isNaN(dias) || dias <= 0) {
+      finInput.value = "";
+      return;
+    }
+
+    const inicio = new Date(inicioInput.value);
+    inicio.setDate(inicio.getDate() + dias);
+
+    finInput.value = inicio.toISOString().split("T")[0];
+  }
+
+  function manejarPermanente() {
+    const esPermanente = periodicidad.value === "0";
+
+    diasInput.disabled   = esPermanente;
+    inicioInput.disabled = esPermanente;
+    finInput.disabled    = esPermanente;
+
+    if (esPermanente) {
+      diasInput.value = "";
+      inicioInput.value = "";
+      finInput.value = "";
+    }
+  }
+
+  diasInput.addEventListener("input", calcularFechaFinal);
+  inicioInput.addEventListener("change", calcularFechaFinal);
+  periodicidad.addEventListener("change", manejarPermanente);
+
+});
+</script>
 
 
 
