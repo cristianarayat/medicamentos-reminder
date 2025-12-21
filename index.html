@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori107 de Medicamentos</h1>
+  <h1>💊 Recordatori108 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1034,6 +1034,36 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("m-fin").value="";
     if(document.getElementById("m-foto")) document.getElementById("m-foto").value="";
   }
+
+})();
+</script>
+
+
+<script>
+/* ==================================================
+   PASO 2 – PERSISTENCIA LOCAL (LOCALSTORAGE)
+   NO MODIFICA BLOQUE 3
+================================================== */
+
+(function(){
+
+  const STORAGE_KEY = "medicamentos_guardados_v1";
+
+  // Guardar en localStorage
+  window.guardarEnStorage = function(lista){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+  };
+
+  // Cargar desde localStorage
+  window.cargarDesdeStorage = function(){
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) return [];
+    try {
+      return JSON.parse(data);
+    } catch {
+      return [];
+    }
+  };
 
 })();
 </script>
