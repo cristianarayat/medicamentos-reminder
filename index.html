@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori90 de Medicamentos</h1>
+  <h1>💊 Recordatori91 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1183,199 +1183,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-<script>
-/* ==================================================
-   BLOQUE 3 – GUARDAR MEDICAMENTO (FUNCIONAL)
-================================================== */
-
-(function(){
-
-  const medicamentosGuardados = [];
-
-  const btnGuardar = document.getElementById("btn-guardar-med");
-  if (!btnGuardar) return;
-
-  // Contenedor donde se mostrarán los medicamentos
-  let lista = document.getElementById("lista-medicamentos");
-  if (!lista) {
-    lista = document.createElement("div");
-    lista.id = "lista-medicamentos";
-    lista.style.marginTop = "16px";
-    document.querySelector("#medicamentos .med-card").appendChild(lista);
-  }
-
-</script>
-
-
-
-     
-  <script>
-/* ==================================================
-   VALIDACIÓN FINAL CORREGIDA – BLOQUE 3
-================================================== */
-
-btnGuardar.addEventListener("click", function(e){
-  e.preventDefault();
-
-  const nombre = document.getElementById("med-nombre")?.value.trim();
-  const dosis = parseInt(document.getElementById("m-dosis")?.value, 10);
-  const periodicidad = document.getElementById("m-periodicidad")?.value;
-  const dias = document.getElementById("m-dias")?.value;
-  const inicio = document.getElementById("m-inicio")?.value;
-  const fin = document.getElementById("m-fin")?.value;
-  const errorBox = document.getElementById("m-error");
-
-  /* ===== VALIDACIÓN BÁSICA ===== */
-  if (!nombre || !dosis || dosis <= 0 || !periodicidad) {
-    if (errorBox) errorBox.style.display = "block";
-    return;
-  }
-
-  /* ===== SI NO ES PERMANENTE ===== */
-  if (periodicidad !== "0") {
-    if (!dias || !inicio || !fin) {
-      if (errorBox) errorBox.style.display = "block";
-      return;
-    }
-  }
-
-  /* ===== VALIDAR DÍAS Y HORAS ===== */
-  const diasHoras = window.obtenerDiasYHoras?.() || {};
-  let hayHoras = false;
-
-  Object.values(diasHoras).forEach(arr => {
-    if (arr.length > 0 && arr.some(h => h)) hayHoras = true;
-  });
-
-  if (!hayHoras) {
-    if (errorBox) errorBox.style.display = "block";
-    return;
-  }
-
-  /* ===== TODO OK ===== */
-  if (errorBox) errorBox.style.display = "none";
-
-  // ⚠️ AQUÍ CONTINÚA TU LÓGICA DE GUARDADO EXISTENTE
-  // NO TOCAMOS NADA MÁS
-});
-</script>
-
-
-
-
-
-
-
-
-
-     
-    // FOTO
-    let fotoURL = "";
-    if (fotoInput && fotoInput.files && fotoInput.files[0]) {
-      fotoURL = URL.createObjectURL(fotoInput.files[0]);
-    }
-
-    // HORAS POR DÍA
-    const horas = {};
-    document.querySelectorAll(".dia-row").forEach(row=>{
-      const dia = row.dataset.dia;
-      horas[dia] = [];
-      row.querySelectorAll("input[type='time']").forEach(h=>{
-        if(h.value) horas[dia].push(h.value);
-      });
-    });
-
-    const medicamento = {
-      nombre,
-      dosis,
-      periodicidad,
-      dias,
-      inicio,
-      fin,
-      horas,
-      fotoURL
-    };
-
-    medicamentosGuardados.push(medicamento);
-    renderMedicamentos();
-
-    limpiarFormulario();
-  });
-
-  function renderMedicamentos(){
-    lista.innerHTML = "";
-
-    medicamentosGuardados.forEach((m, index)=>{
-      const card = document.createElement("div");
-      card.style.background = "#f1f8ff";
-      card.style.borderRadius = "14px";
-      card.style.padding = "12px";
-      card.style.marginBottom = "10px";
-
-     // ===== calcular estado =====
-const estado = obtenerEstadoMedicamento(
-  m.fin,
-  m.periodicidad === "0"
-);
-
-// ===== render =====
-card.innerHTML = `
-  <strong>${m.nombre}</strong><br>
-  Dosis: ${m.dosis} por día<br>
-  Periodicidad: ${m.periodicidad === "0"
-    ? "Permanente"
-    : "Cada " + m.periodicidad + " días"}<br>
-
-  ${m.inicio ? `Inicio: ${m.inicio}<br>` : ""}
-  ${m.fin ? `Fin: ${m.fin}<br>` : ""}
-
-  <div class="${estado.clase}" style="margin-top:6px;">
-    Estado: ${estado.texto}
-  </div>
-
-  ${m.fotoURL
-    ? `<img src="${m.fotoURL}"
-         style="width:70px;border-radius:8px;margin-top:6px;">`
-    : ""}
-
-  <button data-i="${index}" style="
-    margin-top:8px;
-    background:#e53935;
-    color:#fff;
-    border:none;
-    padding:6px 10px;
-    border-radius:8px;
-  ">Eliminar</button>
-`;
-
-
-      card.querySelector("button").onclick = ()=>{
-        medicamentosGuardados.splice(index,1);
-        renderMedicamentos();
-      };
-
-      lista.appendChild(card);
-    });
-  }
-
-  function limpiarFormulario(){
-    document.getElementById("med-nombre").value = "";
-    document.getElementById("m-dosis").value = 1;
-    document.getElementById("m-periodicidad").value = "1";
-    document.getElementById("m-dias").value = "";
-    document.getElementById("m-inicio").value = "";
-    document.getElementById("m-fin").value = "";
-    if (document.getElementById("m-foto")) {
-      document.getElementById("m-foto").value = "";
-    }
-
-    document.querySelectorAll(".dia-row input[type='time']").forEach(h=>{
-      h.value = "";
-    });
-  }
-
-})();
-</script>
 
 
 <script>
@@ -1699,6 +1506,116 @@ function renderMedicamento(med) {
 
 
 
+<script>
+/* ==================================================
+   BLOQUE 3 – GUARDAR + RENDER + ESTADO (FINAL LIMPIO)
+================================================== */
+
+(function(){
+
+  const medicamentosGuardados = [];
+  const btnGuardar = document.getElementById("btn-guardar-med");
+
+  let lista = document.getElementById("lista-medicamentos");
+  if (!lista) {
+    lista = document.createElement("div");
+    lista.id = "lista-medicamentos";
+    lista.style.marginTop = "16px";
+    document.querySelector("#medicamentos .med-card").appendChild(lista);
+  }
+
+  function obtenerEstadoMedicamento(fechaFin, permanente){
+    if (permanente) return { texto:"Activo", clase:"estado-activo" };
+    if (!fechaFin) return { texto:"Activo", clase:"estado-activo" };
+
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const fin = new Date(fechaFin); fin.setHours(0,0,0,0);
+
+    return fin < hoy
+      ? { texto:"Caducado", clase:"estado-caducado" }
+      : { texto:"Activo", clase:"estado-activo" };
+  }
+
+  btnGuardar.addEventListener("click", e=>{
+    e.preventDefault();
+
+    const nombre = medNombre.value.trim();
+    const dosis = Number(mDosis.value);
+    const periodicidad = mPeriodicidad.value;
+    const dias = mDias.value;
+    const inicio = mInicio.value;
+    const fin = mFin.value;
+
+    if (!nombre || !dosis || !periodicidad ||
+        (periodicidad !== "0" && (!dias || !inicio || !fin))) {
+      mError.style.display = "block";
+      return;
+    }
+
+    mError.style.display = "none";
+
+    let fotoURL = "";
+    if (mFoto?.files?.[0]) {
+      fotoURL = URL.createObjectURL(mFoto.files[0]);
+    }
+
+    const medicamento = { nombre, dosis, periodicidad, inicio, fin, fotoURL };
+    medicamentosGuardados.push(medicamento);
+
+    render();
+    limpiar();
+  });
+
+  function render(){
+    lista.innerHTML = "";
+
+    medicamentosGuardados.forEach((m,i)=>{
+      const estado = obtenerEstadoMedicamento(m.fin, m.periodicidad==="0");
+
+      const card = document.createElement("div");
+      card.style.background="#f1f8ff";
+      card.style.borderRadius="14px";
+      card.style.padding="12px";
+      card.style.marginBottom="10px";
+
+      card.innerHTML = `
+        <strong>${m.nombre}</strong><br>
+        Dosis: ${m.dosis} por día<br>
+        ${m.inicio ? `Inicio: ${m.inicio}<br>`:""}
+        ${m.fin ? `Fin: ${m.fin}<br>`:""}
+        <div class="${estado.clase}" style="margin-top:6px;">
+          Estado: ${estado.texto}
+        </div>
+        ${m.fotoURL ? `<img src="${m.fotoURL}" style="width:70px;border-radius:8px;margin-top:6px;">`:""}
+        <button style="margin-top:8px;background:#e53935;color:#fff;border:none;padding:6px 10px;border-radius:8px;">Eliminar</button>
+      `;
+
+      card.querySelector("button").onclick = ()=>{
+        medicamentosGuardados.splice(i,1);
+        render();
+      };
+
+      lista.appendChild(card);
+    });
+  }
+
+  function limpiar(){
+    medNombre.value="";
+    mDosis.value=1;
+    mPeriodicidad.value="1";
+    mDias.value="";
+    mInicio.value="";
+    mFin.value="";
+    if(mFoto) mFoto.value="";
+  }
+
+})();
+</script>
+
+
+
+
+     
 
 
 
