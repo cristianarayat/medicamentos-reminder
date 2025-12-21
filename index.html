@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori106 de Medicamentos</h1>
+  <h1>💊 Recordatori107 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -878,18 +878,27 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+
+
+
+
+
+
+
+
+
 <script>
 /* ==================================================
-   BLOQUE 3 – GUARDADO FINAL COMPLETO
+   BLOQUE 3 – GUARDADO FINAL (CORREGIDO Y FUNCIONAL)
 ================================================== */
 
 (function(){
 
-  const btnGuardar = document.getElementById("btn-guardar-med");
   const card = document.querySelector("#medicamentos .med-card");
 
+  // 🔵 botón guardar REAL (el que se creó arriba)
+  const btnGuardar = document.querySelector(".btn-primario");
 
-  // Habilitamos visualmente el botón (sigue validando)
   btnGuardar.disabled = false;
   btnGuardar.textContent = "Guardar medicamento";
   btnGuardar.style.background = "#2f80ed";
@@ -908,7 +917,7 @@ document.addEventListener("DOMContentLoaded", () => {
   btnGuardar.addEventListener("click", e => {
     e.preventDefault();
 
-    /* ===== TOMAR DATOS ===== */
+    /* ===== DATOS ===== */
     const nombre = document.getElementById("med-nombre").value.trim();
     const dosis = Number(document.getElementById("m-dosis").value);
     const periodicidad = document.getElementById("m-periodicidad").value;
@@ -928,19 +937,16 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // ✅ VALIDACIÓN CORRECTA DÍAS Y HORAS
     let hayHoras = false;
+    Object.values(estado).forEach(arr => {
+      if (arr.length > 0 && arr.some(h => h)) hayHoras = true;
+    });
 
-Object.values(estado).forEach(arr => {
-  if (arr.length > 0 && arr.some(h => h)) {
-    hayHoras = true;
-  }
-});
-
-if (!hayHoras) {
-  alert("Selecciona al menos un día y una hora");
-  return;
-}
-
+    if (!hayHoras) {
+      alert("Selecciona al menos un día y una hora");
+      return;
+    }
 
     /* ===== FOTO ===== */
     let fotoURL = "";
@@ -948,22 +954,21 @@ if (!hayHoras) {
       fotoURL = URL.createObjectURL(fotoInput.files[0]);
     }
 
-    /* ===== ESTADO ===== */
+    /* ===== ESTADO ACTIVO / CADUCADO ===== */
+    let estadoMed = "Activo";
     const hoy = new Date(); hoy.setHours(0,0,0,0);
-    let estado = "Activo";
 
     if (periodicidad !== "0" && fin) {
       const f = new Date(fin); f.setHours(0,0,0,0);
-      if (f < hoy) estado = "Caducado";
+      if (f < hoy) estadoMed = "Caducado";
     }
 
     const med = {
       nombre,
       dosis,
-      periodicidad,
       inicio,
       fin,
-      estado,
+      estado: estadoMed,
       fotoURL
     };
 
@@ -1032,6 +1037,7 @@ if (!hayHoras) {
 
 })();
 </script>
+
 
 
 
