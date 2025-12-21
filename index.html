@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori105 de Medicamentos</h1>
+  <h1>💊 Recordatori106 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -885,8 +885,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 (function(){
 
-  const btnGuardar = document.querySelector(".btn-primario");
+  const btnGuardar = document.getElementById("btn-guardar-med");
   const card = document.querySelector("#medicamentos .med-card");
+
 
   // Habilitamos visualmente el botón (sigue validando)
   btnGuardar.disabled = false;
