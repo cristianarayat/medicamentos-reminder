@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori68 de Medicamentos</h1>
+  <h1>💊 Recordatori69 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -753,6 +753,76 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
+
+
+
+
+
+<!-- =========================
+   BLOQUE 3 – PASO 1
+   VALIDACIÓN BASE (SIN GUARDAR)
+========================= -->
+<script>
+(function(){
+
+  function validarMedicamento(){
+    const errores = [];
+
+    const nombre = document.getElementById("m-nombre")?.value.trim();
+    const dosis = Number(document.getElementById("m-dosis")?.value);
+    const periodicidad = document.getElementById("m-periodicidad")?.value;
+    const diasTrat = document.getElementById("m-dias-trat")?.value;
+    const inicio = document.getElementById("m-inicio")?.value;
+
+    if (!nombre) errores.push("Nombre del medicamento");
+    if (!dosis || dosis <= 0) errores.push("Dosis por día");
+    if (!periodicidad) errores.push("Periodicidad");
+
+    if (periodicidad !== "0") {
+      if (!diasTrat || diasTrat <= 0) errores.push("Días de tratamiento");
+      if (!inicio) errores.push("Fecha de inicio");
+    }
+
+    mostrarErrores(errores);
+    return errores.length === 0;
+  }
+
+  function mostrarErrores(lista){
+    let box = document.getElementById("med-error");
+
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "med-error";
+      box.style.background = "#fdecea";
+      box.style.color = "#b71c1c";
+      box.style.padding = "10px";
+      box.style.borderRadius = "12px";
+      box.style.fontSize = "14px";
+      box.style.marginBottom = "12px";
+
+      const card = document.querySelector("#medicamentos .med-card");
+      card.insertBefore(box, card.firstChild);
+    }
+
+    if (lista.length === 0) {
+      box.style.display = "none";
+      return;
+    }
+
+    box.style.display = "block";
+    box.innerHTML = `
+      <strong>No se puede guardar.</strong><br>
+      Falta completar:<br>
+      ${lista.map(e => "• " + e).join("<br>")}
+    `;
+  }
+
+  // Exponemos solo para pruebas
+  window.validarMedicamento = validarMedicamento;
+
+})();
+</script>
 
 
 
