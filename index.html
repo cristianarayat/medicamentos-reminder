@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori96 de Medicamentos</h1>
+  <h1>💊 Recordatori97 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -472,7 +472,7 @@ window.addEventListener("focus", actualizarBienvenida);
 
 
 <!-- ==================================================
-     BLOQUE 3 – MEDICAMENTOS (FORMULARIO LIMPIO)
+     BLOQUE 3 – MEDICAMENTOS (LIMPIO Y CONTROLADO)
 ================================================== -->
 
 <style>
@@ -529,15 +529,11 @@ window.addEventListener("focus", actualizarBienvenida);
   height:52px;
   border:none;
   border-radius:16px;
-  background:#2f80ed;
+  background:#9e9e9e;
   color:#fff;
   font-size:16px;
   font-weight:700;
   margin-top:12px;
-}
-
-.btn-primario[disabled]{
-  background:#90baf2;
 }
 
 .btn-volver{
@@ -558,11 +554,16 @@ window.addEventListener("focus", actualizarBienvenida);
       </div>
 
       <div class="med-group">
+        <label>Dosis por día</label>
+        <input id="m-dosis" type="number" min="1" value="1">
+      </div>
+
+      <div class="med-group">
         <label>Periodicidad</label>
         <select id="m-periodicidad">
-          <option value="">Seleccionar</option>
           <option value="1">Cada 1 día</option>
           <option value="5">Cada 5 días</option>
+          <option value="7">Cada 7 días</option>
           <option value="14">Cada 14 días</option>
           <option value="21">Cada 21 días</option>
           <option value="30">Cada 30 días</option>
@@ -582,10 +583,10 @@ window.addEventListener("focus", actualizarBienvenida);
 
       <div class="med-group">
         <label>Final del tratamiento</label>
-        <input id="m-fin" type="date" disabled>
+        <input id="m-fin" type="date" readonly>
       </div>
 
-      <button class="btn-primario" id="btn-guardar-med" disabled>
+      <button class="btn-primario" disabled>
         Guardar (desactivado)
       </button>
 
@@ -598,57 +599,52 @@ window.addEventListener("focus", actualizarBienvenida);
 </div>
 
 <script>
-/* ==================================================
-   BLOQUE 3 – LÓGICA BÁSICA (SIN GUARDAR)
-================================================== */
+/* ===== ABRIR / CERRAR ===== */
+document.addEventListener("pointerdown", e=>{
+  let el = e.target;
+  while(el && el!==document.body){
+    if(el.textContent?.trim().toLowerCase()==="medicamentos"){
+      document.getElementById("medicamentos").style.display="block";
+      return;
+    }
+    el = el.parentElement;
+  }
+}, true);
 
-const medBox = document.getElementById("medicamentos");
+document.getElementById("btn-volver-med").onclick = ()=>{
+  document.getElementById("medicamentos").style.display="none";
+};
+
+/* ===== LÓGICA PERMANENTE + FECHA FINAL ===== */
 const periodicidad = document.getElementById("m-periodicidad");
 const dias = document.getElementById("m-dias");
 const inicio = document.getElementById("m-inicio");
 const fin = document.getElementById("m-fin");
 
-/* Abrir */
-document.addEventListener("pointerdown", e=>{
-  if ((e.target.textContent||"").trim()==="Medicamentos") {
-    medBox.style.display="block";
-  }
-});
-
-/* Volver */
-document.getElementById("btn-volver-med").onclick = ()=>{
-  medBox.style.display="none";
-};
-
-/* Permanente */
-periodicidad.addEventListener("change", ()=>{
-  const permanente = periodicidad.value === "0";
-
-  [dias, inicio, fin].forEach(el=>{
-    el.disabled = permanente;
-    if (permanente) el.value = "";
-  });
-});
-
-/* Fecha final automática */
-function calcularFin(){
-  if (periodicidad.value === "0") return;
-
-  const d = parseInt(dias.value);
-  const i = inicio.value;
-
-  if (!d || !i) {
+function recalcularFin(){
+  if(periodicidad.value==="0"){
+    dias.disabled = true;
+    inicio.disabled = true;
     fin.value = "";
     return;
   }
 
-  const fecha = new Date(i);
-  fecha.setDate(fecha.getDate() + d);
-  fin.value = fecha.toISOString().slice(0,10);
+  dias.disabled = false;
+  inicio.disabled = false;
+
+  if(!dias.value || !inicio.value){
+    fin.value="";
+    return;
+  }
+
+  const f = new Date(inicio.value);
+  f.setDate(f.getDate() + parseInt(dias.value,10));
+  fin.value = f.toISOString().slice(0,10);
 }
 
-dias.addEventListener("input", calcularFin);
-inicio.addEventListener("change", calcularFin);
+periodicidad.addEventListener("change", recalcularFin);
+dias.addEventListener("input", recalcularFin);
+inicio.addEventListener("change", recalcularFin);
 </script>
 
 
