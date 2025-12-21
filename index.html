@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori77 de Medicamentos</h1>
+  <h1>💊 Recordatori78 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -830,64 +830,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 <script>
-/* =========================
-   PASO 2 – CÁLCULO AUTOMÁTICO
-   FECHA FINAL DE TRATAMIENTO
-========================= */
-
-(function(){
-
-  const diasInput   = document.querySelector("#medicamentos input[placeholder='Ej: 10']");
-  const inicioInput = document.querySelector("#medicamentos input[type='date']");
-  const finInput    = document.querySelectorAll("#medicamentos input[type='date']")[1];
-
-  if (!diasInput || !inicioInput || !finInput) return;
-
-  function calcularFechaFinal(){
-    const dias = parseInt(diasInput.value, 10);
-    const inicio = inicioInput.value;
-
-    if (!dias || dias <= 0 || !inicio) {
-      finInput.value = "";
-      return;
-    }
-
-    const fecha = new Date(inicio);
-    fecha.setDate(fecha.getDate() + dias);
-
-    finInput.value = fecha.toISOString().split("T")[0];
-  }
-
-  diasInput.addEventListener("input", calcularFechaFinal);
-  inicioInput.addEventListener("change", calcularFechaFinal);
-
-})();
-</script>
-
-
-
-
-
-
-<script>
-/* =========================
-   BLOQUE 3 – FECHAS CORRECTAS
-   ========================= */
+/* ==================================================
+   BLOQUE 3 – LÓGICA FECHA FINAL (CORRECTA)
+================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  const diasInput   = document.querySelector('input[placeholder="Ej: 10"]');
-  const inicioInput = document.querySelector('input[type="date"]:not([readonly])');
-  const finInput    = document.querySelectorAll('input[type="date"]')[1];
-  const periodicidadSelect = document.querySelector('select');
+  const diasInput   = document.getElementById("m-dias");
+  const inicioInput = document.getElementById("m-inicio");
+  const finInput    = document.getElementById("m-fin");
+  const periodicidad = document.getElementById("m-periodicidad");
 
-  if (!diasInput || !inicioInput || !finInput || !periodicidadSelect) return;
+  if (!diasInput || !inicioInput || !finInput || !periodicidad) return;
 
-  /* ✅ SOLO la fecha final es automática */
+  // ✅ Fecha final NO editable manualmente
   finInput.readOnly = true;
 
   function recalcularFechaFinal() {
-    const dias = parseInt(diasInput.value);
+
+    // Permanente → limpiar y salir
+    if (periodicidad.value === "0") {
+      diasInput.disabled = true;
+      inicioInput.disabled = true;
+      finInput.value = "";
+      return;
+    } else {
+      diasInput.disabled = false;
+      inicioInput.disabled = false;
+    }
+
+    const dias = parseInt(diasInput.value, 10);
     const inicio = inicioInput.value;
 
     if (!dias || dias <= 0 || !inicio) {
@@ -900,26 +872,13 @@ document.addEventListener("DOMContentLoaded", () => {
     finInput.value = fecha.toISOString().slice(0, 10);
   }
 
-  function manejarPeriodicidad() {
-    const esPermanente = periodicidadSelect.value === "permanente";
-
-    diasInput.disabled   = esPermanente;
-    finInput.disabled    = esPermanente;
-
-    if (esPermanente) {
-      diasInput.value = "";
-      finInput.value = "";
-    } else {
-      recalcularFechaFinal();
-    }
-  }
-
   diasInput.addEventListener("input", recalcularFechaFinal);
   inicioInput.addEventListener("change", recalcularFechaFinal);
-  periodicidadSelect.addEventListener("change", manejarPeriodicidad);
+  periodicidad.addEventListener("change", recalcularFechaFinal);
 
 });
 </script>
+
 
 
 
