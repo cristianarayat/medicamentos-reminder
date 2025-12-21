@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori71 de Medicamentos</h1>
+  <h1>💊 Recordatori72 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -863,6 +863,74 @@ document.addEventListener("DOMContentLoaded", () => {
 
 })();
 </script>
+
+
+
+
+
+
+<script>
+/* =========================
+   BLOQUE 3 – PASO 2
+   FECHA FINAL AUTOMÁTICA
+========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const diasInput   = document.querySelector("input[placeholder='Ej: 10']");
+  const inicioInput = document.querySelector("input[type='date']");
+  const finInput    = document.querySelectorAll("input[type='date']")[1];
+  const periodicidad = document.querySelector("select");
+
+  // 🔒 La fecha final nunca se edita manualmente
+  if (finInput) finInput.readOnly = true;
+
+  function recalcularFechaFinal() {
+    if (!diasInput || !inicioInput || !finInput) return;
+
+    const dias = parseInt(diasInput.value);
+    const inicio = inicioInput.value;
+
+    if (!dias || dias <= 0 || !inicio) {
+      finInput.value = "";
+      return;
+    }
+
+    const fecha = new Date(inicio);
+    fecha.setDate(fecha.getDate() + dias);
+
+    finInput.value = fecha.toISOString().slice(0, 10);
+  }
+
+  function manejarPeriodicidad() {
+    if (!periodicidad) return;
+
+    const esPermanente =
+      periodicidad.value.toLowerCase().includes("permanente");
+
+    if (esPermanente) {
+      diasInput.value = "";
+      inicioInput.value = "";
+      finInput.value = "";
+
+      diasInput.disabled = true;
+      inicioInput.disabled = true;
+      finInput.disabled = true;
+    } else {
+      diasInput.disabled = false;
+      inicioInput.disabled = false;
+      finInput.disabled = true; // siempre bloqueado
+    }
+  }
+
+  diasInput?.addEventListener("input", recalcularFechaFinal);
+  inicioInput?.addEventListener("change", recalcularFechaFinal);
+  periodicidad?.addEventListener("change", manejarPeriodicidad);
+
+});
+</script>
+
+
 
 
 
