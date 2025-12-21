@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori79 de Medicamentos</h1>
+  <h1>💊 Recordatori80 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -880,6 +880,9 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+
+
+     
 <!-- =========================
    BLOQUE 3 – DÍAS Y HORAS
    (VERTICAL + DOSIS DINÁMICA)
@@ -1002,6 +1005,123 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+<!-- =========================
+     BLOQUE 3 – DÍAS Y HORAS
+     (VERTICAL + DOSIS DINÁMICA)
+========================= -->
+
+<style>
+.med-dias {
+  margin-top: 16px;
+}
+
+.dia-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dia-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: none;
+  background: #e0e0e0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dia-btn.activo {
+  background: #2f80ed;
+  color: #fff;
+}
+
+.horas-container {
+  display: flex;
+  gap: 6px;
+}
+
+.horas-container input[type="time"] {
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #cfcfcf;
+  padding: 0 6px;
+  font-size: 14px;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const card = document.querySelector("#medicamentos .med-card");
+  if (!card || document.getElementById("dias-horas")) return;
+
+  const bloque = document.createElement("div");
+  bloque.id = "dias-horas";
+  bloque.className = "med-dias";
+  bloque.innerHTML = `<label>Días y horas</label>`;
+  card.insertBefore(bloque, document.getElementById("btn-guardar-med"));
+
+  const dias = ["L","M","X","J","V","S","D"];
+  const datos = {}; // { L: ["08:00","20:00"], ... }
+
+  const getDosis = () => {
+    const d = parseInt(document.getElementById("m-dosis")?.value || 1);
+    return d > 0 ? d : 1;
+  };
+
+  dias.forEach(dia => {
+    const row = document.createElement("div");
+    row.className = "dia-row";
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "dia-btn";
+    btn.textContent = dia;
+
+    const horasBox = document.createElement("div");
+    horasBox.className = "horas-container";
+
+    btn.onclick = () => {
+      btn.classList.toggle("activo");
+
+      if (!btn.classList.contains("activo")) {
+        horasBox.innerHTML = "";
+        delete datos[dia];
+        return;
+      }
+
+      const dosis = getDosis();
+      datos[dia] = datos[dia] || [];
+
+      horasBox.innerHTML = "";
+      for (let i = 0; i < dosis; i++) {
+        const input = document.createElement("input");
+        input.type = "time";
+        input.value = datos[dia][i] || "";
+
+        input.onchange = () => {
+          datos[dia][i] = input.value;
+        };
+
+        horasBox.appendChild(input);
+      }
+    };
+
+    row.appendChild(btn);
+    row.appendChild(horasBox);
+    bloque.appendChild(row);
+  });
+
+  // Si cambia la dosis, se actualizan SOLO los días activos
+  document.getElementById("m-dosis")?.addEventListener("input", () => {
+    document.querySelectorAll(".dia-btn.activo").forEach(btn => btn.click());
+    document.querySelectorAll(".dia-btn.activo").forEach(btn => btn.click());
+  });
+
+});
+</script>
 
 
 
