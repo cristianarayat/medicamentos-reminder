@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori82 de Medicamentos</h1>
+  <h1>💊 Recordatori83 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1339,6 +1339,71 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+<script>
+/* =========================
+   ESTADO DEL MEDICAMENTO
+========================= */
+
+function obtenerEstadoMedicamento(fechaFin, esPermanente = false) {
+
+  if (esPermanente) {
+    return {
+      texto: "Activo",
+      clase: "estado-activo"
+    };
+  }
+
+  if (!fechaFin) {
+    return {
+      texto: "Activo",
+      clase: "estado-activo"
+    };
+  }
+
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+
+  const fin = new Date(fechaFin);
+  fin.setHours(0,0,0,0);
+
+  if (fin < hoy) {
+    return {
+      texto: "Caducado",
+      clase: "estado-caducado"
+    };
+  }
+
+  return {
+    texto: "Activo",
+    clase: "estado-activo"
+  };
+}
+</script>
+
+
+
+
+<style>
+.estado-activo{
+  background:#e8f5e9;
+  color:#2e7d32;
+  padding:4px 10px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:700;
+  display:inline-block;
+}
+
+.estado-caducado{
+  background:#fdecea;
+  color:#b71c1c;
+  padding:4px 10px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:700;
+  display:inline-block;
+}
+</style>
 
 
 
