@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori76 de Medicamentos</h1>
+  <h1>💊 Recordatori77 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -871,38 +871,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <script>
 /* =========================
-   BLOQUE 3 – FECHAS (FIX FINAL)
+   BLOQUE 3 – FECHAS CORRECTAS
    ========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  const diasInput  = document.querySelector('input[placeholder="Ej: 10"]');
+  const diasInput   = document.querySelector('input[placeholder="Ej: 10"]');
   const inicioInput = document.querySelector('input[type="date"]:not([readonly])');
-  const fechas = document.querySelectorAll('input[type="date"]');
-  const finInput = fechas.length > 1 ? fechas[1] : null;
-  const periodicidad = document.querySelector('select');
+  const finInput    = document.querySelectorAll('input[type="date"]')[1];
+  const periodicidadSelect = document.querySelector('select');
 
-  if (!diasInput || !inicioInput || !finInput || !periodicidad) return;
+  if (!diasInput || !inicioInput || !finInput || !periodicidadSelect) return;
 
-  // 👉 SOLO la fecha FINAL es de solo lectura
+  /* ✅ SOLO la fecha final es automática */
   finInput.readOnly = true;
 
   function recalcularFechaFinal() {
-
-    // Si es permanente → limpiar y bloquear
-    if (periodicidad.value === "permanente") {
-      diasInput.value = "";
-      diasInput.disabled = true;
-      inicioInput.value = "";
-      inicioInput.disabled = true;
-      finInput.value = "";
-      return;
-    }
-
-    // Si NO es permanente → habilitar
-    diasInput.disabled = false;
-    inicioInput.disabled = false;
-
     const dias = parseInt(diasInput.value);
     const inicio = inicioInput.value;
 
@@ -916,13 +900,27 @@ document.addEventListener("DOMContentLoaded", () => {
     finInput.value = fecha.toISOString().slice(0, 10);
   }
 
-  // Eventos
+  function manejarPeriodicidad() {
+    const esPermanente = periodicidadSelect.value === "permanente";
+
+    diasInput.disabled   = esPermanente;
+    finInput.disabled    = esPermanente;
+
+    if (esPermanente) {
+      diasInput.value = "";
+      finInput.value = "";
+    } else {
+      recalcularFechaFinal();
+    }
+  }
+
   diasInput.addEventListener("input", recalcularFechaFinal);
   inicioInput.addEventListener("change", recalcularFechaFinal);
-  periodicidad.addEventListener("change", recalcularFechaFinal);
+  periodicidadSelect.addEventListener("change", manejarPeriodicidad);
 
 });
 </script>
+
 
 
 
