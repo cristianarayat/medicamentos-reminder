@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori108 de Medicamentos</h1>
+  <h1>💊 Recordatori109 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1070,6 +1070,107 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+<!-- =========================
+   BLOQUE 3 – MEJORA VISUAL LISTA MEDICAMENTOS
+   (NO TOCA LÓGICA EXISTENTE)
+========================= -->
+
+<style>
+#lista-meds{
+  margin-top:24px;
+}
+
+#lista-meds h3{
+  font-size:18px;
+  margin-bottom:12px;
+  text-align:center;
+}
+
+.med-item{
+  background:#f8fbff;
+  border:1px solid #dbe7ff;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
+}
+
+.med-item strong{
+  font-size:16px;
+}
+
+.med-estado{
+  margin-top:6px;
+  font-weight:700;
+  font-size:14px;
+}
+
+.med-estado.activo{
+  color:#2e7d32;
+}
+
+.med-estado.caducado{
+  color:#b71c1c;
+}
+
+.med-item img{
+  display:block;
+  margin-top:8px;
+  width:80px;
+  border-radius:10px;
+}
+
+.med-item button{
+  margin-top:10px;
+  width:100%;
+  background:#e53935;
+  color:#fff;
+  border:none;
+  height:44px;
+  border-radius:12px;
+  font-weight:700;
+}
+</style>
+
+<script>
+/* =========================
+   REESTILIZAR TARJETAS EXISTENTES
+========================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const lista = document.getElementById("lista-meds");
+  if (!lista) return;
+
+  // Insertar título si no existe
+  if (!lista.querySelector("h3")) {
+    const titulo = document.createElement("h3");
+    titulo.textContent = "Medicamentos guardados";
+    lista.prepend(titulo);
+  }
+
+  // Aplicar clases visuales a los items ya creados
+  const observer = new MutationObserver(() => {
+    lista.querySelectorAll("div").forEach(card => {
+      if (!card.classList.contains("med-item")) {
+        card.classList.add("med-item");
+
+        const estadoDiv = card.querySelector("div[style*='font-weight']");
+        if (estadoDiv) {
+          estadoDiv.classList.add("med-estado");
+          estadoDiv.classList.add(
+            estadoDiv.textContent.includes("Activo")
+              ? "activo"
+              : "caducado"
+          );
+        }
+      }
+    });
+  });
+
+  observer.observe(lista, { childList: true });
+
+});
+</script>
 
 
 
