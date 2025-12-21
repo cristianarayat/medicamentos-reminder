@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori81 de Medicamentos</h1>
+  <h1>💊 Recordatori82 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1198,6 +1198,145 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+
+
+
+
+
+
+<script>
+/* ==================================================
+   BLOQUE 3 – GUARDAR MEDICAMENTO (FUNCIONAL)
+================================================== */
+
+(function(){
+
+  const medicamentosGuardados = [];
+
+  const btnGuardar = document.getElementById("btn-guardar-med");
+  if (!btnGuardar) return;
+
+  // Contenedor donde se mostrarán los medicamentos
+  let lista = document.getElementById("lista-medicamentos");
+  if (!lista) {
+    lista = document.createElement("div");
+    lista.id = "lista-medicamentos";
+    lista.style.marginTop = "16px";
+    document.querySelector("#medicamentos .med-card").appendChild(lista);
+  }
+
+  btnGuardar.addEventListener("click", function(e){
+    e.preventDefault();
+
+    const nombre = document.getElementById("med-nombre")?.value.trim();
+    const dosis = document.getElementById("m-dosis")?.value;
+    const periodicidad = document.getElementById("m-periodicidad")?.value;
+    const dias = document.getElementById("m-dias")?.value;
+    const inicio = document.getElementById("m-inicio")?.value;
+    const fin = document.getElementById("m-fin")?.value;
+    const fotoInput = document.getElementById("m-foto");
+
+    const errorBox = document.getElementById("m-error");
+
+    if (
+      !nombre ||
+      !dosis ||
+      !periodicidad ||
+      (periodicidad !== "0" && (!dias || !inicio))
+    ) {
+      if (errorBox) errorBox.style.display = "block";
+      return;
+    }
+
+    if (errorBox) errorBox.style.display = "none";
+
+    // FOTO
+    let fotoURL = "";
+    if (fotoInput && fotoInput.files && fotoInput.files[0]) {
+      fotoURL = URL.createObjectURL(fotoInput.files[0]);
+    }
+
+    // HORAS POR DÍA
+    const horas = {};
+    document.querySelectorAll(".dia-row").forEach(row=>{
+      const dia = row.dataset.dia;
+      horas[dia] = [];
+      row.querySelectorAll("input[type='time']").forEach(h=>{
+        if(h.value) horas[dia].push(h.value);
+      });
+    });
+
+    const medicamento = {
+      nombre,
+      dosis,
+      periodicidad,
+      dias,
+      inicio,
+      fin,
+      horas,
+      fotoURL
+    };
+
+    medicamentosGuardados.push(medicamento);
+    renderMedicamentos();
+
+    limpiarFormulario();
+  });
+
+  function renderMedicamentos(){
+    lista.innerHTML = "";
+
+    medicamentosGuardados.forEach((m, index)=>{
+      const card = document.createElement("div");
+      card.style.background = "#f1f8ff";
+      card.style.borderRadius = "14px";
+      card.style.padding = "12px";
+      card.style.marginBottom = "10px";
+
+      card.innerHTML = `
+        <strong>${m.nombre}</strong><br>
+        Dosis: ${m.dosis} por día<br>
+        Periodicidad: ${m.periodicidad === "0" ? "Permanente" : "Cada " + m.periodicidad + " días"}<br>
+        ${m.inicio ? `Inicio: ${m.inicio}<br>` : ""}
+        ${m.fin ? `Fin: ${m.fin}<br>` : ""}
+        ${m.fotoURL ? `<img src="${m.fotoURL}" style="width:70px;border-radius:8px;margin-top:6px;">` : ""}
+        <button data-i="${index}" style="
+          margin-top:8px;
+          background:#e53935;
+          color:#fff;
+          border:none;
+          padding:6px 10px;
+          border-radius:8px;
+        ">Eliminar</button>
+      `;
+
+      card.querySelector("button").onclick = ()=>{
+        medicamentosGuardados.splice(index,1);
+        renderMedicamentos();
+      };
+
+      lista.appendChild(card);
+    });
+  }
+
+  function limpiarFormulario(){
+    document.getElementById("med-nombre").value = "";
+    document.getElementById("m-dosis").value = 1;
+    document.getElementById("m-periodicidad").value = "1";
+    document.getElementById("m-dias").value = "";
+    document.getElementById("m-inicio").value = "";
+    document.getElementById("m-fin").value = "";
+    if (document.getElementById("m-foto")) {
+      document.getElementById("m-foto").value = "";
+    }
+
+    document.querySelectorAll(".dia-row input[type='time']").forEach(h=>{
+      h.value = "";
+    });
+  }
+
+})();
+</script>
 
 
 
