@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori93 de Medicamentos</h1>
+  <h1>💊 Recordatori94 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -472,7 +472,7 @@ window.addEventListener("focus", actualizarBienvenida);
 
 
 <!-- ==================================================
-     BLOQUE 3 – MEDICAMENTOS (BASE LIMPIO v0)
+     BLOQUE 3 – MEDICAMENTOS (PASO 1 – BASE LIMPIA)
 ================================================== -->
 
 <style>
@@ -553,14 +553,12 @@ window.addEventListener("focus", actualizarBienvenida);
       </div>
 
       <button class="btn-primario" id="btn-guardar-med">
-        Guardar medicamento
+        Guardar (desactivado)
       </button>
 
       <button class="btn-primario btn-volver" id="btn-volver-med">
         Volver
       </button>
-
-      <div id="lista-medicamentos" style="margin-top:16px"></div>
 
     </div>
   </div>
@@ -570,6 +568,7 @@ window.addEventListener("focus", actualizarBienvenida);
 /* ==================================================
    CONEXIÓN BOTÓN "MEDICAMENTOS"
 ================================================== */
+
 document.addEventListener("pointerdown", function(e){
   let el = e.target;
   while (el && el !== document.body) {
@@ -582,50 +581,20 @@ document.addEventListener("pointerdown", function(e){
   }
 }, true);
 
-/* ==================================================
+/* =========================
    BOTÓN VOLVER
-================================================== */
+========================= */
 document.getElementById("btn-volver-med").onclick = () => {
   document.getElementById("medicamentos").style.display = "none";
 };
 
-/* ==================================================
-   GUARDADO BÁSICO (TEMPORAL)
-================================================== */
-const meds = [];
-
-document.getElementById("btn-guardar-med").onclick = () => {
-  const nombre = document.getElementById("med-nombre").value.trim();
-  if (!nombre) {
-    alert("Falta el nombre del medicamento");
-    return;
-  }
-
-  meds.push({ nombre });
-  document.getElementById("med-nombre").value = "";
-  renderMeds();
+/* =========================
+   GUARDAR (DESACTIVADO)
+========================= */
+document.getElementById("btn-guardar-med").onclick = (e) => {
+  e.preventDefault();
+  alert("Paso 1 OK. Guardado se activará más adelante.");
 };
-
-function renderMeds(){
-  const cont = document.getElementById("lista-medicamentos");
-  cont.innerHTML = "";
-  meds.forEach((m,i)=>{
-    const d = document.createElement("div");
-    d.style.padding = "10px";
-    d.style.background = "#f1f8ff";
-    d.style.borderRadius = "12px";
-    d.style.marginBottom = "8px";
-    d.innerHTML = `
-      <strong>${m.nombre}</strong>
-      <button style="float:right" data-i="${i}">Eliminar</button>
-    `;
-    d.querySelector("button").onclick = ()=>{
-      meds.splice(i,1);
-      renderMeds();
-    };
-    cont.appendChild(d);
-  });
-}
 </script>
 
 
