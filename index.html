@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori85 de Medicamentos</h1>
+  <h1>💊 Recordatori86 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1572,6 +1572,90 @@ function renderMedicamento(med) {
 
 
      
+<script>
+/* =========================
+   ESTADO DEL TRATAMIENTO
+========================= */
+
+function obtenerEstadoTratamiento(med) {
+  if (med.periodicidad === "Permanente") {
+    return { texto: "Permanente", color: "#1976d2" };
+  }
+
+  if (!med.fin) {
+    return { texto: "Sin fecha", color: "#757575" };
+  }
+
+  const hoy = new Date();
+  const fin = new Date(med.fin + "T00:00:00");
+
+  if (hoy <= fin) {
+    return { texto: "Activo", color: "#2e7d32" };
+  } else {
+    return { texto: "Caducado", color: "#c62828" };
+  }
+}
+
+/* =========================
+   MODIFICAR RENDER EXISTENTE
+   (sin tocar tu guardado)
+========================= */
+
+function renderMedicamento(med) {
+  const estado = obtenerEstadoTratamiento(med);
+
+  const div = document.createElement("div");
+  div.className = "med-guardado";
+  div.style.background = "#f1f8ff";
+  div.style.borderRadius = "16px";
+  div.style.padding = "14px";
+  div.style.marginTop = "12px";
+
+  div.innerHTML = `
+    <strong>${med.nombre}</strong><br>
+    Dosis: ${med.dosis} por día<br>
+    Periodicidad: ${med.periodicidad}<br>
+    ${med.inicio ? `Inicio: ${med.inicio}<br>` : ""}
+    ${med.fin ? `Fin: ${med.fin}<br>` : ""}
+    
+    <div style="
+      margin-top:6px;
+      font-weight:700;
+      color:${estado.color};
+    ">
+      Estado: ${estado.texto}
+    </div>
+
+    ${med.foto ? `
+      <img src="${med.foto}" style="
+        margin-top:8px;
+        width:90px;
+        height:auto;
+        border-radius:10px;
+      ">
+    ` : ""}
+
+    <button class="btn-eliminar" style="
+      margin-top:10px;
+      width:100%;
+      height:44px;
+      border:none;
+      border-radius:12px;
+      background:#e53935;
+      color:#fff;
+      font-weight:700;
+    ">
+      Eliminar
+    </button>
+  `;
+
+  div.querySelector(".btn-eliminar").onclick = () => {
+    eliminarMedicamento(med.id);
+  };
+
+  return div;
+}
+</script>
 
 
 
