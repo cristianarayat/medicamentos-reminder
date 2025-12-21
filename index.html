@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori87 de Medicamentos</h1>
+  <h1>💊 Recordatori88 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1225,31 +1225,66 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#medicamentos .med-card").appendChild(lista);
   }
 
-  btnGuardar.addEventListener("click", function(e){
-    e.preventDefault();
+  <script>
+/* ==================================================
+   VALIDACIÓN FINAL CORREGIDA – BLOQUE 3
+================================================== */
 
-    const nombre = document.getElementById("med-nombre")?.value.trim();
-    const dosis = document.getElementById("m-dosis")?.value;
-    const periodicidad = document.getElementById("m-periodicidad")?.value;
-    const dias = document.getElementById("m-dias")?.value;
-    const inicio = document.getElementById("m-inicio")?.value;
-    const fin = document.getElementById("m-fin")?.value;
-    const fotoInput = document.getElementById("m-foto");
+btnGuardar.addEventListener("click", function(e){
+  e.preventDefault();
 
-    const errorBox = document.getElementById("m-error");
+  const nombre = document.getElementById("med-nombre")?.value.trim();
+  const dosis = parseInt(document.getElementById("m-dosis")?.value, 10);
+  const periodicidad = document.getElementById("m-periodicidad")?.value;
+  const dias = document.getElementById("m-dias")?.value;
+  const inicio = document.getElementById("m-inicio")?.value;
+  const fin = document.getElementById("m-fin")?.value;
+  const errorBox = document.getElementById("m-error");
 
-    if (
-      !nombre ||
-      !dosis ||
-      !periodicidad ||
-      (periodicidad !== "0" && (!dias || !inicio))
-    ) {
+  /* ===== VALIDACIÓN BÁSICA ===== */
+  if (!nombre || !dosis || dosis <= 0 || !periodicidad) {
+    if (errorBox) errorBox.style.display = "block";
+    return;
+  }
+
+  /* ===== SI NO ES PERMANENTE ===== */
+  if (periodicidad !== "0") {
+    if (!dias || !inicio || !fin) {
       if (errorBox) errorBox.style.display = "block";
       return;
     }
+  }
 
-    if (errorBox) errorBox.style.display = "none";
+  /* ===== VALIDAR DÍAS Y HORAS ===== */
+  const diasHoras = window.obtenerDiasYHoras?.() || {};
+  let hayHoras = false;
 
+  Object.values(diasHoras).forEach(arr => {
+    if (arr.length > 0 && arr.some(h => h)) hayHoras = true;
+  });
+
+  if (!hayHoras) {
+    if (errorBox) errorBox.style.display = "block";
+    return;
+  }
+
+  /* ===== TODO OK ===== */
+  if (errorBox) errorBox.style.display = "none";
+
+  // ⚠️ AQUÍ CONTINÚA TU LÓGICA DE GUARDADO EXISTENTE
+  // NO TOCAMOS NADA MÁS
+});
+</script>
+
+
+
+
+
+
+
+
+
+     
     // FOTO
     let fotoURL = "";
     if (fotoInput && fotoInput.files && fotoInput.files[0]) {
