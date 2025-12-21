@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori83 de Medicamentos</h1>
+  <h1>💊 Recordatori84 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1404,6 +1404,85 @@ function obtenerEstadoMedicamento(fechaFin, esPermanente = false) {
   display:inline-block;
 }
 </style>
+
+
+
+
+<script>
+/* ==================================================
+   BLOQUE 3 – PASO FINAL
+   FECHA FINAL + ESTADO ACTIVO / CADUCADO
+================================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const inicioInput = document.getElementById("m-inicio");
+  const diasInput   = document.getElementById("m-dias");
+  const finInput    = document.getElementById("m-fin");
+  const guardarBtn  = document.getElementById("btn-guardar-med");
+
+  /* 🔒 La fecha final NUNCA se edita */
+  if (finInput) {
+    finInput.readOnly = true;
+    finInput.style.background = "#f5f5f5";
+  }
+
+  /* 📅 Cálculo automático de fecha final */
+  function recalcularFechaFinal() {
+    if (!inicioInput || !diasInput || !finInput) return;
+
+    const inicio = inicioInput.value;
+    const dias   = parseInt(diasInput.value, 10);
+
+    if (!inicio || !dias || dias <= 0) {
+      finInput.value = "";
+      return;
+    }
+
+    const fecha = new Date(inicio);
+    fecha.setDate(fecha.getDate() + dias);
+
+    finInput.value = fecha.toISOString().slice(0, 10);
+  }
+
+  inicioInput?.addEventListener("change", recalcularFechaFinal);
+  diasInput?.addEventListener("input", recalcularFechaFinal);
+
+  /* 🟢🔴 Estado Activo / Caducado */
+  function obtenerEstado(fin) {
+    if (!fin) return "Sin fecha";
+    const hoy = new Date();
+    const fechaFin = new Date(fin + "T00:00:00");
+    return fechaFin >= hoy ? "🟢 Activo" : "🔴 Caducado";
+  }
+
+  /* 🧠 Al guardar: mostrar estado */
+  guardarBtn?.addEventListener("click", () => {
+    const fin = finInput.value;
+    const estado = obtenerEstado(fin);
+
+    let estadoBox = document.getElementById("estado-medicamento");
+    if (!estadoBox) {
+      estadoBox = document.createElement("div");
+      estadoBox.id = "estado-medicamento";
+      estadoBox.style.marginTop = "10px";
+      estadoBox.style.fontWeight = "600";
+      estadoBox.style.fontSize = "14px";
+
+      const card = document.querySelector("#medicamentos .med-card");
+      card.appendChild(estadoBox);
+    }
+
+    estadoBox.textContent = "Estado del tratamiento: " + estado;
+  });
+
+});
+</script>
+
+
+
+
+
 
 
 
