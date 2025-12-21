@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori100 de Medicamentos</h1>
+  <h1>💊 Recordatori101 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -845,6 +845,21 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const card = document.querySelector("#medicamentos .med-card");
+  if (!card) return;
+
+  const btnGuardar = document.getElementById("btn-guardar-med");
+  const btnVolver  = document.getElementById("btn-volver-med");
+
+  if (!btnGuardar || !btnVolver) return;
+
+  // Mover botones al final real de la tarjeta
+  card.appendChild(btnGuardar);
+  card.appendChild(btnVolver);
+});
+</script>
 
 
 
