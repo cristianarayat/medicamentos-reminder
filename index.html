@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori103 de Medicamentos</h1>
+  <h1>💊 Recordatori104 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -878,6 +878,154 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<script>
+/* ==================================================
+   BLOQUE 3 – GUARDADO FINAL COMPLETO
+================================================== */
+
+(function(){
+
+  const btnGuardar = document.querySelector(".btn-primario");
+  const card = document.querySelector("#medicamentos .med-card");
+
+  // Habilitamos visualmente el botón (sigue validando)
+  btnGuardar.disabled = false;
+  btnGuardar.textContent = "Guardar medicamento";
+  btnGuardar.style.background = "#2f80ed";
+
+  const medicamentos = [];
+
+  // Contenedor lista
+  let lista = document.getElementById("lista-meds");
+  if (!lista) {
+    lista = document.createElement("div");
+    lista.id = "lista-meds";
+    lista.style.marginTop = "20px";
+    card.appendChild(lista);
+  }
+
+  btnGuardar.addEventListener("click", e => {
+    e.preventDefault();
+
+    /* ===== TOMAR DATOS ===== */
+    const nombre = document.getElementById("med-nombre").value.trim();
+    const dosis = Number(document.getElementById("m-dosis").value);
+    const periodicidad = document.getElementById("m-periodicidad").value;
+    const dias = document.getElementById("m-dias").value;
+    const inicio = document.getElementById("m-inicio").value;
+    const fin = document.getElementById("m-fin").value;
+    const fotoInput = document.getElementById("m-foto");
+
+    /* ===== VALIDACIONES ===== */
+    if (!nombre || dosis <= 0 || !periodicidad) {
+      alert("Faltan datos obligatorios");
+      return;
+    }
+
+    if (periodicidad !== "0" && (!dias || !inicio || !fin)) {
+      alert("Completa días y fechas");
+      return;
+    }
+
+    const diasHoras = window.obtenerDiasYHoras?.() || {};
+    const hayHoras = Object.values(diasHoras)
+      .some(arr => arr.some(h => h));
+
+    if (!hayHoras) {
+      alert("Selecciona al menos un día y una hora");
+      return;
+    }
+
+    /* ===== FOTO ===== */
+    let fotoURL = "";
+    if (fotoInput?.files?.[0]) {
+      fotoURL = URL.createObjectURL(fotoInput.files[0]);
+    }
+
+    /* ===== ESTADO ===== */
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    let estado = "Activo";
+
+    if (periodicidad !== "0" && fin) {
+      const f = new Date(fin); f.setHours(0,0,0,0);
+      if (f < hoy) estado = "Caducado";
+    }
+
+    const med = {
+      nombre,
+      dosis,
+      periodicidad,
+      inicio,
+      fin,
+      estado,
+      fotoURL
+    };
+
+    medicamentos.push(med);
+    render();
+    limpiar();
+  });
+
+  function render(){
+    lista.innerHTML = "";
+
+    medicamentos
+      .sort((a,b)=> a.estado === b.estado ? 0 : a.estado === "Activo" ? -1 : 1)
+      .forEach((m,i)=>{
+        const div = document.createElement("div");
+        div.style.background = "#f1f8ff";
+        div.style.borderRadius = "14px";
+        div.style.padding = "12px";
+        div.style.marginBottom = "10px";
+
+        div.innerHTML = `
+          <strong>${m.nombre}</strong><br>
+          Dosis: ${m.dosis} por día<br>
+          ${m.inicio ? `Inicio: ${m.inicio}<br>` : ""}
+          ${m.fin ? `Fin: ${m.fin}<br>` : ""}
+          <div style="
+            margin-top:6px;
+            font-weight:700;
+            color:${m.estado==="Activo" ? "#2e7d32" : "#b71c1c"};
+          ">
+            Estado: ${m.estado}
+          </div>
+          ${m.fotoURL ? `
+            <img src="${m.fotoURL}"
+              style="width:70px;border-radius:8px;margin-top:6px;">
+          ` : ""}
+          <button style="
+            margin-top:8px;
+            background:#e53935;
+            color:#fff;
+            border:none;
+            padding:6px 10px;
+            border-radius:8px;
+            width:100%;
+          ">Eliminar</button>
+        `;
+
+        div.querySelector("button").onclick = ()=>{
+          medicamentos.splice(i,1);
+          render();
+        };
+
+        lista.appendChild(div);
+      });
+  }
+
+  function limpiar(){
+    document.getElementById("med-nombre").value="";
+    document.getElementById("m-dosis").value=1;
+    document.getElementById("m-periodicidad").value="1";
+    document.getElementById("m-dias").value="";
+    document.getElementById("m-inicio").value="";
+    document.getElementById("m-fin").value="";
+    if(document.getElementById("m-foto")) document.getElementById("m-foto").value="";
+  }
+
+})();
+</script>
 
 
 
