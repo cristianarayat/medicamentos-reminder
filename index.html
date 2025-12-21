@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori67 de Medicamentos</h1>
+  <h1>💊 Recordatori68 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -606,21 +606,18 @@ document.getElementById("btn-guardar-med").onclick = () => {
 
 
 <!-- =========================
-     BLOQUE 3 – COMPLEMENTO FECHAS Y PERIODICIDAD
+     BLOQUE 3 – COMPLEMENTARIO
+     CAMPOS + LÓGICA (SIN GUARDAR)
 ========================= -->
 
 <style>
-.med-extra{
-  margin-top:14px;
-}
-
+.med-extra{ margin-top:14px; }
 .med-extra label{
   display:block;
   font-size:14px;
   font-weight:600;
   margin-bottom:6px;
 }
-
 .med-extra input,
 .med-extra select{
   width:100%;
@@ -630,80 +627,128 @@ document.getElementById("btn-guardar-med").onclick = () => {
   padding:0 14px;
   font-size:15px;
 }
-
-.med-extra input[disabled]{
-  background:#eee;
-  color:#777;
-}
 </style>
 
-<div class="med-extra">
-
-  <label>Dosis por día</label>
-  <input id="m-dosis-extra" type="number" min="1" value="1">
-
-  <label>Periodicidad</label>
-  <select id="m-periodicidad-extra">
-    <option value="1">Cada 1 día</option>
-    <option value="2">Cada 2 días</option>
-    <option value="5">Cada 5 días</option>
-    <option value="7">Cada 7 días</option>
-    <option value="14">Cada 14 días</option>
-    <option value="30">Cada 30 días</option>
-    <option value="0">Permanente</option>
-  </select>
-
-  <label>Días de tratamiento</label>
-  <input id="m-dias-extra" type="number" min="1" placeholder="Ej: 10">
-
-  <label>Inicio del tratamiento</label>
-  <input id="m-inicio-extra" type="date">
-
-  <label>Final del tratamiento</label>
-  <input id="m-fin-extra" type="date" disabled>
-
-</div>
-
 <script>
-(function(){
+document.addEventListener("DOMContentLoaded", () => {
 
-  const periodicidad = document.getElementById("m-periodicidad-extra");
-  const dias = document.getElementById("m-dias-extra");
-  const inicio = document.getElementById("m-inicio-extra");
-  const fin = document.getElementById("m-fin-extra");
+  /* ===== CONECTAR BOTÓN MEDICAMENTOS ===== */
+  document.querySelectorAll("button").forEach(btn=>{
+    if(btn.textContent.trim()==="Medicamentos"){
+      btn.addEventListener("click",()=>{
+        document.getElementById("medicamentos").style.display="block";
+      });
+    }
+  });
 
-  function recalcularFin(){
-    if (!inicio.value || !dias.value) {
-      fin.value = "";
+  /* ===== INSERTAR CAMPOS NUEVOS ===== */
+  const card = document.querySelector("#medicamentos .med-card");
+  if(!card || document.getElementById("m-dosis")) return;
+
+  const bloque = document.createElement("div");
+  bloque.innerHTML = `
+    <div class="med-extra">
+      <label>Dosis por día</label>
+      <input id="m-dosis" type="number" min="1" value="1">
+    </div>
+
+    <div class="med-extra">
+      <label>Periodicidad</label>
+      <select id="m-periodicidad">
+        <option value="1">Cada 1 día</option>
+        <option value="2">Cada 2 días</option>
+        <option value="5">Cada 5 días</option>
+        <option value="7">Cada 7 días</option>
+        <option value="14">Cada 14 días</option>
+        <option value="30">Cada 30 días</option>
+        <option value="0">Permanente</option>
+      </select>
+    </div>
+
+    <div class="med-extra">
+      <label>Días de tratamiento</label>
+      <input id="m-dias" type="number" min="1" placeholder="Ej: 10">
+    </div>
+
+    <div class="med-extra">
+      <label>Inicio del tratamiento</label>
+      <input id="m-inicio" type="date">
+    </div>
+
+    <div class="med-extra">
+      <label>Final del tratamiento</label>
+      <input id="m-fin" type="date" disabled>
+    </div>
+
+    <div id="m-error" style="
+      display:none;
+      margin-top:10px;
+      background:#fdecea;
+      color:#b71c1c;
+      padding:10px;
+      border-radius:10px;
+      font-size:14px;
+    ">
+      No se puede guardar. Faltan datos obligatorios.
+    </div>
+  `;
+
+  /* Insertar antes del botón Guardar */
+  const btnGuardar = [...card.querySelectorAll("button")]
+    .find(b=>b.textContent.includes("Guardar"));
+  card.insertBefore(bloque, btnGuardar);
+
+  /* ===== LÓGICA FECHA FINAL ===== */
+  function calcularFin(){
+    const dias = parseInt(document.getElementById("m-dias").value);
+    const inicio = document.getElementById("m-inicio").value;
+    const fin = document.getElementById("m-fin");
+
+    if(!dias || !inicio){
+      fin.value="";
       return;
     }
-
-    const d = new Date(inicio.value);
-    d.setDate(d.getDate() + parseInt(dias.value, 10));
+    const d = new Date(inicio);
+    d.setDate(d.getDate() + dias);
     fin.value = d.toISOString().slice(0,10);
   }
 
-  function evaluarPeriodicidad(){
-    const esPermanente = periodicidad.value === "0";
+  document.getElementById("m-dias").addEventListener("input", calcularFin);
+  document.getElementById("m-inicio").addEventListener("change", calcularFin);
 
-    dias.disabled = esPermanente;
-    inicio.disabled = esPermanente;
-    fin.disabled = true;
+  /* ===== PERMANENTE ===== */
+  document.getElementById("m-periodicidad").addEventListener("change", e=>{
+    const permanente = e.target.value === "0";
+    ["m-dias","m-inicio","m-fin"].forEach(id=>{
+      const el = document.getElementById(id);
+      el.disabled = permanente;
+      if(permanente) el.value="";
+    });
+  });
 
-    if (esPermanente) {
-      dias.value = "";
-      inicio.value = "";
-      fin.value = "";
-    } else {
-      recalcularFin();
+  /* ===== VALIDACIÓN VISUAL (SIN GUARDAR) ===== */
+  btnGuardar.addEventListener("click", e=>{
+    e.preventDefault();
+
+    const nombre = document.querySelector("#medicamentos input")?.value.trim();
+    const periodicidad = document.getElementById("m-periodicidad").value;
+    const dias = document.getElementById("m-dias").value;
+    const inicio = document.getElementById("m-inicio").value;
+    const error = document.getElementById("m-error");
+
+    if(
+      !nombre ||
+      (periodicidad !== "0" && (!dias || !inicio))
+    ){
+      error.style.display="block";
+      return;
     }
-  }
 
-  dias.addEventListener("input", recalcularFin);
-  inicio.addEventListener("change", recalcularFin);
-  periodicidad.addEventListener("change", evaluarPeriodicidad);
+    error.style.display="none";
+    alert("Validación OK (guardar se hará después)");
+  });
 
-})();
+});
 </script>
 
 
