@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori89 de Medicamentos</h1>
+  <h1>💊 Recordatori90 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -726,28 +726,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* ===== VALIDACIÓN VISUAL (SIN GUARDAR) ===== */
-  btnGuardar.addEventListener("click", e=>{
-    e.preventDefault();
-
-    const nombre = document.querySelector("#medicamentos input")?.value.trim();
-    const periodicidad = document.getElementById("m-periodicidad").value;
-    const dias = document.getElementById("m-dias").value;
-    const inicio = document.getElementById("m-inicio").value;
-    const error = document.getElementById("m-error");
-
-    if(
-      !nombre ||
-      (periodicidad !== "0" && (!dias || !inicio))
-    ){
-      error.style.display="block";
-      return;
-    }
-
-    error.style.display="none";
-    alert("Validación OK (guardar se hará después)");
-  });
-
+ 
 });
 </script>
 
@@ -1196,7 +1175,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-</script>
+
 
 
 
