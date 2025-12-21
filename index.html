@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori104 de Medicamentos</h1>
+  <h1>💊 Recordatori105 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -927,14 +927,19 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const diasHoras = window.obtenerDiasYHoras?.() || {};
-    const hayHoras = Object.values(diasHoras)
-      .some(arr => arr.some(h => h));
+    let hayHoras = false;
 
-    if (!hayHoras) {
-      alert("Selecciona al menos un día y una hora");
-      return;
-    }
+Object.values(estado).forEach(arr => {
+  if (arr.length > 0 && arr.some(h => h)) {
+    hayHoras = true;
+  }
+});
+
+if (!hayHoras) {
+  alert("Selecciona al menos un día y una hora");
+  return;
+}
+
 
     /* ===== FOTO ===== */
     let fotoURL = "";
