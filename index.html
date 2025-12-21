@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori92 de Medicamentos</h1>
+  <h1>💊 Recordatori93 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -457,6 +457,181 @@ function actualizarBienvenida(){
 document.addEventListener("DOMContentLoaded", actualizarBienvenida);
 window.addEventListener("focus", actualizarBienvenida);
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ==================================================
+     BLOQUE 3 – MEDICAMENTOS (BASE LIMPIO v0)
+================================================== -->
+
+<style>
+#medicamentos{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#eef1f4;
+  z-index:1000;
+  overflow:auto;
+}
+
+.med-container{
+  max-width:480px;
+  margin:0 auto;
+  padding:16px;
+}
+
+.med-card{
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+}
+
+.med-card h2{
+  text-align:center;
+  margin-bottom:16px;
+}
+
+.med-group{
+  margin-bottom:14px;
+}
+
+.med-group label{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.med-group input{
+  width:100%;
+  height:48px;
+  border-radius:14px;
+  border:1px solid #cfcfcf;
+  padding:0 14px;
+  font-size:15px;
+}
+
+.btn-primario{
+  width:100%;
+  height:52px;
+  border:none;
+  border-radius:16px;
+  background:#2f80ed;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+  margin-top:12px;
+}
+
+.btn-volver{
+  background:#bdbdbd;
+  margin-top:8px;
+}
+</style>
+
+<div id="medicamentos">
+  <div class="med-container">
+    <div class="med-card">
+
+      <h2>Medicamentos</h2>
+
+      <div class="med-group">
+        <label>Nombre del medicamento</label>
+        <input id="med-nombre" placeholder="Ej: Paracetamol">
+      </div>
+
+      <button class="btn-primario" id="btn-guardar-med">
+        Guardar medicamento
+      </button>
+
+      <button class="btn-primario btn-volver" id="btn-volver-med">
+        Volver
+      </button>
+
+      <div id="lista-medicamentos" style="margin-top:16px"></div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==================================================
+   CONEXIÓN BOTÓN "MEDICAMENTOS"
+================================================== */
+document.addEventListener("pointerdown", function(e){
+  let el = e.target;
+  while (el && el !== document.body) {
+    if ((el.textContent || "").trim().toLowerCase() === "medicamentos") {
+      e.preventDefault();
+      document.getElementById("medicamentos").style.display = "block";
+      return;
+    }
+    el = el.parentElement;
+  }
+}, true);
+
+/* ==================================================
+   BOTÓN VOLVER
+================================================== */
+document.getElementById("btn-volver-med").onclick = () => {
+  document.getElementById("medicamentos").style.display = "none";
+};
+
+/* ==================================================
+   GUARDADO BÁSICO (TEMPORAL)
+================================================== */
+const meds = [];
+
+document.getElementById("btn-guardar-med").onclick = () => {
+  const nombre = document.getElementById("med-nombre").value.trim();
+  if (!nombre) {
+    alert("Falta el nombre del medicamento");
+    return;
+  }
+
+  meds.push({ nombre });
+  document.getElementById("med-nombre").value = "";
+  renderMeds();
+};
+
+function renderMeds(){
+  const cont = document.getElementById("lista-medicamentos");
+  cont.innerHTML = "";
+  meds.forEach((m,i)=>{
+    const d = document.createElement("div");
+    d.style.padding = "10px";
+    d.style.background = "#f1f8ff";
+    d.style.borderRadius = "12px";
+    d.style.marginBottom = "8px";
+    d.innerHTML = `
+      <strong>${m.nombre}</strong>
+      <button style="float:right" data-i="${i}">Eliminar</button>
+    `;
+    d.querySelector("button").onclick = ()=>{
+      meds.splice(i,1);
+      renderMeds();
+    };
+    cont.appendChild(d);
+  });
+}
+</script>
+
+
+
+
+
 
 
 
