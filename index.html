@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori98 de Medicamentos</h1>
+  <h1>💊 Recordatori99 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -784,6 +784,37 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
+<script>
+/* =========================================
+   BLOQUE 3 – ORDENAR BOTONES AL FINAL
+========================================= */
+document.addEventListener("DOMContentLoaded", () => {
+
+  const card = document.querySelector("#medicamentos .med-card");
+  if (!card) return;
+
+  const btnGuardar = document.getElementById("btn-guardar-med");
+  const btnVolver  = document.getElementById("btn-volver-med");
+
+  if (!btnGuardar || !btnVolver) return;
+
+  // Contenedor fijo al final
+  let footer = document.getElementById("med-footer");
+
+  if (!footer) {
+    footer = document.createElement("div");
+    footer.id = "med-footer";
+    footer.style.marginTop = "20px";
+    footer.style.display = "flex";
+    footer.style.flexDirection = "column";
+    footer.style.gap = "8px";
+    card.appendChild(footer);
+  }
+
+  footer.appendChild(btnGuardar);
+  footer.appendChild(btnVolver);
+});
+</script>
 
 
 
