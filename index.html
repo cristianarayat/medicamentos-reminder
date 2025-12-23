@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori113 de Medicamentos</h1>
+  <h1>💊 Recordatori114 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -973,8 +973,16 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     medicamentos.push(med);
-    render();
-    limpiar();
+
+// 🔑 GUARDAR EN STORAGE PARA SEGUIMIENTO
+localStorage.setItem(
+  "medicamentos_guardados_v1",
+  JSON.stringify(medicamentos)
+);
+
+render();
+limpiar();
+
   });
 
   function render(){
