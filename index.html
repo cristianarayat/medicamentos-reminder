@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori114 de Medicamentos</h1>
+  <h1>💊 Recordatori115 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1354,13 +1354,21 @@ function cargarHoy(){
   const tomadosHoy = tomados[hoyClave] || [];
 
   const activosHoy = meds.filter(m => {
-    if (!m.inicio || !m.fin) return false;
-    const ini = new Date(m.inicio);
-    const fin = new Date(m.fin);
-    ini.setHours(0,0,0,0);
-    fin.setHours(23,59,59,999);
-    return ahora >= ini && ahora <= fin;
-  });
+
+  // 🔵 PERMANENTE → siempre activo
+  if (m.periodicidad === "0") return true;
+
+  // 🔵 NO permanente → validar fechas
+  if (!m.inicio || !m.fin) return false;
+
+  const ini = new Date(m.inicio);
+  const fin = new Date(m.fin);
+  ini.setHours(0,0,0,0);
+  fin.setHours(23,59,59,999);
+
+  return ahora >= ini && ahora <= fin;
+});
+
 
   activosHoy.sort((a,b)=>{
     if(!a.hora) return 1;
