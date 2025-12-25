@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori129 de Medicamentos</h1>
+  <h1>💊 Recordatori130 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1444,22 +1444,22 @@ function cardHoy(m, estado){
   const div = document.createElement("div");
   div.className = "card-med";
 
-  const badge = {
-    pendiente: "badge-pendiente",
-    atrasado: "badge-atrasado",
-    tomado: "badge-tomado"
-  };
+  function renderBadge(estado){
+  if (estado === "tomado") {
+    return `<span class="badge-completado">Completado hoy</span>`;
+  }
+  if (estado === "atrasado") {
+    return `<span class="badge-atrasado">Atrasado</span>`;
+  }
+  return `<span class="badge-pendiente">Pendiente</span>`;
+}
 
-  const label = {
-    pendiente: "Pendiente",
-    atrasado: "Atrasado",
-    tomado: "Tomado"
-  };
 
   div.innerHTML = `
     <div class="fila">
       <strong>${m.nombre}</strong>
-      <span class="${badge[estado]}">${label[estado]}</span>
+      ${renderBadge(estado)}
+
     </div>
     <div class="meta">⏰ ${m.hora || '—'}</div>
     <div class="meta">
@@ -1609,6 +1609,17 @@ function fmt(f){
   opacity:1;
 }
 
+.badge-completado{
+  background:#e8f5e9;
+  color:#2e7d32;
+  padding:4px 10px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:700;
+}
+
+
+     
 </style>
 
 <script>
