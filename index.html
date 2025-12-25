@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori138 de Medicamentos</h1>
+  <h1>💊 Recordatori139 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1820,42 +1820,65 @@ function calcularAdherencia(){
   hoy.setHours(0,0,0,0);
 
   // últimos 7 días
-  for (let i = 0; i < 7; i++) {
+  
+function calcularAdherencia(){
 
+  const meds = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  const elPct = document.getElementById("adhPorcentaje");
+  const elDetalle = document.getElementById("adhDetalle");
+  const elMensaje = document.getElementById("adhMensaje");
+
+  const hoyKey = new Date().toISOString().slice(0,10);
+  const tomasHoy = Array.isArray(tomados[hoyKey])
+    ? tomados[hoyKey].length
+    : 0;
+
+  // 🔴 REGLA ABSOLUTA
+  if (tomasHoy === 0) {
+    elPct.textContent = "0%";
+    elDetalle.textContent = "0 dosis tomadas hoy";
+    elMensaje.textContent = "Aún no has confirmado ninguna toma hoy";
+    return;
+  }
+
+  // ✅ SOLO SI HOY > 0 → recién calculamos histórico
+  let totalProgramados = 0;
+  let totalHechos = 0;
+
+  const hoy = new Date();
+  hoy.setHours(0,0,0,0);
+
+  for (let i = 0; i < 7; i++) {
     const d = new Date(hoy);
     d.setDate(d.getDate() - i);
     const key = d.toISOString().slice(0,10);
 
-    let programadosDia = 0;
-
     meds.forEach(m => {
-
-      // 🔵 Permanente
       if (m.periodicidad === "0") {
-        programadosDia += m.dosis || 1;
-        return;
-      }
-
-      if (!m.inicio || !m.fin) return;
-
-      const ini = new Date(m.inicio);
-      const fin = new Date(m.fin);
-      ini.setHours(0,0,0,0);
-      fin.setHours(23,59,59,999);
-
-      if (d >= ini && d <= fin) {
-        programadosDia += m.dosis || 1;
+        totalProgramados += m.dosis || 1;
+        if ((tomados[key] || []).includes(m.nombre)) {
+          totalHechos += m.dosis || 1;
+        }
       }
     });
-
-    const hechosDia = Math.min(
-      (tomados[key] || []).length,
-      programadosDia
-    );
-
-    totalProgramados += programadosDia;
-    totalHechos += hechosDia;
   }
+
+  const pct = Math.round((totalHechos / totalProgramados) * 100);
+  elPct.textContent = `${pct}%`;
+  elDetalle.textContent =
+    `${totalHechos} de ${totalProgramados} dosis tomadas (últimos 7 días)`;
+  elMensaje.textContent = "Buen trabajo, sigue así";
+}
+
+
+     
 
   const elPct = document.getElementById("adhPorcentaje");
   const elDetalle = document.getElementById("adhDetalle");
