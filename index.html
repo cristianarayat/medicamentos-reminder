@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori135 de Medicamentos</h1>
+  <h1>💊 Recordatori136 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1507,7 +1507,14 @@ function marcarTomado(nombre){
   ) || {};
 
   if (!tomados[hoy]) tomados[hoy] = [];
-  if (!tomados[hoy].includes(nombre)) tomados[hoy].push(nombre);
+
+  // ⛔ no duplicar
+  if (tomados[hoy].includes(nombre)) {
+    mostrarToast(`⚠ ${nombre} ya fue registrado hoy`);
+    return;
+  }
+
+  tomados[hoy].push(nombre);
 
   localStorage.setItem(
     "medicamentos_tomados_v1",
@@ -1517,7 +1524,9 @@ function marcarTomado(nombre){
   mostrarToast(`✔ ${nombre} marcado como tomado`);
   cargarHoy();
   mostrarHistorial(hoy);
+  calcularAdherencia(); // 🔑 refresca %
 }
+
 
 /* =========================
    HISTORIAL
@@ -1871,6 +1880,23 @@ if (tomadosHoy === 0) {
   return;
 }
 
+
+// 🔴 REGLA CLAVE: si HOY no hay tomas → adherencia 0%
+const hoyKey = new Date().toISOString().slice(0,10);
+const tomadosHoy = Array.isArray(tomados[hoyKey])
+  ? tomados[hoyKey].length
+  : 0;
+
+if (tomadosHoy === 0) {
+  elPct.textContent = "0%";
+  elDetalle.textContent =
+    `0 de ${totalProgramados} dosis tomadas (últimos 7 días)`;
+  elMensaje.textContent = "Aún no hay tomas registradas hoy";
+  return;
+}
+
+
+     
 // ✅ comportamiento normal
 const pct = Math.round((totalHechos / totalProgramados) * 100);
 
@@ -1991,62 +2017,8 @@ function mostrarHistorial(fecha){
 </script>
 
 
-<script>
-/* =========================
-   PASO 4E – OPCIÓN A
-   CONFIRMACIÓN VISUAL SEGURA
-========================= */
-
-// Guardamos la función original
-const _marcarTomadoBase = window.marcarTomado;
-
-window.marcarTomado = function(nombre){
-  // Evita doble click rápido
-  const btn = [...document.querySelectorAll(".btn-ok")]
-    .find(b => b.innerText.includes("Tomado"));
-
-  if (btn) btn.disabled = true;
-
-  // Ejecuta lógica original
-  _marcarTomadoBase(nombre);
-
-  // Feedback visual inmediato
-  setTimeout(() => {
-    cargarHoy(); // refresca tarjetas
-  }, 50);
-};
-</script>
 
 
-
-<script>
-/* =========================
-   PASO 4F – BLOQUEO POR DÍA
-   (NO DUPLICAR TOMAS)
-========================= */
-
-// respaldo por seguridad
-const marcarTomado_4F_original = window.marcarTomado;
-
-window.marcarTomado = function(nombre){
-  const hoy = new Date().toISOString().slice(0,10);
-
-  const tomados = JSON.parse(
-    localStorage.getItem("medicamentos_tomados_v1")
-  ) || {};
-
-  if (!tomados[hoy]) tomados[hoy] = [];
-
-  // ⛔ ya fue tomado hoy
-  if (tomados[hoy].includes(nombre)) {
-    mostrarToast(`⚠ ${nombre} ya fue registrado hoy`);
-    return;
-  }
-
-  // ✅ registrar normalmente
-  marcarTomado_4F_original(nombre);
-};
-</script>
 
 
 
