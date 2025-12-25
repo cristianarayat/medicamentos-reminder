@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori130 de Medicamentos</h1>
+  <h1>💊 Recordatori131 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1440,6 +1440,20 @@ function calcularEstado(m, tomadosHoy, ahora){
 /* =========================
    CARD
 ========================= */
+function obtenerHoraHoy(m){
+  if (!m.horas) return null;
+
+  const hoy = new Date();
+  const dias = ["D","L","M","X","J","V","S"];
+  const diaHoy = dias[hoy.getDay()];
+
+  const horasHoy = m.horas[diaHoy];
+  if (!Array.isArray(horasHoy) || horasHoy.length === 0) return null;
+
+  return horasHoy[0]; // primera hora del día
+}
+
+     
 function cardHoy(m, estado){
   const div = document.createElement("div");
   div.className = "card-med";
@@ -1461,7 +1475,7 @@ function cardHoy(m, estado){
       ${renderBadge(estado)}
 
     </div>
-    <div class="meta">⏰ ${m.hora || '—'}</div>
+    <div class="meta">⏰ ${obtenerHoraHoy(m) || '—'}</div>
     <div class="meta">
   📅 ${
     m.periodicidad === "0"
