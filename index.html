@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori137 de Medicamentos</h1>
+  <h1>💊 Recordatori138 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1868,17 +1868,21 @@ function calcularAdherencia(){
     return;
   }
 
-  // 🔴 NUEVA REGLA: si HOY no hay tomas → adherencia 0%
+// ✅ REGLA DEFINITIVA:
+// si HOY no se confirmó ninguna toma → adherencia = 0%
 const hoyKey = new Date().toISOString().slice(0,10);
-const tomadosHoy = (tomados[hoyKey] || []).length;
+const tomasHoy = Array.isArray(tomados[hoyKey])
+  ? tomados[hoyKey].length
+  : 0;
 
-if (tomadosHoy === 0) {
+if (tomasHoy === 0) {
   elPct.textContent = "0%";
   elDetalle.textContent =
     `0 de ${totalProgramados} dosis tomadas (últimos 7 días)`;
-  elMensaje.textContent = "Aún no hay tomas registradas hoy";
+  elMensaje.textContent = "Aún no has confirmado ninguna toma hoy";
   return;
 }
+
 
 
 
