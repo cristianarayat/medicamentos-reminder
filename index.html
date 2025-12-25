@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori117 - MArtina Fea de Medicamentos</h1>
+  <h1>💊 Recordatori119 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -966,11 +966,13 @@ document.addEventListener("DOMContentLoaded", () => {
    const med = {
   nombre,
   dosis,
-  inicio,
-  fin,
+  periodicidad,                // 🔑 CLAVE
+  inicio: periodicidad === "0" ? null : inicio,
+  fin: periodicidad === "0" ? null : fin,
   estado: estadoMed,
   fotoURL
 };
+
 
 
     medicamentos.push(med);
