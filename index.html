@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori122 de Medicamentos</h1>
+  <h1>💊 Recordatori123 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -908,7 +908,10 @@ document.addEventListener("DOMContentLoaded", () => {
   btnGuardar.textContent = "Guardar medicamento";
   btnGuardar.style.background = "#2f80ed";
 
-  const medicamentos = [];
+  const medicamentos = JSON.parse(
+  localStorage.getItem("medicamentos_guardados_v1")
+) || [];
+
 
   // Contenedor lista
   let lista = document.getElementById("lista-meds");
