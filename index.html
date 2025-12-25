@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori127 de Medicamentos</h1>
+  <h1>💊 Recordatori128 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1730,6 +1730,7 @@ window.addEventListener("load", () => {
    LÓGICA ADHERENCIA
 ========================= */
 function calcularAdherencia(){
+
   const meds = JSON.parse(
     localStorage.getItem("medicamentos_guardados_v1")
   ) || [];
@@ -1738,18 +1739,29 @@ function calcularAdherencia(){
     localStorage.getItem("medicamentos_tomados_v1")
   ) || {};
 
-  let total = 0;
-  let hechos = 0;
+  let totalProgramados = 0;
+  let totalHechos = 0;
 
   const hoy = new Date();
   hoy.setHours(0,0,0,0);
 
+  // últimos 7 días
   for (let i = 0; i < 7; i++) {
+
     const d = new Date(hoy);
     d.setDate(d.getDate() - i);
-    const clave = d.toISOString().slice(0,10);
+    const key = d.toISOString().slice(0,10);
+
+    let programadosDia = 0;
 
     meds.forEach(m => {
+
+      // 🔵 Permanente
+      if (m.periodicidad === "0") {
+        programadosDia += m.dosis || 1;
+        return;
+      }
+
       if (!m.inicio || !m.fin) return;
 
       const ini = new Date(m.inicio);
@@ -1758,43 +1770,38 @@ function calcularAdherencia(){
       fin.setHours(23,59,59,999);
 
       if (d >= ini && d <= fin) {
-        total++;
-        if ((tomados[clave] || []).includes(m.nombre)) {
-          hechos++;
-        }
+        programadosDia += m.dosis || 1;
       }
     });
+
+    const hechosDia = Math.min(
+      (tomados[key] || []).length,
+      programadosDia
+    );
+
+    totalProgramados += programadosDia;
+    totalHechos += hechosDia;
   }
 
-  const pct = total === 0
-  ? null
-  : Math.round((hechos / total) * 100);
-
-
   const elPct = document.getElementById("adhPorcentaje");
-const elDetalle = document.getElementById("adhDetalle");
-const elMensaje = document.getElementById("adhMensaje");
+  const elDetalle = document.getElementById("adhDetalle");
+  const elMensaje = document.getElementById("adhMensaje");
 
-if (pct === null) {
-  elPct.textContent = "—";
-  elDetalle.textContent = "No hay dosis registradas";
-  elMensaje.textContent = "";
-} else {
+  if (totalProgramados === 0) {
+    elPct.textContent = "—";
+    elDetalle.textContent = "No hay dosis registradas";
+    elMensaje.textContent = "";
+    return;
+  }
+
+  const pct = Math.round((totalHechos / totalProgramados) * 100);
+
   elPct.textContent = `${pct}%`;
   elDetalle.textContent =
-    `${hechos} de ${total} dosis tomadas (últimos 7 días)`;
-  elMensaje.textContent =
-    mensajeAdherencia(pct);
+    `${totalHechos} de ${totalProgramados} dosis tomadas (últimos 7 días)`;
+  elMensaje.textContent = mensajeAdherencia(pct);
 }
 
-
-
-function mensajeAdherencia(p){
-  if (p >= 90) return "Excelente adherencia 👏";
-  if (p >= 70) return "Buen progreso, sigue así 👍";
-  if (p >= 50) return "Puedes mejorar 💪";
-  return "Revisa tus horarios ⏰";
-}
 </script>
 
 
