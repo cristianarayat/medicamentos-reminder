@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori132 de Medicamentos</h1>
+  <h1>💊 Recordatori133 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -980,12 +980,14 @@ document.addEventListener("DOMContentLoaded", () => {
    const med = {
   nombre,
   dosis,
+  periodicidad, // ✅ CLAVE (esto faltaba)
   inicio,
   fin,
   estado: estadoMed,
   fotoURL,
-  horas: JSON.parse(JSON.stringify(estado)) // ✅ GUARDA DÍAS Y HORAS
+  horas: JSON.parse(JSON.stringify(estado))
 };
+
 
 
 
