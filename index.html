@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori119 de Medicamentos</h1>
+  <h1>💊 Recordatori120 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1437,7 +1437,14 @@ function cardHoy(m, estado){
       <span class="${badge[estado]}">${label[estado]}</span>
     </div>
     <div class="meta">⏰ ${m.hora || '—'}</div>
-    <div class="meta">📅 ${fmt(m.inicio)} → ${fmt(m.fin)}</div>
+    <div class="meta">
+  📅 ${
+    m.periodicidad === "0"
+      ? "Permanente"
+      : `${fmt(m.inicio)} → ${fmt(m.fin)}`
+  }
+</div>
+
     ${estado !== "tomado"
       ? `<button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>`
       : ``}
