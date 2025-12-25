@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori126 de Medicamentos</h1>
+  <h1>💊 Recordatori127 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1649,17 +1649,31 @@ function generarResumenSemanal(){
     const key = d.toISOString().slice(0,10);
 
     let programados = 0;
-    meds.forEach(m => {
-      if (!m.inicio || !m.fin) return;
-      const ini = new Date(m.inicio);
-      const fin = new Date(m.fin);
-      ini.setHours(0,0,0,0);
-      fin.setHours(23,59,59,999);
-      if (d >= ini && d <= fin) programados++;
-    });
+
+meds.forEach(m => {
+
+  // 🔵 Permanente: siempre cuenta
+  if (m.periodicidad === "0") {
+    programados += m.dosis || 1;
+    return;
+  }
+
+  if (!m.inicio || !m.fin) return;
+
+  const ini = new Date(m.inicio);
+  const fin = new Date(m.fin);
+  ini.setHours(0,0,0,0);
+  fin.setHours(23,59,59,999);
+
+  if (d >= ini && d <= fin) {
+    programados += m.dosis || 1;
+  }
+});
 
     const hechos = (tomados[key] || []).length;
+    const hechosReales = Math.min(hechos, programados);
 
+       
     const fila = document.createElement("div");
     fila.style.display = "flex";
     fila.style.justifyContent = "space-between";
@@ -1670,11 +1684,11 @@ function generarResumenSemanal(){
     fila.innerHTML = `
   <span>${d.toLocaleDateString('es-CL',{weekday:'short',day:'numeric'})}</span>
   <strong>
-    ${
-      sinMedicamentos || programados === 0
-        ? "—"
-        : `${hechos}/${programados}`
-    }
+     ${
+    sinMedicamentos || programados === 0
+      ? "—"
+      : `${hechosReales}/${programados}`
+  }
   </strong>
 `;
 
