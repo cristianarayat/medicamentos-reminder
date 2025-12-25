@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori115 de Medicamentos</h1>
+  <h1>💊 Recordatori116 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -963,14 +963,15 @@ document.addEventListener("DOMContentLoaded", () => {
       if (f < hoy) estadoMed = "Caducado";
     }
 
-    const med = {
-      nombre,
-      dosis,
-      inicio,
-      fin,
-      estado: estadoMed,
-      fotoURL
-    };
+   const med = {
+  nombre,
+  dosis,
+  inicio,
+  fin,
+  estado: estadoMed,
+  fotoURL
+};
+
 
     medicamentos.push(med);
 
@@ -1353,21 +1354,28 @@ function cargarHoy(){
   const hoyClave = ahora.toISOString().slice(0,10);
   const tomadosHoy = tomados[hoyClave] || [];
 
-  const activosHoy = meds.filter(m => {
+const activosHoy = meds.filter(m => {
 
-  // 🔵 PERMANENTE → siempre activo
-  if (m.periodicidad === "0") return true;
+  // 1️⃣ PERMANENTE → siempre activo
+  if (m.periodicidad === "0") {
+    return true;
+  }
 
-  // 🔵 NO permanente → validar fechas
-  if (!m.inicio || !m.fin) return false;
+  // 2️⃣ Si NO es permanente, necesita fechas
+  if (!m.inicio || !m.fin) {
+    return false;
+  }
 
+  // 3️⃣ Validar rango de fechas
   const ini = new Date(m.inicio);
   const fin = new Date(m.fin);
+
   ini.setHours(0,0,0,0);
   fin.setHours(23,59,59,999);
 
   return ahora >= ini && ahora <= fin;
 });
+
 
 
   activosHoy.sort((a,b)=>{
