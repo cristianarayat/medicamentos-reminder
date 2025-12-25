@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori133 de Medicamentos</h1>
+  <h1>💊 Recordatori134 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1709,8 +1709,34 @@ meds.forEach(m => {
   }
 });
 
-    const hechos = (tomados[key] || []).length;
-    const hechosReales = Math.min(hechos, programados);
+    const tomadosDia = tomados[key] || [];
+
+let hechosReales = 0;
+
+meds.forEach(m => {
+
+  // 🔵 Permanente
+  if (m.periodicidad === "0") {
+    if (tomadosDia.includes(m.nombre)) {
+      hechosReales += m.dosis || 1;
+    }
+    return;
+  }
+
+  if (!m.inicio || !m.fin) return;
+
+  const ini = new Date(m.inicio);
+  const fin = new Date(m.fin);
+  ini.setHours(0,0,0,0);
+  fin.setHours(23,59,59,999);
+
+  if (d >= ini && d <= fin) {
+    if (tomadosDia.includes(m.nombre)) {
+      hechosReales += m.dosis || 1;
+    }
+  }
+});
+
 
        
     const fila = document.createElement("div");
