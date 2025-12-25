@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori128 de Medicamentos</h1>
+  <h1>💊 Recordatori129 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1470,9 +1470,12 @@ function cardHoy(m, estado){
   }
 </div>
 
-    ${estado !== "tomado"
-      ? `<button class="btn-ok" onclick="marcarTomado('${m.nombre}')">✓ Tomado</button>`
-      : ``}
+    <button class="btn-ok"
+  ${estado === "tomado" ? "disabled" : ""}
+  onclick="marcarTomado('${m.nombre}')">
+  ${estado === "tomado" ? "✔ Tomado" : "✓ Tomar"}
+</button>
+
   `;
   return div;
 }
@@ -1598,6 +1601,14 @@ function fmt(f){
 .badge-tomado{background:#e0e0e0;color:#555;padding:4px 8px;border-radius:10px;font-size:12px}
 .item-hist{padding:8px;border-bottom:1px solid #eee}
 .vacio{text-align:center;color:#777}
+
+.btn-ok:disabled{
+  background:#c8e6c9;
+  color:#2e7d32;
+  cursor:default;
+  opacity:1;
+}
+
 </style>
 
 <script>
