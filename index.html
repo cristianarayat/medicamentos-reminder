@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori120 de Medicamentos</h1>
+  <h1>💊 Recordatori121 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -944,9 +944,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if (!hayHoras) {
-      alert("Selecciona al menos un día y una hora");
-      return;
-    }
+  btnGuardar.textContent = "Selecciona día y hora";
+  btnGuardar.style.background = "#bdbdbd";
+  setTimeout(() => {
+    btnGuardar.textContent = "Guardar medicamento";
+    btnGuardar.style.background = "#2f80ed";
+  }, 2000);
+  return;
+}
+
 
     /* ===== FOTO ===== */
     let fotoURL = "";
