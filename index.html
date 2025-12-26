@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori152 de Medicamentos</h1>
+  <h1>💊 Recordatori153 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1588,9 +1588,14 @@ function cardHoy(m, estado, dosisIndex, hora){
 
     <button class="btn-ok"
   ${estado === "tomado" ? "disabled" : ""}
-  onclick="marcarTomado('${m.nombre}')">
-  ${estado === "tomado" ? "✔ Tomado" : "✓ Tomar"}
+  onclick="marcarTomadoPorHora('${m.nombre}|${hora}', this)">
+  ${
+    estado === "tomado"
+      ? "✔ Tomado"
+      : `✓ Tomar (${hora})`
+  }
 </button>
+
 
 
   `;
@@ -1631,9 +1636,13 @@ function marcarTomado(nombre){
 /* =========================
    MARCAR TOMADO POR DOSIS (HORA)
 ========================= */
-function marcarTomadoPorHora(clave){
+function marcarTomadoPorHora(clave, btn){
 
-  const hoy = new Date().toISOString().slice(0,10);
+  const ahora = new Date();
+  const horaReal =
+    ahora.toTimeString().slice(0,5);
+
+  const hoy = ahora.toISOString().slice(0,10);
 
   const tomados = JSON.parse(
     localStorage.getItem("medicamentos_tomados_v1")
@@ -1646,6 +1655,7 @@ function marcarTomadoPorHora(clave){
     return;
   }
 
+  // Guardar con hora real
   tomados[hoy].push(clave);
 
   localStorage.setItem(
@@ -1653,11 +1663,20 @@ function marcarTomadoPorHora(clave){
     JSON.stringify(tomados)
   );
 
+  // 🔒 UX: bloquear botón y mostrar hora
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = `✔ Tomado a las ${horaReal}`;
+    btn.style.background = "#c8e6c9";
+    btn.style.color = "#2e7d32";
+  }
+
   mostrarToast("✔ Dosis registrada");
   cargarHoy();
   mostrarHistorial(hoy);
   calcularAdherencia();
 }
+
 
 
      
