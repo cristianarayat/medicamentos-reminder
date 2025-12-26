@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori149 de Medicamentos</h1>
+  <h1>💊 Recordatori150 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1521,14 +1521,17 @@ function obtenerHoraHoy(m){
   if (!m.horas) return null;
 
   const hoy = new Date();
-  const dias = ["D","L","M","X","J","V","S"];
-  const diaHoy = dias[hoy.getDay()];
+
+  // 🔑 MISMO FORMATO QUE EL GUARDADO
+  const dias = ["L","M","X","J","V","S","D"];
+  const diaHoy = dias[(hoy.getDay() + 6) % 7];
 
   const horasHoy = m.horas[diaHoy];
   if (!Array.isArray(horasHoy) || horasHoy.length === 0) return null;
 
   return horasHoy[0]; // primera hora del día
 }
+
 
      
 function cardHoy(m, estado){
@@ -1563,9 +1566,10 @@ function cardHoy(m, estado){
 
     <button class="btn-ok"
   ${estado === "tomado" ? "disabled" : ""}
-  onclick="marcarTomadoPorHora('${m.nombre}|${hora}')">
+  onclick="marcarTomado('${m.nombre}')">
   ${estado === "tomado" ? "✔ Tomado" : "✓ Tomar"}
 </button>
+
 
   `;
   return div;
