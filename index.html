@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori139 de Medicamentos</h1>
+  <h1>💊 Recordatori140 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1773,54 +1773,12 @@ meds.forEach(m => {
 </script>
 
 
+
 <script>
 /* =========================
-   PASO 4D – ADHERENCIA
-   (COMPLEMENTO SEGURO)
+   PASO 4D – ADHERENCIA (FIX FINAL)
 ========================= */
 
-window.addEventListener("load", () => {
-  const seg = document.getElementById("seguimiento");
-  if (!seg) return;
-
-  const cont = document.createElement("div");
-  cont.className = "bloque";
-  cont.innerHTML = `
-    <h3>📈 Adherencia</h3>
-    <div id="adhPorcentaje" style="font-size:26px;font-weight:700;margin-top:6px">—</div>
-    <div id="adhDetalle" style="font-size:13px;color:#666;margin-top:4px"></div>
-    <div id="adhMensaje" style="margin-top:8px;font-size:14px"></div>
-  `;
-
-  seg.querySelector(".card-seg")?.insertBefore(
-    cont,
-    document.getElementById("volver-seguimiento")
-  );
-
-  calcularAdherencia();
-});
-
-/* =========================
-   LÓGICA ADHERENCIA
-========================= */
-function calcularAdherencia(){
-
-  const meds = JSON.parse(
-    localStorage.getItem("medicamentos_guardados_v1")
-  ) || [];
-
-  const tomados = JSON.parse(
-    localStorage.getItem("medicamentos_tomados_v1")
-  ) || {};
-
-  let totalProgramados = 0;
-  let totalHechos = 0;
-
-  const hoy = new Date();
-  hoy.setHours(0,0,0,0);
-
-  // últimos 7 días
-  
 function calcularAdherencia(){
 
   const meds = JSON.parse(
@@ -1835,33 +1793,40 @@ function calcularAdherencia(){
   const elDetalle = document.getElementById("adhDetalle");
   const elMensaje = document.getElementById("adhMensaje");
 
-  const hoyKey = new Date().toISOString().slice(0,10);
-  const tomasHoy = Array.isArray(tomados[hoyKey])
-    ? tomados[hoyKey].length
-    : 0;
+  if (!elPct) return;
 
-  // 🔴 REGLA ABSOLUTA
-  if (tomasHoy === 0) {
-    elPct.textContent = "0%";
-    elDetalle.textContent = "0 dosis tomadas hoy";
-    elMensaje.textContent = "Aún no has confirmado ninguna toma hoy";
-    return;
-  }
-
-  // ✅ SOLO SI HOY > 0 → recién calculamos histórico
   let totalProgramados = 0;
   let totalHechos = 0;
 
   const hoy = new Date();
   hoy.setHours(0,0,0,0);
 
+  // 🔹 últimos 7 días
   for (let i = 0; i < 7; i++) {
     const d = new Date(hoy);
     d.setDate(d.getDate() - i);
     const key = d.toISOString().slice(0,10);
 
     meds.forEach(m => {
+
+      // ✔ permanente
       if (m.periodicidad === "0") {
+        totalProgramados += m.dosis || 1;
+        if ((tomados[key] || []).includes(m.nombre)) {
+          totalHechos += m.dosis || 1;
+        }
+        return;
+      }
+
+      // ✔ con fechas
+      if (!m.inicio || !m.fin) return;
+
+      const ini = new Date(m.inicio);
+      const fin = new Date(m.fin);
+      ini.setHours(0,0,0,0);
+      fin.setHours(23,59,59,999);
+
+      if (d >= ini && d <= fin) {
         totalProgramados += m.dosis || 1;
         if ((tomados[key] || []).includes(m.nombre)) {
           totalHechos += m.dosis || 1;
@@ -1870,20 +1835,7 @@ function calcularAdherencia(){
     });
   }
 
-  const pct = Math.round((totalHechos / totalProgramados) * 100);
-  elPct.textContent = `${pct}%`;
-  elDetalle.textContent =
-    `${totalHechos} de ${totalProgramados} dosis tomadas (últimos 7 días)`;
-  elMensaje.textContent = "Buen trabajo, sigue así";
-}
-
-
-     
-
-  const elPct = document.getElementById("adhPorcentaje");
-  const elDetalle = document.getElementById("adhDetalle");
-  const elMensaje = document.getElementById("adhMensaje");
-
+  // 🚫 Nada programado
   if (totalProgramados === 0) {
     elPct.textContent = "—";
     elDetalle.textContent = "No hay dosis registradas";
@@ -1891,38 +1843,38 @@ function calcularAdherencia(){
     return;
   }
 
-// ✅ REGLA DEFINITIVA:
-// si HOY no se confirmó ninguna toma → adherencia = 0%
-const hoyKey = new Date().toISOString().slice(0,10);
-const tomasHoy = Array.isArray(tomados[hoyKey])
-  ? tomados[hoyKey].length
-  : 0;
+  // 🔴 regla: si HOY no tomó nada → 0%
+  const hoyKey = new Date().toISOString().slice(0,10);
+  const tomasHoy = Array.isArray(tomados[hoyKey])
+    ? tomados[hoyKey].length
+    : 0;
 
-if (tomasHoy === 0) {
-  elPct.textContent = "0%";
+  if (tomasHoy === 0) {
+    elPct.textContent = "0%";
+    elDetalle.textContent =
+      `0 de ${totalProgramados} dosis tomadas (últimos 7 días)`;
+    elMensaje.textContent =
+      "Aún no has confirmado ninguna toma hoy";
+    return;
+  }
+
+  // ✅ cálculo final REAL
+  const pct = Math.round((totalHechos / totalProgramados) * 100);
+
+  elPct.textContent = `${pct}%`;
   elDetalle.textContent =
-    `0 de ${totalProgramados} dosis tomadas (últimos 7 días)`;
-  elMensaje.textContent = "Aún no has confirmado ninguna toma hoy";
-  return;
+    `${totalHechos} de ${totalProgramados} dosis tomadas (últimos 7 días)`;
+
+  elMensaje.textContent =
+    pct >= 90 ? "Excelente adherencia 👏" :
+    pct >= 70 ? "Buen progreso 👍" :
+    pct >= 50 ? "Puedes mejorar 💪" :
+    "Revisa tus horarios ⏰";
 }
-
-
-
-
-
-
-     
-// ✅ comportamiento normal
-const pct = Math.round((totalHechos / totalProgramados) * 100);
-
-elPct.textContent = `${pct}%`;
-elDetalle.textContent =
-  `${totalHechos} de ${totalProgramados} dosis tomadas (últimos 7 días)`;
-elMensaje.textContent = mensajeAdherencia(pct);
-
-}
-
 </script>
+
+
+
 
 
 
