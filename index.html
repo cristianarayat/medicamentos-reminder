@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori143 de Medicamentos</h1>
+  <h1>💊 Recordatori144 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1436,8 +1436,11 @@ const activosHoy = meds.filter(m => {
   activosHoy.forEach(m => {
 
   const hoy = new Date();
-  const dias = ["D","L","M","X","J","V","S"];
-  const diaHoy = dias[hoy.getDay()];
+
+// 🔑 MAPEO CORRECTO (coincide con el guardado)
+const diasMap = ["D","L","M","X","J","V","S"];
+const diaHoy = diasMap[(hoy.getDay() + 6) % 7];
+
   const horasHoy = (m.horas && m.horas[diaHoy]) || [];
 
   // 🔁 una tarjeta POR CADA HORA
