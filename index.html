@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori140 de Medicamentos</h1>
+  <h1>💊 Recordatori141 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1772,6 +1772,36 @@ meds.forEach(m => {
 }
 </script>
 
+<script>
+/* =========================
+   CONTENEDOR ADHERENCIA (OBLIGATORIO)
+========================= */
+window.addEventListener("load", () => {
+  const seg = document.getElementById("seguimiento");
+  if (!seg) return;
+
+  // evitar duplicar
+  if (document.getElementById("adhPorcentaje")) return;
+
+  const bloque = document.createElement("div");
+  bloque.className = "bloque";
+  bloque.innerHTML = `
+    <h3>📈 Adherencia</h3>
+    <div id="adhPorcentaje"
+         style="font-size:26px;font-weight:700;margin-top:6px">—</div>
+    <div id="adhDetalle"
+         style="font-size:13px;color:#666;margin-top:4px"></div>
+    <div id="adhMensaje"
+         style="margin-top:8px;font-size:14px"></div>
+  `;
+
+  seg.querySelector(".card-seg")
+     .insertBefore(bloque, document.getElementById("volver-seguimiento"));
+
+  // 🔑 calcular al abrir
+  calcularAdherencia();
+});
+</script>
 
 
 <script>
