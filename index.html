@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori144 de Medicamentos</h1>
+  <h1>💊 Recordatori145 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1398,26 +1398,31 @@ function cargarHoy(){
   const hoyClave = ahora.toISOString().slice(0,10);
   const tomadosHoy = tomados[hoyClave] || [];
 
+const hoyFecha = new Date();
+
+// 🔑 día correcto (L M X J V S D)
+const diasMap = ["D","L","M","X","J","V","S"];
+const diaHoy = diasMap[(hoyFecha.getDay() + 6) % 7];
+
 const activosHoy = meds.filter(m => {
 
-  // 1️⃣ PERMANENTE → siempre activo
-  if (m.periodicidad === "0") {
-    return true;
-  }
-
-  // 2️⃣ Si NO es permanente, necesita fechas
-  if (!m.inicio || !m.fin) {
+  // ⛔ sin horas hoy → no mostrar
+  if (!m.horas || !Array.isArray(m.horas[diaHoy]) || m.horas[diaHoy].length === 0) {
     return false;
   }
 
-  // 3️⃣ Validar rango de fechas
+  // 🔵 permanente
+  if (m.periodicidad === "0") return true;
+
+  // 🔴 necesita fechas
+  if (!m.inicio || !m.fin) return false;
+
   const ini = new Date(m.inicio);
   const fin = new Date(m.fin);
-
   ini.setHours(0,0,0,0);
   fin.setHours(23,59,59,999);
 
-  return ahora >= ini && ahora <= fin;
+  return hoyFecha >= ini && hoyFecha <= fin;
 });
 
 
@@ -1428,6 +1433,16 @@ const activosHoy = meds.filter(m => {
     return a.hora.localeCompare(b.hora);
   });
 
+
+
+// 🟡 PASO B: si no hay dosis hoy, mostrar mensaje
+if (activosHoy.length === 0) {
+  cont.innerHTML = `<p class="vacio">No hay medicamentos programados para hoy</p>`;
+  return;
+}
+
+
+     
   if (activosHoy.length === 0) {
     cont.innerHTML = `<p class="vacio">No hay medicamentos hoy</p>`;
     return;
