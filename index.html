@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori146 de Medicamentos</h1>
+  <h1>💊 Recordatori147 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -999,7 +999,7 @@ if (!hayHoras) {
   fin,
   estado: estadoMed,
   fotoURL,
-  horas: JSON.parse(JSON.stringify(estado))
+  horas: JSON.parse(JSON.stringify(estado)),
 };
 
 
@@ -1016,6 +1016,8 @@ localStorage.setItem(
 
 render();
 limpiar();
+// 🔄 REINICIAR HORAS PARA PRÓXIMO MEDICAMENTO
+Object.keys(estado).forEach(d => estado[d] = []);
 
   });
 
