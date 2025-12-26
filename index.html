@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori151 de Medicamentos</h1>
+  <h1>💊 Recordatori152 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1483,8 +1483,9 @@ const diaHoy = diasMap[(hoy.getDay() + 6) % 7];
     );
 
     cont.appendChild(
-  cardHoy(m, estado)
+  cardHoy(m, estado, idx, hora)
 );
+
 
   });
 
@@ -1551,7 +1552,7 @@ function obtenerHoraHoy(m){
 
 
      
-function cardHoy(m, estado){
+function cardHoy(m, estado, dosisIndex, hora){
   const div = document.createElement("div");
   div.className = "card-med";
 
@@ -1569,10 +1570,14 @@ function cardHoy(m, estado){
   div.innerHTML = `
     <div class="fila">
       <strong>${m.nombre}</strong>
+<div style="font-size:13px;color:#555">
+  Dosis ${dosisIndex + 1} – ⏰ ${hora}
+</div>
+
       ${renderBadge(estado)}
 
     </div>
-    <div class="meta">⏰ ${obtenerHoraHoy(m) || '—'}</div>
+   
     <div class="meta">
   📅 ${
     m.periodicidad === "0"
