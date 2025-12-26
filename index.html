@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori141 de Medicamentos</h1>
+  <h1>💊 Recordatori142 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -945,11 +945,25 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // ✅ VALIDACIÓN CORRECTA DÍAS Y HORAS
-    let hayHoras = false;
-    Object.values(estado).forEach(arr => {
-      if (arr.length > 0 && arr.some(h => h)) hayHoras = true;
-    });
+    // ✅ VALIDACIÓN REAL DE HORAS (DOM)
+let hayHoras = false;
+
+document
+  .querySelectorAll('#med-dias input[type="time"]')
+  .forEach(input => {
+    if (input.value) hayHoras = true;
+  });
+
+if (!hayHoras) {
+  btnGuardar.textContent = "Selecciona día y hora";
+  btnGuardar.style.background = "#bdbdbd";
+  setTimeout(() => {
+    btnGuardar.textContent = "Guardar medicamento";
+    btnGuardar.style.background = "#2f80ed";
+  }, 2000);
+  return;
+}
+
 
     if (!hayHoras) {
   btnGuardar.textContent = "Selecciona día y hora";
