@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori142 de Medicamentos</h1>
+  <h1>💊 Recordatori143 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1434,9 +1434,30 @@ const activosHoy = meds.filter(m => {
   }
 
   activosHoy.forEach(m => {
-    const estado = calcularEstado(m, tomadosHoy, ahora);
-    cont.appendChild(cardHoy(m, estado));
+
+  const hoy = new Date();
+  const dias = ["D","L","M","X","J","V","S"];
+  const diaHoy = dias[hoy.getDay()];
+  const horasHoy = (m.horas && m.horas[diaHoy]) || [];
+
+  // 🔁 una tarjeta POR CADA HORA
+  horasHoy.forEach((hora, idx) => {
+    if (!hora) return;
+
+    const estado = calcularEstadoPorHora(
+      m.nombre,
+      hora,
+      tomadosHoy,
+      ahora
+    );
+
+    cont.appendChild(
+      cardHoyPorHora(m, hora, idx, estado)
+    );
   });
+
+});
+
 }
 
 /* =========================
@@ -1454,6 +1475,30 @@ function calcularEstado(m, tomadosHoy, ahora){
   return "pendiente";
 }
 
+
+/* =========================
+   ESTADO POR DOSIS (HORA)
+========================= */
+function calcularEstadoPorHora(nombre, hora, tomadosHoy, ahora){
+
+  const clave = `${nombre}|${hora}`;
+
+  // ya tomada esa dosis
+  if (tomadosHoy.includes(clave)) return "tomado";
+
+  const [h, min] = hora.split(":");
+  const horaMed = new Date(ahora);
+  horaMed.setHours(h, min, 0, 0);
+
+  if (ahora > horaMed) return "atrasado";
+  return "pendiente";
+}
+
+
+
+
+
+     
 /* =========================
    CARD
 ========================= */
@@ -1541,6 +1586,40 @@ function marcarTomado(nombre){
   calcularAdherencia(); // 🔑 refresca %
 }
 
+
+/* =========================
+   MARCAR TOMADO POR DOSIS (HORA)
+========================= */
+function marcarTomadoPorHora(clave){
+
+  const hoy = new Date().toISOString().slice(0,10);
+
+  const tomados = JSON.parse(
+    localStorage.getItem("medicamentos_tomados_v1")
+  ) || {};
+
+  if (!tomados[hoy]) tomados[hoy] = [];
+
+  if (tomados[hoy].includes(clave)) {
+    mostrarToast("⚠ Esta dosis ya fue registrada");
+    return;
+  }
+
+  tomados[hoy].push(clave);
+
+  localStorage.setItem(
+    "medicamentos_tomados_v1",
+    JSON.stringify(tomados)
+  );
+
+  mostrarToast("✔ Dosis registrada");
+  cargarHoy();
+  mostrarHistorial(hoy);
+  calcularAdherencia();
+}
+
+
+     
 
 /* =========================
    HISTORIAL
