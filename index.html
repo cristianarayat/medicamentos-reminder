@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori150 de Medicamentos</h1>
+  <h1>💊 Recordatori151 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1016,8 +1016,20 @@ localStorage.setItem(
 
 render();
 limpiar();
-// 🔄 REINICIAR HORAS PARA PRÓXIMO MEDICAMENTO
+// 🔄 REINICIAR HORAS (estado + UI)
 Object.keys(estado).forEach(d => estado[d] = []);
+
+// limpiar botones y horas visuales
+document.querySelectorAll("#med-dias button").forEach(btn => {
+  btn.classList.remove("activo");
+  btn.style.background = "#e0e0e0";
+  btn.style.color = "#000";
+});
+
+document
+  .querySelectorAll('#med-dias input[type="time"]')
+  .forEach(input => input.remove());
+
 
   });
 
@@ -1081,9 +1093,14 @@ Object.keys(estado).forEach(d => estado[d] = []);
   document.getElementById("m-dias").value="";
   document.getElementById("m-inicio").value="";
   document.getElementById("m-fin").value="";
-  if(document.getElementById("m-foto")) {
-    document.getElementById("m-foto").value="";
-  }
+  const foto = document.getElementById("m-foto");
+const preview = document.getElementById("m-preview");
+
+if (foto) foto.value = "";
+if (preview) {
+  preview.innerHTML = `<span style="font-size:12px;color:#777">Sin imagen</span>`;
+}
+
 }
 
 // 🔄 PASO 2: renderizar medicamentos cargados desde localStorage
