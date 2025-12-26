@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori148 de Medicamentos</h1>
+  <h1>💊 Recordatori149 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1402,9 +1402,11 @@ function cargarHoy(){
 
 const hoyFecha = new Date();
 
-// 🔑 día correcto (L M X J V S D)
-const diasMap = ["D","L","M","X","J","V","S"];
-const diaHoy = diasMap[(hoyFecha.getDay() + 6) % 7];
+// 🔑 día correcto (MISMO FORMATO QUE GUARDADO)
+const diasMap = ["L","M","X","J","V","S","D"];
+const diaHoy = diasMap[
+  (hoyFecha.getDay() + 6) % 7
+];
 
 const activosHoy = meds.filter(m => {
 
@@ -1446,8 +1448,9 @@ if (activosHoy.length === 0) {
   const hoy = new Date();
 
 // 🔑 MAPEO CORRECTO (coincide con el guardado)
-const diasMap = ["D","L","M","X","J","V","S"];
+const diasMap = ["L","M","X","J","V","S","D"];
 const diaHoy = diasMap[(hoy.getDay() + 6) % 7];
+
 
   const horasHoy = (m.horas && m.horas[diaHoy]) || [];
 
