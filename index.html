@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori145 de Medicamentos</h1>
+  <h1>💊 Recordatori146 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1427,11 +1427,6 @@ const activosHoy = meds.filter(m => {
 
 
 
-  activosHoy.sort((a,b)=>{
-    if(!a.hora) return 1;
-    if(!b.hora) return -1;
-    return a.hora.localeCompare(b.hora);
-  });
 
 
 
@@ -1443,11 +1438,7 @@ if (activosHoy.length === 0) {
 
 
      
-  if (activosHoy.length === 0) {
-    cont.innerHTML = `<p class="vacio">No hay medicamentos hoy</p>`;
-    return;
-  }
-
+  
   activosHoy.forEach(m => {
 
   const hoy = new Date();
@@ -1566,7 +1557,7 @@ function cardHoy(m, estado){
 
     <button class="btn-ok"
   ${estado === "tomado" ? "disabled" : ""}
-  onclick="marcarTomado('${m.nombre}')">
+  onclick="marcarTomadoPorHora('${m.nombre}|${hora}')">
   ${estado === "tomado" ? "✔ Tomado" : "✓ Tomar"}
 </button>
 
