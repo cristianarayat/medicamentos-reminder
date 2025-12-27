@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori154 de Medicamentos</h1>
+  <h1>💊 Recordatori155 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1853,12 +1853,22 @@ function generarResumenSemanal(){
 
 meds.forEach(m => {
 
-  // 🔵 Permanente: siempre cuenta
+  if (!m.horas) return;
+
+  // 🔑 día correcto
+  const diasMap = ["L","M","X","J","V","S","D"];
+  const dia = diasMap[(d.getDay() + 6) % 7];
+
+  const horasDia = m.horas[dia];
+  if (!Array.isArray(horasDia) || horasDia.length === 0) return;
+
+  // 🔵 permanente
   if (m.periodicidad === "0") {
-    programados += m.dosis || 1;
+    programados += horasDia.length;
     return;
   }
 
+  // 🔴 con fechas
   if (!m.inicio || !m.fin) return;
 
   const ini = new Date(m.inicio);
@@ -1867,9 +1877,10 @@ meds.forEach(m => {
   fin.setHours(23,59,59,999);
 
   if (d >= ini && d <= fin) {
-    programados += m.dosis || 1;
+    programados += horasDia.length;
   }
 });
+
 
     const tomadosDia = tomados[key] || [];
 
@@ -1877,26 +1888,22 @@ let hechosReales = 0;
 
 meds.forEach(m => {
 
-  // 🔵 Permanente
-  if (m.periodicidad === "0") {
-    if (tomadosDia.includes(m.nombre)) {
-      hechosReales += m.dosis || 1;
+  if (!m.horas) return;
+
+  const diasMap = ["L","M","X","J","V","S","D"];
+  const dia = diasMap[(d.getDay() + 6) % 7];
+
+  const horasDia = m.horas[dia];
+  if (!Array.isArray(horasDia)) return;
+
+  horasDia.forEach(hora => {
+    if (!hora) return;
+
+    const clave = `${m.nombre}|${hora}`;
+    if (tomadosDia.includes(clave)) {
+      hechosReales++;
     }
-    return;
-  }
-
-  if (!m.inicio || !m.fin) return;
-
-  const ini = new Date(m.inicio);
-  const fin = new Date(m.fin);
-  ini.setHours(0,0,0,0);
-  fin.setHours(23,59,59,999);
-
-  if (d >= ini && d <= fin) {
-    if (tomadosDia.includes(m.nombre)) {
-      hechosReales += m.dosis || 1;
-    }
-  }
+  });
 });
 
 
