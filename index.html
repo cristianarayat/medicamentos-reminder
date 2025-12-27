@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori160 de Medicamentos</h1>
+  <h1>💊 Recordatori161 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -618,35 +618,43 @@ document.addEventListener("pointerdown", e=>{
 /* =========================
    FECHA FINAL + PERMANENTE
 ========================= */
-const periodicidad = document.getElementById("m-periodicidad");
-const dias = document.getElementById("m-dias");
-const inicio = document.getElementById("m-inicio");
-const fin = document.getElementById("m-fin");
 
-if(periodicidad.value === "0"){
-  dias.disabled = true;
-  inicio.disabled = false; // 🔑 permitir inicio
-  fin.value = "";
-  return;
-}
+function recalcularFin(){
 
+  const periodicidad = document.getElementById("m-periodicidad");
+  const dias = document.getElementById("m-dias");
+  const inicio = document.getElementById("m-inicio");
+  const fin = document.getElementById("m-fin");
 
+  if (!periodicidad || !dias || !inicio || !fin) return;
+
+  // 🔵 Permanente
+  if (periodicidad.value === "0") {
+    dias.disabled = true;
+    inicio.disabled = false; // ✅ permitir fecha inicio
+    fin.value = "";
+    return;
+  }
+
+  // 🔴 No permanente
   dias.disabled = false;
   inicio.disabled = false;
 
-  if(!dias.value || !inicio.value){
-    fin.value="";
+  if (!dias.value || !inicio.value) {
+    fin.value = "";
     return;
   }
 
   const f = new Date(inicio.value);
-  f.setDate(f.getDate() + parseInt(dias.value,10));
-  fin.value = f.toISOString().slice(0,10);
+  f.setDate(f.getDate() + parseInt(dias.value, 10));
+  fin.value = f.toISOString().slice(0, 10);
 }
 
-periodicidad.addEventListener("change", recalcularFin);
-dias.addEventListener("input", recalcularFin);
-inicio.addEventListener("change", recalcularFin);
+// listeners
+document.getElementById("m-periodicidad").addEventListener("change", recalcularFin);
+document.getElementById("m-dias").addEventListener("input", recalcularFin);
+document.getElementById("m-inicio").addEventListener("change", recalcularFin);
+
 
 /* =========================
    DÍAS Y HORAS
