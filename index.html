@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori163 de Medicamentos</h1>
+  <h1>💊 Recordatori164 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1064,8 +1064,13 @@ document
         div.style.marginBottom = "10px";
 
         div.innerHTML = `
-          <strong>${m.id}</strong>
-          <div style="font-size:14px;font-weight:600">${m.nombre}</div>
+          <div style="font-weight:600;font-size:15px">
+  ${m.nombre}
+</div>
+<div style="font-size:11px;color:#999">
+  ID: ${m.id}
+</div>
+
           ${m.ubicacion ? `<div style="font-size:13px;color:#555">📍 ${m.ubicacion}</div>` : ""}
           <br>
           Dosis: ${m.dosis} por día<br>
@@ -1591,8 +1596,13 @@ function cardHoy(m, estado, dosisIndex, hora){
 
   div.innerHTML = `
     <div class="fila">
-      <strong>${m.id}</strong>
-      <div style="font-size:14px;font-weight:600">${m.nombre}</div>
+      <div style="font-weight:600;font-size:15px">
+  ${m.nombre}
+</div>
+<div style="font-size:11px;color:#999">
+  ID: ${m.id}
+</div>
+
       ${m.ubicacion ? `<div style="font-size:13px;color:#666">📍 ${m.ubicacion}</div>` : ""}
 
 <div style="font-size:13px;color:#555">
