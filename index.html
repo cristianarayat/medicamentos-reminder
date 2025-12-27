@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori166 de Medicamentos</h1>
+  <h1>💊 Recordatori167 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -997,12 +997,14 @@ if (!hayHoras) {
 if (fotoInput?.files?.[0]) {
   const reader = new FileReader();
   reader.onload = () => {
-    fotoURL = reader.result;
-    guardarMedicamentoFinal();
+    guardarMedicamento(reader.result); // ✅ AQUÍ
+    render();
+    limpiar();
   };
   reader.readAsDataURL(fotoInput.files[0]);
-  return; // ⛔ detener flujo hasta cargar imagen
+  return;
 }
+
 
 
     /* ===== ESTADO ACTIVO / CADUCADO ===== */
