@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori161 de Medicamentos</h1>
+  <h1>💊 Recordatori162 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1007,16 +1007,18 @@ if (!hayHoras) {
     }
 
    const med = {
+  id: Date.now().toString(), // 🔑 ID ÚNICO
   nombre,
   ubicacion,
   dosis,
-  periodicidad, // ✅ CLAVE (esto faltaba)
+  periodicidad,
   inicio,
   fin,
   estado: estadoMed,
   fotoURL,
   horas: JSON.parse(JSON.stringify(estado)),
 };
+
 
 
 
