@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori170 de Medicamentos</h1>
+  <h1>💊 Recordatori171 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1010,16 +1010,7 @@ if (!hayHoras) {
 }
 
 
-    if (!hayHoras) {
-  btnGuardar.textContent = "Selecciona día y hora";
-  btnGuardar.style.background = "#bdbdbd";
-  setTimeout(() => {
-    btnGuardar.textContent = "Guardar medicamento";
-    btnGuardar.style.background = "#2f80ed";
-  }, 2000);
-  return;
-}
-
+   
 
    /* ===== ESTADO ACTIVO / CADUCADO ===== */
 let estadoMed = "Activo";
@@ -1050,9 +1041,12 @@ const finalizarGuardado = (fotoBase64 = "") => {
   document
     .querySelectorAll('#med-dias input[type="time"]')
     .forEach(input => input.remove());
-};
+
+
 
 /* ===== FOTO ===== */
+
+const fotoInput = document.getElementById("m-foto");
 if (fotoInput?.files?.[0]) {
   const reader = new FileReader();
   reader.onload = () => finalizarGuardado(reader.result);
@@ -1060,7 +1054,8 @@ if (fotoInput?.files?.[0]) {
 } else {
   finalizarGuardado("");
 }
-
+     
+});
 
 
 
