@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori165 de Medicamentos</h1>
+  <h1>💊 Recordatori166 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -993,9 +993,17 @@ if (!hayHoras) {
 
     /* ===== FOTO ===== */
     let fotoURL = "";
-    if (fotoInput?.files?.[0]) {
-      fotoURL = URL.createObjectURL(fotoInput.files[0]);
-    }
+
+if (fotoInput?.files?.[0]) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    fotoURL = reader.result;
+    guardarMedicamentoFinal();
+  };
+  reader.readAsDataURL(fotoInput.files[0]);
+  return; // ⛔ detener flujo hasta cargar imagen
+}
+
 
     /* ===== ESTADO ACTIVO / CADUCADO ===== */
     let estadoMed = "Activo";
@@ -1006,31 +1014,32 @@ if (!hayHoras) {
       if (f < hoy) estadoMed = "Caducado";
     }
 
-   const med = {
-  id: Date.now().toString(), // 🔑 ID ÚNICO
-  nombre,
-  ubicacion,
-  dosis,
-  periodicidad,
-  inicio,
-  fin,
-  estado: estadoMed,
-  fotoURL,
-  horas: JSON.parse(JSON.stringify(estado)),
-};
 
+       
+       
+   function guardarMedicamento(fotoBase64 = "") {
 
+  const med = {
+    id: Date.now().toString(), // 🔑 ID ÚNICO
+    nombre,
+    ubicacion,
+    dosis,
+    periodicidad,
+    inicio,
+    fin,
+    estado: estadoMed,
+    fotoURL: fotoBase64,   // ✅ persistente
+    horas: JSON.parse(JSON.stringify(estado)),
+  };
 
+  medicamentos.push(med);
 
+  localStorage.setItem(
+    "medicamentos_guardados_v1",
+    JSON.stringify(medicamentos)
+  );
+}
 
-
-    medicamentos.push(med);
-
-// 🔑 GUARDAR EN STORAGE PARA SEGUIMIENTO
-localStorage.setItem(
-  "medicamentos_guardados_v1",
-  JSON.stringify(medicamentos)
-);
 
 render();
 limpiar();
