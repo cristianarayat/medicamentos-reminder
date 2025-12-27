@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori159 de Medicamentos</h1>
+  <h1>💊 Recordatori160 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -623,13 +623,13 @@ const dias = document.getElementById("m-dias");
 const inicio = document.getElementById("m-inicio");
 const fin = document.getElementById("m-fin");
 
-function recalcularFin(){
-  if(periodicidad.value==="0"){
-    dias.disabled = true;
-    inicio.disabled = true;
-    fin.value="";
-    return;
-  }
+if(periodicidad.value === "0"){
+  dias.disabled = true;
+  inicio.disabled = false; // 🔑 permitir inicio
+  fin.value = "";
+  return;
+}
+
 
   dias.disabled = false;
   inicio.disabled = false;
