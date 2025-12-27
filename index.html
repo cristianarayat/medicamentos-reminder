@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori157 de Medicamentos</h1>
+  <h1>💊 Recordatori158 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -545,6 +545,12 @@ window.addEventListener("focus", actualizarBienvenida);
         <input id="med-nombre" placeholder="Ej: Paracetamol">
       </div>
 
+<div class="med-group">
+  <label>Ubicación del medicamento</label>
+  <input id="med-ubicacion" placeholder="Ej: Velador, Cocina, Botiquín">
+</div>
+
+         
       <div class="med-group">
         <label>Dosis por día</label>
         <input id="m-dosis" type="number" min="1" value="1">
@@ -927,6 +933,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* ===== DATOS ===== */
     const nombre = document.getElementById("med-nombre").value.trim();
+    const ubicacion = document.getElementById("med-ubicacion")?.value.trim() || "";
     const dosis = Number(document.getElementById("m-dosis").value);
     const periodicidad = document.getElementById("m-periodicidad").value;
     const dias = document.getElementById("m-dias").value;
@@ -993,6 +1000,7 @@ if (!hayHoras) {
 
    const med = {
   nombre,
+  ubicacion,
   dosis,
   periodicidad, // ✅ CLAVE (esto faltaba)
   inicio,
@@ -1046,7 +1054,9 @@ document
         div.style.marginBottom = "10px";
 
         div.innerHTML = `
-          <strong>${m.nombre}</strong><br>
+          <strong>${m.nombre}</strong>
+          ${m.ubicacion ? `<div style="font-size:13px;color:#555">📍 ${m.ubicacion}</div>` : ""}
+          <br>
           Dosis: ${m.dosis} por día<br>
           ${m.inicio ? `Inicio: ${m.inicio}<br>` : ""}
           ${m.fin ? `Fin: ${m.fin}<br>` : ""}
@@ -1570,6 +1580,8 @@ function cardHoy(m, estado, dosisIndex, hora){
   div.innerHTML = `
     <div class="fila">
       <strong>${m.nombre}</strong>
+      ${m.ubicacion ? `<div style="font-size:13px;color:#666">📍 ${m.ubicacion}</div>` : ""}
+
 <div style="font-size:13px;color:#555">
   Dosis ${dosisIndex + 1} – ⏰ ${hora}
 </div>
