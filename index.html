@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori168 de Medicamentos</h1>
+  <h1>💊 Recordatori169 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1022,10 +1022,10 @@ if (fotoInput?.files?.[0]) {
 
        
        
-   function guardarMedicamento(fotoBase64 = "") {
+function guardarMedicamento(fotoBase64 = "") {
 
   const med = {
-    id: Date.now().toString(), // 🔑 ID ÚNICO
+    id: Date.now().toString(),
     nombre,
     ubicacion,
     dosis,
@@ -1033,37 +1033,35 @@ if (fotoInput?.files?.[0]) {
     inicio,
     fin,
     estado: estadoMed,
-    fotoURL: fotoBase64,   // ✅ persistente
+    fotoURL: fotoBase64,
     horas: JSON.parse(JSON.stringify(estado)),
   };
 
+  // ✅ guardar
   medicamentos.push(med);
-
   localStorage.setItem(
     "medicamentos_guardados_v1",
     JSON.stringify(medicamentos)
   );
+
+  // ✅ render + limpiar SOLO después de guardar
+  render();
+  limpiar();
+
+  // 🔄 reiniciar estado horas
+  Object.keys(estado).forEach(d => estado[d] = []);
+
+  document.querySelectorAll("#med-dias button").forEach(btn => {
+    btn.classList.remove("activo");
+    btn.style.background = "#e0e0e0";
+    btn.style.color = "#000";
+  });
+
+  document
+    .querySelectorAll('#med-dias input[type="time"]')
+    .forEach(input => input.remove());
 }
 
-
-render();
-limpiar();
-// 🔄 REINICIAR HORAS (estado + UI)
-Object.keys(estado).forEach(d => estado[d] = []);
-
-// limpiar botones y horas visuales
-document.querySelectorAll("#med-dias button").forEach(btn => {
-  btn.classList.remove("activo");
-  btn.style.background = "#e0e0e0";
-  btn.style.color = "#000";
-});
-
-document
-  .querySelectorAll('#med-dias input[type="time"]')
-  .forEach(input => input.remove());
-
-
-  });
 
   function render(){
     lista.innerHTML = "";
