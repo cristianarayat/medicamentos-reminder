@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori156 de Medicamentos</h1>
+  <h1>💊 Recordatori157 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -2167,7 +2167,11 @@ function mostrarHistorial(fecha){
 
     // Filtrar solo medicamentos existentes
     const nombresValidos = meds.map(m => m.nombre);
-    const listaLimpia = lista.filter(n => nombresValidos.includes(n));
+    const listaLimpia = lista.filter(item => {
+  if (!item) return false;
+  const nombre = item.split("|")[0];
+  return nombresValidos.includes(nombre);
+});
 
     if (listaLimpia.length === 0) {
       cont.innerHTML =
@@ -2175,12 +2179,16 @@ function mostrarHistorial(fecha){
       return;
     }
 
-    listaLimpia.forEach(nombre => {
-      const d = document.createElement("div");
-      d.className = "item-hist";
-      d.innerHTML = `✓ ${nombre}`;
-      cont.appendChild(d);
-    });
+    listaLimpia.forEach(item => {
+  const d = document.createElement("div");
+  d.className = "item-hist";
+
+  const [nombre, hora] = item.split("|");
+  d.innerHTML = `✓ ${nombre}${hora ? ` – ${hora}` : ""}`;
+
+  cont.appendChild(d);
+});
+
   };
 
 })();
