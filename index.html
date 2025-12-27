@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori155 de Medicamentos</h1>
+  <h1>💊 Recordatori156 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -2001,18 +2001,24 @@ function calcularAdherencia(){
 meds.forEach(m => {
 
   // 🔵 permanente
-  if (m.periodicidad === "0") {
-    const horas = Object.values(m.horas || {}).flat();
-    totalProgramados += horas.length;
+if (m.periodicidad === "0") {
 
-    const tomadosDia = tomados[key] || [];
-    horas.forEach(h => {
-      if (tomadosDia.includes(`${m.nombre}|${h}`)) {
-        totalHechos++;
-      }
-    });
-    return;
-  }
+  const diasMap = ["L","M","X","J","V","S","D"];
+  const dia = diasMap[(d.getDay() + 6) % 7];
+
+  const horasDia = m.horas?.[dia] || [];
+  totalProgramados += horasDia.length;
+
+  const tomadosDia = tomados[key] || [];
+  horasDia.forEach(h => {
+    if (tomadosDia.includes(`${m.nombre}|${h}`)) {
+      totalHechos++;
+    }
+  });
+
+  return;
+}
+
 
   // 🔴 con fechas
   if (!m.inicio || !m.fin) return;
@@ -2023,15 +2029,19 @@ meds.forEach(m => {
   fin.setHours(23,59,59,999);
 
   if (d >= ini && d <= fin) {
-    const horas = Object.values(m.horas || {}).flat();
-    totalProgramados += horas.length;
+    const diasMap = ["L","M","X","J","V","S","D"];
+const dia = diasMap[(d.getDay() + 6) % 7];
 
-    const tomadosDia = tomados[key] || [];
-    horas.forEach(h => {
-      if (tomadosDia.includes(`${m.nombre}|${h}`)) {
-        totalHechos++;
-      }
-    });
+const horasDia = m.horas?.[dia] || [];
+totalProgramados += horasDia.length;
+
+const tomadosDia = tomados[key] || [];
+horasDia.forEach(h => {
+  if (tomadosDia.includes(`${m.nombre}|${h}`)) {
+    totalHechos++;
+  }
+});
+
   }
 
 });
