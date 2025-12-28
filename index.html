@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori193 de Medicamentos</h1>
+  <h1>💊 Recordatori194 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -120,6 +120,37 @@ button{
      <button id="btn-meds">Medicamentos</button>
      <button id="btn-seg">Seguimiento</button>
 
+       <!-- CONEXIÓN BOTONES HOME -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // DATOS PERSONALES
+  document.getElementById("btn-datos")?.addEventListener("click", () => {
+    document.getElementById("datos-personales").style.display = "block";
+  });
+
+  // MEDICAMENTOS
+  document.getElementById("btn-meds")?.addEventListener("click", () => {
+    document.getElementById("medicamentos").style.display = "block";
+
+    if (!window._medInit) {
+      inicializarMedicamentos();
+      window._medInit = true;
+    }
+
+    render();
+  });
+
+  // SEGUIMIENTO
+  document.getElementById("btn-seg")?.addEventListener("click", () => {
+    document.getElementById("seguimiento").style.display = "block";
+    cargarHoy();
+    prepararHistorial();
+  });
+
+});
+</script>
+
 
     <!-- IMAGEN INFERIOR -->
     <img 
@@ -133,14 +164,7 @@ button{
 
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
 
-  // Abrir Datos Personales
-  document.getElementById("btn-datos")?.addEventListener("click", () => {
-    document.getElementById("datos-personales").style.display = "block";
-  });
-
-  document.addEventListener("DOMContentLoaded", () => {
 
   // Abrir Datos Personales
   document.getElementById("btn-datos")?.addEventListener("click", () => {
@@ -1094,7 +1118,6 @@ function render() {
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
 
   const card = document.querySelector("#medicamentos .med-card");
   if (!card || document.getElementById("m-foto")) return;
@@ -1129,7 +1152,6 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsDataURL(file);
   });
 
-});
 </script>
 
 
