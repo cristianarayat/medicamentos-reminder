@@ -108,7 +108,7 @@ button{
      HEADER
 ========================= -->
 <header>
-  <h1>💊 Recordatori205 de Medicamentos</h1>
+  <h1>💊 Recordatori206 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -398,7 +398,77 @@ button{
      (SE COMPLETAN EN BLOQUES FUTUROS)
 ========================= -->
 
-<div id="pantalla-datos" class="hidden"></div>
+<div id="pantalla-datos" class="hidden">
+
+  <!-- =========================
+       BLOQUE 2 – DATOS PERSONALES
+  ========================= -->
+
+  <div class="dp-container">
+    <div class="dp-card">
+
+      <h2>Datos personales</h2>
+
+      <div class="dp-group">
+        <label>Nombre del paciente</label>
+        <input id="dp-paciente" type="text">
+      </div>
+
+      <div class="dp-group">
+        <label>Fecha de nacimiento</label>
+        <input id="dp-nacimiento" type="date">
+      </div>
+
+      <div class="dp-group">
+        <label>Nombre del cuidador</label>
+        <input id="dp-cuidador" type="text">
+      </div>
+
+      <div class="dp-group">
+        <label>Teléfono del cuidador</label>
+        <div class="phone-wrap">
+          <div class="phone-prefix">+569</div>
+          <input id="dp-telefono" type="tel" maxlength="8" placeholder="12345678">
+        </div>
+      </div>
+
+      <div class="switch-row">
+        <div class="switch-left">🔊 Recordatorios por voz</div>
+        <label class="switch">
+          <input id="dp-voz" type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="switch-row">
+        <div class="switch-left">📳 Vibración</div>
+        <label class="switch">
+          <input id="dp-vibracion" type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div id="dp-error" class="dp-error">
+        Completa todos los campos correctamente
+      </div>
+
+      <div id="dp-toast" class="dp-toast">
+        ✅ Datos guardados correctamente
+      </div>
+
+      <button class="dp-btn primario" id="dp-guardar">
+        Guardar
+      </button>
+
+      <button class="dp-btn secundario" id="dp-volver">
+        Volver
+      </button>
+
+    </div>
+  </div>
+
+</div>
+
 <div id="pantalla-medicamentos" class="hidden"></div>
 <div id="pantalla-seguimiento" class="hidden"></div>
 
