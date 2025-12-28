@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori197 de Medicamentos</h1>
+  <h1>💊 Recordatori198 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -758,92 +758,61 @@ function inicializarMedicamentos() {
       };
       reader.readAsDataURL(file);
     });
+  
+  
+    // =========================
+  // BOTONES + LISTA (UNA SOLA VEZ)
+  // =========================
+
+  // evitar duplicar si ya existe
+  if (document.getElementById("lista-meds")) return;
+
+  // BOTONES
+  const btnGuardar = document.createElement("button");
+  btnGuardar.className = "btn-primario";
+  btnGuardar.disabled = true;
+  btnGuardar.textContent = "Guardar (desactivado)";
+
+  const btnVolver = document.createElement("button");
+  btnVolver.className = "btn-primario btn-volver";
+  btnVolver.textContent = "Volver";
+  btnVolver.onclick = () =>
+    document.getElementById("medicamentos").style.display = "none";
+
+  const footer = document.createElement("div");
+  footer.style.marginTop = "20px";
+  footer.style.display = "flex";
+  footer.style.flexDirection = "column";
+  footer.style.gap = "8px";
+
+  footer.appendChild(btnGuardar);
+  footer.appendChild(btnVolver);
+  card.appendChild(footer);
+
+  // LISTA DE MEDICAMENTOS
+  const listaWrapper = document.createElement("div");
+  listaWrapper.style.marginTop = "30px";
+
+  const titulo = document.createElement("h3");
+  titulo.textContent = "Medicamentos guardados";
+  titulo.style.textAlign = "center";
+  titulo.style.marginBottom = "12px";
+
+  const lista = document.createElement("div");
+  lista.id = "lista-meds";
+
+  listaWrapper.appendChild(titulo);
+  listaWrapper.appendChild(lista);
+  card.appendChild(listaWrapper);
+
+  // exponer botón guardar para el resto del código
+  window._btnGuardarMed = btnGuardar;
+
+  
+  
   }
 
-  // ⬇️ TODO LO DEMÁS SIGUE AQUÍ DENTRO
-
-
-
-     
-const DIAS = ["L","M","X","J","V","S","D"];
-const contDias = document.getElementById("med-dias");
-const estado = {};
-
-DIAS.forEach(dia=>{
-  estado[dia]=[];
-
-  const row = document.createElement("div");
-  row.style.display="flex";
-  row.style.gap="10px";
-  row.style.marginBottom="10px";
-
-  const btn = document.createElement("button");
-  btn.type="button";
-  btn.textContent=dia;
-  btn.style.width="40px";
-  btn.style.height="40px";
-  btn.style.borderRadius="12px";
-  btn.style.border="none";
-  btn.style.background="#e0e0e0";
-  btn.style.fontWeight="700";
-
-  const horas = document.createElement("div");
-  horas.style.display="flex";
-  horas.style.gap="6px";
-
-  btn.onclick=()=>{
-    btn.classList.toggle("activo");
-    btn.style.background = btn.classList.contains("activo") ? "#2f80ed" : "#e0e0e0";
-    btn.style.color = btn.classList.contains("activo") ? "#fff" : "#000";
-
-    horas.innerHTML="";
-    if(!btn.classList.contains("activo")){
-      estado[dia]=[];
-      return;
-    }
-
-    const dosis = parseInt(document.getElementById("m-dosis").value||1);
-    estado[dia]=Array(dosis).fill("");
-
-    estado[dia].forEach((_,i)=>{
-      const input=document.createElement("input");
-      input.type="time";
-      input.onchange = () => {
-  estado[dia][i] = input.value;
-  actualizarEstadoBotonGuardar();
-};
-
-      horas.appendChild(input);
-    });
-  };
-
-  row.appendChild(btn);
-  row.appendChild(horas);
-  contDias.appendChild(row);
-});
-
-function actualizarEstadoBotonGuardar() {
-  const btnGuardar = document.querySelector(".btn-primario");
-  if (!btnGuardar) return;
-
-  let hayHora = false;
-
-  document
-    .querySelectorAll('#med-dias input[type="time"]')
-    .forEach(input => {
-      if (input.value) hayHora = true;
-    });
-
-  if (hayHora) {
-    btnGuardar.disabled = false;
-    btnGuardar.textContent = "Guardar medicamento";
-    btnGuardar.style.background = "#2f80ed";
-  } else {
-    btnGuardar.disabled = true;
-    btnGuardar.textContent = "Guardar (desactivado)";
-    btnGuardar.style.background = "#9e9e9e";
-  }
-}
+ 
 
      
 
