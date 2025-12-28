@@ -208,7 +208,7 @@ button{
 <body>
 
 <header>
-  <h1>💊 Recordatori219 Medicamentos</h1>
+  <h1>💊 Recordatori220 Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -297,7 +297,60 @@ button{
     <div class="card">
       <h2 style="text-align:center;margin-top:0">Medicamentos</h2>
 
-      <!-- aquí va TODO el formulario de medicamentos -->
+      <div class="dp-group">
+  <label>Nombre del medicamento</label>
+  <input id="med-nombre" placeholder="Ej: Paracetamol">
+</div>
+
+<div class="dp-group">
+  <label>Dosis</label>
+  <input id="med-dosis" placeholder="Ej: 1 comprimido">
+</div>
+
+<div class="dp-group">
+  <label>Periodicidad</label>
+  <select id="med-periodicidad" style="width:100%;height:48px;border-radius:14px;padding:0 12px">
+    <option value="">Seleccionar</option>
+    <option value="diaria">Diaria</option>
+    <option value="dias">Días específicos</option>
+    <option value="horas">Cada X horas</option>
+  </select>
+</div>
+
+<div class="dp-group hidden" id="grupo-horas">
+  <label>Cada cuántas horas</label>
+  <input id="med-cada-horas" type="number" min="1" placeholder="Ej: 8">
+</div>
+
+<div class="dp-group hidden" id="grupo-dias">
+  <label>Días</label>
+  <div id="med-dias" style="display:flex;gap:6px;flex-wrap:wrap">
+    <button data-dia="L">L</button>
+    <button data-dia="M">M</button>
+    <button data-dia="X">X</button>
+    <button data-dia="J">J</button>
+    <button data-dia="V">V</button>
+    <button data-dia="S">S</button>
+    <button data-dia="D">D</button>
+  </div>
+</div>
+
+<div class="dp-group">
+  <label>Hora</label>
+  <input id="med-hora" type="time">
+</div>
+
+<div id="med-error" class="dp-error">
+  Completa todos los campos correctamente
+</div>
+
+<button id="med-guardar">Guardar medicamento</button>
+<button id="med-volver" style="background:#bdbdbd">Volver</button>
+
+<hr style="margin:20px 0">
+
+<div id="lista-meds"></div>
+
       
     </div>
   </div>
