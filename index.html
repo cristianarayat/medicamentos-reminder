@@ -193,7 +193,7 @@ button{
 <body>
 
 <header>
-  <h1>💊 Recordatori211 de Medicamentos</h1>
+  <h1>💊 Recordatori212 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -292,6 +292,51 @@ document.getElementById("dp-volver").onclick = () => {
   home.classList.remove("hidden");
 };
 
+<script>
+/* =========================
+   BIENVENIDA + EDAD
+========================= */
+
+function calcularEdad(fechaNacimiento){
+  const hoy = new Date();
+  const nac = new Date(fechaNacimiento);
+
+  let años = hoy.getFullYear() - nac.getFullYear();
+  let meses = hoy.getMonth() - nac.getMonth();
+
+  if (meses < 0) {
+    años--;
+    meses += 12;
+  }
+
+  return { años, meses };
+}
+
+function actualizarBienvenida(){
+  const cont = document.getElementById("bienvenida");
+  const data = JSON.parse(localStorage.getItem("datosPersonales"));
+
+  if(!data || !data.paciente || !data.nacimiento){
+    cont.textContent = "Bienvenido";
+    return;
+  }
+
+  const edad = calcularEdad(data.nacimiento);
+
+  cont.innerHTML = `
+    <div style="text-align:center">
+      <div style="font-size:18px;font-weight:700">
+        Bienvenido ${data.paciente}
+      </div>
+      <div style="font-size:14px;color:#555;margin-top:4px">
+        ${edad.años} años · ${edad.meses} meses
+      </div>
+    </div>
+  `;
+}
+</script>
+
+   
 /* =========================
    GUARDADO DATOS
 ========================= */
@@ -322,7 +367,15 @@ document.getElementById("dp-guardar").onclick = () => {
 
   $("dp-toast").style.display="block";
   setTimeout(()=> $("dp-toast").style.display="none",2000);
+
+   actualizarBienvenida();
+   
+   
+   
 };
+
+document.addEventListener("DOMContentLoaded", actualizarBienvenida);
+   
 </script>
 
 </body>
