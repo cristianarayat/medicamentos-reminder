@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Recordatorio de Medicamentos</title>
+<title>Recordatori – Medicamentos</title>
 
 <style>
 /* =========================
    ESTILOS GENERALES
 ========================= */
+*{ box-sizing:border-box; }
+
 body{
   margin:0;
   font-family: system-ui, Arial, sans-serif;
@@ -16,9 +18,7 @@ body{
   color:#333;
 }
 
-.hidden{
-  display:none;
-}
+.hidden{ display:none; }
 
 /* =========================
    HEADER
@@ -35,16 +35,16 @@ header h1{
 }
 
 /* =========================
-   CONTENEDOR PRINCIPAL
+   CONTENEDOR
 ========================= */
 .container{
   max-width:480px;
-  margin:auto;
+  margin:0 auto;
   padding:16px;
 }
 
 /* =========================
-   TARJETA HOME
+   CARD
 ========================= */
 .card{
   background:#fff;
@@ -54,7 +54,7 @@ header h1{
 }
 
 /* =========================
-   BIENVENIDA
+   HOME
 ========================= */
 #bienvenida{
   font-size:18px;
@@ -63,9 +63,6 @@ header h1{
   margin-bottom:12px;
 }
 
-/* =========================
-   IMAGEN HOME
-========================= */
 .imagen-home{
   width:100%;
   max-width:420px;
@@ -73,16 +70,13 @@ header h1{
   margin:18px auto;
 }
 
-/* =========================
-   BOTONES
-========================= */
 button{
   width:100%;
   height:52px;
   border:none;
   border-radius:14px;
   background:#2f80ed;
-  color:white;
+  color:#fff;
   font-size:16px;
   font-weight:700;
   margin-top:12px;
@@ -90,25 +84,116 @@ button{
 }
 
 /* =========================
-   FOOTER
+   DATOS PERSONALES
 ========================= */
+#pantalla-datos{
+  position:fixed;
+  inset:0;
+  background:#eef1f4;
+  z-index:1000;
+  overflow:auto;
+}
+
+.dp-group label{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.dp-group input{
+  width:100%;
+  height:48px;
+  border-radius:14px;
+  border:1px solid #ccc;
+  padding:0 14px;
+  font-size:15px;
+}
+
+.phone-wrap{
+  display:flex;
+  border:1px solid #ccc;
+  border-radius:14px;
+  overflow:hidden;
+}
+
+.phone-prefix{
+  padding:0 12px;
+  background:#f1f3f4;
+  display:flex;
+  align-items:center;
+  font-weight:600;
+}
+
+.phone-wrap input{
+  border:none;
+  flex:1;
+  padding:0 12px;
+}
+
+.switch-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:8px;
+}
+
+.switch{
+  position:relative;
+  width:50px;
+  height:28px;
+}
+.switch input{ opacity:0; }
+.slider{
+  position:absolute;
+  inset:0;
+  background:#ccc;
+  border-radius:28px;
+}
+.slider:before{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  left:3px;
+  top:3px;
+  background:#fff;
+  border-radius:50%;
+}
+.switch input:checked + .slider{
+  background:#2f80ed;
+}
+.switch input:checked + .slider:before{
+  transform:translateX(22px);
+}
+
+.dp-error{
+  display:none;
+  color:#d32f2f;
+  font-size:13px;
+  text-align:center;
+}
+
+.dp-toast{
+  display:none;
+  text-align:center;
+  font-weight:600;
+  color:#2e7d32;
+}
+
 .footer{
   text-align:center;
   font-size:12px;
   color:#777;
-  margin-top:16px;
-  padding-bottom:12px;
+  margin:16px 0;
 }
 </style>
 </head>
 
 <body>
 
-<!-- =========================
-     HEADER
-========================= -->
 <header>
-  <h1>💊 Recordatori208 de Medicamentos</h1>
+  <h1>💊 Recordatori210 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -117,157 +202,126 @@ button{
 <div class="container" id="home">
   <div class="card">
 
-    <div id="bienvenida">
-      Bienvenido
-    </div>
+    <div id="bienvenida">Bienvenido</div>
 
-    <img
-      src="personas-inclusivas.png"
-      alt="Personas inclusivas"
-      class="imagen-home"
-    >
+    <img src="personas-inclusivas.png" class="imagen-home" alt="Personas inclusivas">
 
     <button id="btn-datos">Datos personales</button>
-    <button id="btn-medicamentos">Medicamentos</button>
-    <button id="btn-seguimiento">Seguimiento</button>
+    <button disabled>Medicamentos</button>
+    <button disabled>Seguimiento</button>
 
   </div>
 </div>
 
-
 <!-- =========================
-     BLOQUE 2 – DATOS PERSONALES
+     DATOS PERSONALES
 ========================= -->
-
-
-
-   
-   
-   
-<!-- =========================
-     CONTENEDORES DE MÓDULOS
-     (SE COMPLETAN EN BLOQUES FUTUROS)
-========================= -->
-
 <div id="pantalla-datos" class="hidden">
+  <div class="container">
+    <div class="card">
 
-  <!-- =========================
-       BLOQUE 2 – DATOS PERSONALES
-  ========================= -->
+      <h2 style="text-align:center;margin-top:0">Datos personales</h2>
 
-  
+      <div class="dp-group">
+        <label>Nombre del paciente</label>
+        <input id="dp-paciente">
+      </div>
+
+      <div class="dp-group">
+        <label>Fecha de nacimiento</label>
+        <input id="dp-nacimiento" type="date">
+      </div>
+
+      <div class="dp-group">
+        <label>Nombre del cuidador</label>
+        <input id="dp-cuidador">
+      </div>
+
+      <div class="dp-group">
+        <label>Teléfono del cuidador</label>
+        <div class="phone-wrap">
+          <div class="phone-prefix">+569</div>
+          <input id="dp-telefono" maxlength="8">
+        </div>
+      </div>
 
       <div class="switch-row">
-        <div class="switch-left">🔊 Recordatorios por voz</div>
+        <span>🔊 Recordatorios por voz</span>
         <label class="switch">
-          <input id="dp-voz" type="checkbox">
+          <input type="checkbox" id="dp-voz">
           <span class="slider"></span>
         </label>
       </div>
 
       <div class="switch-row">
-        <div class="switch-left">📳 Vibración</div>
+        <span>📳 Vibración</span>
         <label class="switch">
-          <input id="dp-vibracion" type="checkbox">
+          <input type="checkbox" id="dp-vibracion">
           <span class="slider"></span>
         </label>
       </div>
 
-      <div id="dp-error" class="dp-error">
-        Completa todos los campos correctamente
-      </div>
+      <div id="dp-error" class="dp-error">Completa todos los campos correctamente</div>
+      <div id="dp-toast" class="dp-toast">✅ Datos guardados correctamente</div>
 
-      <div id="dp-toast" class="dp-toast">
-        ✅ Datos guardados correctamente
-      </div>
-
-      <button class="dp-btn primario" id="dp-guardar">
-        Guardar
-      </button>
-
-      <button class="dp-btn secundario" id="dp-volver">
-        Volver
-      </button>
+      <button id="dp-guardar">Guardar</button>
+      <button id="dp-volver" style="background:#bdbdbd">Volver</button>
 
     </div>
   </div>
-
 </div>
 
-<div id="pantalla-medicamentos" class="hidden"></div>
-<div id="pantalla-seguimiento" class="hidden"></div>
-
-<!-- =========================
-     FOOTER
-========================= -->
 <div class="footer">
   Desarrollado por <strong>CA Tecnología</strong>
 </div>
 
 <script>
-/* ==================================================
-   BLOQUE 1 – LÓGICA HOME + NAVEGACIÓN
-   (BASE DEL SISTEMA)
-================================================== */
+/* =========================
+   NAVEGACIÓN
+========================= */
+const home = document.getElementById("home");
+const datos = document.getElementById("pantalla-datos");
 
-/* ---------- Helpers ---------- */
-function mostrarPantalla(id){
-  // Ocultar todo
-  document.getElementById("home").classList.add("hidden");
-  document.getElementById("pantalla-datos").classList.add("hidden");
-  document.getElementById("pantalla-medicamentos").classList.add("hidden");
-  document.getElementById("pantalla-seguimiento").classList.add("hidden");
+document.getElementById("btn-datos").onclick = () => {
+  home.classList.add("hidden");
+  datos.classList.remove("hidden");
+};
 
-  // Mostrar la solicitada
-  document.getElementById(id).classList.remove("hidden");
-}
+document.getElementById("dp-volver").onclick = () => {
+  datos.classList.add("hidden");
+  home.classList.remove("hidden");
+};
 
-function volverHome(){
-  mostrarPantalla("home");
-}
+/* =========================
+   GUARDADO DATOS
+========================= */
+const $ = id => document.getElementById(id);
 
-/* ---------- Bienvenida ---------- */
-function actualizarBienvenida(){
-  const cont = document.getElementById("bienvenida");
-  const data = JSON.parse(localStorage.getItem("datosPersonales"));
+document.getElementById("dp-guardar").onclick = () => {
 
-  if(!data || !data.paciente){
-    cont.textContent = "Bienvenido";
+  if(
+    !$("dp-paciente").value.trim() ||
+    !$("dp-nacimiento").value ||
+    !$("dp-cuidador").value.trim() ||
+    !/^\d{8}$/.test($("dp-telefono").value)
+  ){
+    $("dp-error").style.display="block";
     return;
   }
 
-  cont.innerHTML = `
-    Bienvenido ${data.paciente}
-  `;
-}
+  $("dp-error").style.display="none";
 
-/* ---------- Navegación ---------- */
-document.addEventListener("DOMContentLoaded", () => {
+  localStorage.setItem("datosPersonales", JSON.stringify({
+    paciente:$("dp-paciente").value,
+    nacimiento:$("dp-nacimiento").value,
+    cuidador:$("dp-cuidador").value,
+    telefono:"+569"+$("dp-telefono").value,
+    voz:$("dp-voz").checked,
+    vibracion:$("dp-vibracion").checked
+  }));
 
-  actualizarBienvenida();
-
-  document.getElementById("btn-datos")
-    .addEventListener("click", () => {
-      mostrarPantalla("pantalla-datos");
-    });
-
-  document.getElementById("btn-medicamentos")
-    .addEventListener("click", () => {
-      mostrarPantalla("pantalla-medicamentos");
-    });
-
-  document.getElementById("btn-seguimiento")
-    .addEventListener("click", () => {
-      mostrarPantalla("pantalla-seguimiento");
-    });
-
-});
-
-/* ---------- Exposición global (para otros bloques) ---------- */
-window.AppNavigation = {
-  volverHome,
-  mostrarPantalla,
-  actualizarBienvenida
+  $("dp-toast").style.display="block";
+  setTimeout(()=> $("dp-toast").style.display="none",2000);
 };
 </script>
 
