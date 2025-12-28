@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori192 de Medicamentos</h1>
+  <h1>💊 Recordatori193 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -140,10 +140,27 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("datos-personales").style.display = "block";
   });
 
-  // Abrir Medicamentos
-  document.getElementById("btn-meds")?.addEventListener("click", () => {
+  document.addEventListener("DOMContentLoaded", () => {
 
-  // Abrir Seguimiento
+  // Abrir Datos Personales
+  document.getElementById("btn-datos")?.addEventListener("click", () => {
+    document.getElementById("datos-personales").style.display = "block";
+  });
+
+  // ✅ Abrir Medicamentos
+  document.getElementById("btn-meds")?.addEventListener("click", () => {
+    document.getElementById("medicamentos").style.display = "block";
+
+    // inicializar solo una vez
+    if (!window._medInit) {
+      inicializarMedicamentos();
+      window._medInit = true;
+    }
+
+    render();
+  });
+
+  // ✅ Abrir Seguimiento
   document.getElementById("btn-seg")?.addEventListener("click", () => {
     document.getElementById("seguimiento").style.display = "block";
     cargarHoy();
@@ -151,6 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
 </script>
 
 
