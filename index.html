@@ -208,7 +208,7 @@ button{
 <body>
 
 <header>
-  <h1>💊 Recordatori220 Medicamentos</h1>
+  <h1>💊 Recordatori221 Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -461,7 +461,142 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-   
+
+
+<script>
+/* =========================
+   BLOQUE 3.2 – LÓGICA MEDICAMENTOS
+========================= */
+
+const diasSeleccionados = new Set();
+
+/* --- navegación --- */
+$("btn-medicamentos").onclick = () => {
+  $("home").classList.add("hidden");
+  $("pantalla-medicamentos").classList.remove("hidden");
+  renderMedicamentos();
+};
+
+$("med-volver").onclick = () => {
+  $("pantalla-medicamentos").classList.add("hidden");
+  $("home").classList.remove("hidden");
+};
+
+/* --- periodicidad --- */
+$("med-periodicidad").onchange = e => {
+  $("grupo-horas")?.classList.add("hidden");
+  $("grupo-dias")?.classList.add("hidden");
+
+  if(e.target.value === "horas"){
+    $("grupo-horas").classList.remove("hidden");
+  }
+
+  if(e.target.value === "dias"){
+    $("grupo-dias").classList.remove("hidden");
+  }
+};
+
+/* --- días específicos --- */
+document.querySelectorAll("#med-dias button").forEach(btn => {
+  btn.onclick = () => {
+    btn.classList.toggle("activo");
+
+    if(btn.classList.contains("activo")){
+      btn.style.background = "#2f80ed";
+      btn.style.color = "#fff";
+      diasSeleccionados.add(btn.dataset.dia);
+    }else{
+      btn.style.background = "";
+      btn.style.color = "";
+      diasSeleccionados.delete(btn.dataset.dia);
+    }
+  };
+});
+
+/* --- guardar medicamento --- */
+$("med-guardar").onclick = () => {
+
+  const data = {
+    nombre: $("med-nombre").value.trim(),
+    dosis: $("med-dosis").value.trim(),
+    periodicidad: $("med-periodicidad").value,
+    cadaHoras: $("med-cada-horas")?.value || "",
+    dias: [...diasSeleccionados],
+    hora: $("med-hora").value
+  };
+
+  if(!data.nombre || !data.dosis || !data.periodicidad || !data.hora){
+    $("med-error").style.display = "block";
+    return;
+  }
+
+  $("med-error").style.display = "none";
+
+  const meds = JSON.parse(localStorage.getItem("medicamentos") || "[]");
+  meds.push(data);
+  localStorage.setItem("medicamentos", JSON.stringify(meds));
+
+  limpiarFormularioMedicamentos();
+  renderMedicamentos();
+};
+
+/* --- render listado --- */
+function renderMedicamentos(){
+  const cont = $("lista-meds");
+  cont.innerHTML = "";
+
+  const meds = JSON.parse(localStorage.getItem("medicamentos") || "[]");
+
+  if(meds.length === 0){
+    cont.innerHTML = "<p style='color:#777'>Sin medicamentos</p>";
+    return;
+  }
+
+  meds.forEach((m,i) => {
+    const div = document.createElement("div");
+    div.style.marginBottom = "12px";
+    div.innerHTML = `
+      <strong>${m.nombre}</strong><br>
+      ${m.dosis}<br>
+      ${m.periodicidad}<br>
+      <small>${m.hora}</small><br>
+      <button style="background:#d32f2f;margin-top:6px"
+        onclick="eliminarMedicamento(${i})">
+        Eliminar
+      </button>
+    `;
+    cont.appendChild(div);
+  });
+}
+
+/* --- eliminar --- */
+function eliminarMedicamento(i){
+  const meds = JSON.parse(localStorage.getItem("medicamentos"));
+  meds.splice(i,1);
+  localStorage.setItem("medicamentos", JSON.stringify(meds));
+  renderMedicamentos();
+}
+
+/* --- limpiar formulario --- */
+function limpiarFormularioMedicamentos(){
+  $("med-nombre").value = "";
+  $("med-dosis").value = "";
+  $("med-periodicidad").value = "";
+  $("med-cada-horas")?.value = "";
+  $("med-hora").value = "";
+
+  diasSeleccionados.clear();
+  document.querySelectorAll("#med-dias button").forEach(b => {
+    b.classList.remove("activo");
+    b.style.background = "";
+    b.style.color = "";
+  });
+
+  $("grupo-horas")?.classList.add("hidden");
+  $("grupo-dias")?.classList.add("hidden");
+}
+</script>
+
 
    
 </body>
