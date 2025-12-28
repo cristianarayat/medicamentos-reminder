@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori186 de Medicamentos</h1>
+  <h1>💊 Recordatori187 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -597,16 +597,6 @@ window.addEventListener("focus", actualizarBienvenida);
 
       <!-- BOTONES (SE INSERTAN POR JS AL FINAL) -->
 
-<!-- =========================
-     MEDICAMENTOS GUARDADOS
-========================= -->
-<div style="margin-top:30px">
-  <h3 style="text-align:center;margin-bottom:12px">
-    Medicamentos guardados
-  </h3>
-
-  <div id="lista-meds"></div>
-</div>
 
          
     </div>
@@ -624,11 +614,16 @@ document.addEventListener("pointerdown", e=>{
   while(el && el!==document.body){
     if(el.textContent?.trim().toLowerCase()==="medicamentos"){
       document.getElementById("medicamentos").style.display="block";
+
+      // 🔑 MOSTRAR LISTA AL ABRIR
+      render();
+
       return;
     }
     el = el.parentElement;
   }
 }, true);
+
 
 /* =========================
    FECHA FINAL + PERMANENTE
@@ -782,6 +777,29 @@ footer.appendChild(btnGuardar);
 footer.appendChild(btnVolver);
 card.appendChild(footer);
 
+// =========================
+// LISTA DE MEDICAMENTOS (ABAJO DE LOS BOTONES)
+// =========================
+const listaWrapper = document.createElement("div");
+listaWrapper.style.marginTop = "30px";
+
+const tituloLista = document.createElement("h3");
+tituloLista.textContent = "Medicamentos guardados";
+tituloLista.style.textAlign = "center";
+tituloLista.style.marginBottom = "12px";
+
+const listaMeds = document.createElement("div");
+listaMeds.id = "lista-meds";
+
+listaWrapper.appendChild(tituloLista);
+listaWrapper.appendChild(listaMeds);
+
+// 🔑 SE AGREGA DESPUÉS DE GUARDAR Y VOLVER
+card.appendChild(listaWrapper);
+
+
+
+     
 btnGuardar.addEventListener("click", () => {
 
   // ===== DATOS =====
