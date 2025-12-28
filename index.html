@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori172 de Medicamentos</h1>
+  <h1>💊 Recordatori173 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1111,20 +1111,7 @@ if (fotoInput?.files?.[0]) {
 
        
        
-function guardarMedicamento(fotoBase64 = "") {
 
-  const med = {
-    id: Date.now().toString(),
-    nombre,
-    ubicacion,
-    dosis,
-    periodicidad,
-    inicio,
-    fin,
-    estado: estadoMed,
-    fotoURL: fotoBase64,
-    horas: JSON.parse(JSON.stringify(estado)),
-  };
 
   // ✅ guardar
   medicamentos.push(med);
@@ -1234,6 +1221,64 @@ if (preview) {
 // 🔄 PASO 2: renderizar medicamentos cargados desde localStorage
 render();
 
+function guardarFinal(fotoBase64 = "") {
+
+  const nombre = document.getElementById("med-nombre").value.trim();
+  const ubicacion = document.getElementById("med-ubicacion")?.value.trim() || "";
+  const dosis = Number(document.getElementById("m-dosis").value);
+  const periodicidad = document.getElementById("m-periodicidad").value;
+  const inicio = document.getElementById("m-inicio").value;
+  const fin = document.getElementById("m-fin").value;
+
+  const estadoMed = (() => {
+    if (periodicidad === "0") return "Activo";
+    if (!fin) return "Activo";
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const f = new Date(fin); f.setHours(0,0,0,0);
+    return f < hoy ? "Caducado" : "Activo";
+  })();
+
+  const med = {
+    id: Date.now().toString(),
+    nombre,
+    ubicacion,
+    dosis,
+    periodicidad,
+    inicio,
+    fin,
+    estado: estadoMed,
+    fotoURL: fotoBase64,
+    horas: JSON.parse(JSON.stringify(estado))
+  };
+
+  const meds = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
+
+  meds.push(med);
+
+  localStorage.setItem(
+    "medicamentos_guardados_v1",
+    JSON.stringify(meds)
+  );
+
+  render();
+  limpiar();
+
+  Object.keys(estado).forEach(d => estado[d] = []);
+  document.querySelectorAll("#med-dias button").forEach(b => {
+    b.classList.remove("activo");
+    b.style.background = "#e0e0e0";
+    b.style.color = "#000";
+  });
+
+  document
+    .querySelectorAll('#med-dias input[type="time"]')
+    .forEach(i => i.remove());
+}
+
+
+     
 })();
 
 </script>
