@@ -202,7 +202,7 @@ button{
 <body>
 
 <header>
-  <h1>💊 Recordatori216 Medicamentos</h1>
+  <h1>💊 Recordatori217 Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -345,95 +345,99 @@ function actualizarBienvenida(){
 }
 
 <script>
-/* =========================
-   UTILIDAD
-========================= */
-const $ = id => document.getElementById(id);
+document.addEventListener("DOMContentLoaded", () => {
 
-/* =========================
-   EDAD
-========================= */
-function calcularEdad(fecha){
-  const n = new Date(fecha);
-  const h = new Date();
-  let años = h.getFullYear() - n.getFullYear();
-  let meses = h.getMonth() - n.getMonth();
-  if (meses < 0){ años--; meses += 12; }
-  return {años, meses};
-}
+  /* =========================
+     UTILIDAD
+  ========================= */
+  const $ = id => document.getElementById(id);
 
-/* =========================
-   BIENVENIDA
-========================= */
-function actualizarBienvenida(){
-  const cont = $("bienvenida");
-  const data = JSON.parse(localStorage.getItem("datosPersonales"));
-
-  if(!data){
-    cont.innerHTML = `<div class="nombre">Bienvenido</div>`;
-    return;
+  /* =========================
+     EDAD
+  ========================= */
+  function calcularEdad(fecha){
+    const n = new Date(fecha);
+    const h = new Date();
+    let años = h.getFullYear() - n.getFullYear();
+    let meses = h.getMonth() - n.getMonth();
+    if (meses < 0){ años--; meses += 12; }
+    return {años, meses};
   }
 
-  const e = calcularEdad(data.nacimiento);
-  cont.innerHTML = `
-    <div class="nombre">Bienvenido ${data.paciente}</div>
-    <div class="edad">${e.años} años · ${e.meses} meses</div>
-  `;
-}
+  /* =========================
+     BIENVENIDA
+  ========================= */
+  function actualizarBienvenida(){
+    const cont = $("bienvenida");
+    const data = JSON.parse(localStorage.getItem("datosPersonales"));
 
-/* =========================
-   NAVEGACIÓN
-========================= */
-$("btn-datos").onclick = () => {
-  $("home").classList.add("hidden");
-  $("pantalla-datos").classList.remove("hidden");
-};
+    if(!data){
+      cont.innerHTML = `<div class="nombre">Bienvenido</div>`;
+      return;
+    }
 
-$("btn-medicamentos").onclick = () => {
-  $("home").classList.add("hidden");
-  $("pantalla-medicamentos").classList.remove("hidden");
-};
-
-$("dp-volver").onclick = () => {
-  $("pantalla-datos").classList.add("hidden");
-  $("home").classList.remove("hidden");
-};
-
-/* =========================
-   GUARDAR DATOS
-========================= */
-$("dp-guardar").onclick = () => {
-  if(
-    !$("dp-paciente").value.trim() ||
-    !$("dp-nacimiento").value ||
-    !$("dp-cuidador").value.trim() ||
-    !/^\d{8}$/.test($("dp-telefono").value)
-  ){
-    $("dp-error").style.display="block";
-    return;
+    const e = calcularEdad(data.nacimiento);
+    cont.innerHTML = `
+      <div class="nombre">Bienvenido ${data.paciente}</div>
+      <div class="edad">${e.años} años · ${e.meses} meses</div>
+    `;
   }
 
-  $("dp-error").style.display="none";
+  /* =========================
+     NAVEGACIÓN
+  ========================= */
+  $("btn-datos").onclick = () => {
+    $("home").classList.add("hidden");
+    $("pantalla-datos").classList.remove("hidden");
+  };
 
-  localStorage.setItem("datosPersonales", JSON.stringify({
-    paciente: $("dp-paciente").value.trim(),
-    nacimiento: $("dp-nacimiento").value,
-    cuidador: $("dp-cuidador").value.trim(),
-    telefono: "+569" + $("dp-telefono").value,
-    voz: $("dp-voz").checked,
-    vibracion: $("dp-vibracion").checked
-  }));
+  $("btn-medicamentos").onclick = () => {
+    $("home").classList.add("hidden");
+    $("pantalla-medicamentos").classList.remove("hidden");
+  };
 
-  $("dp-toast").style.display="block";
-  setTimeout(()=> $("dp-toast").style.display="none",2000);
+  $("dp-volver").onclick = () => {
+    $("pantalla-datos").classList.add("hidden");
+    $("home").classList.remove("hidden");
+  };
 
+  /* =========================
+     GUARDAR DATOS
+  ========================= */
+  $("dp-guardar").onclick = () => {
+    if(
+      !$("dp-paciente").value.trim() ||
+      !$("dp-nacimiento").value ||
+      !$("dp-cuidador").value.trim() ||
+      !/^\d{8}$/.test($("dp-telefono").value)
+    ){
+      $("dp-error").style.display="block";
+      return;
+    }
+
+    $("dp-error").style.display="none";
+
+    localStorage.setItem("datosPersonales", JSON.stringify({
+      paciente: $("dp-paciente").value.trim(),
+      nacimiento: $("dp-nacimiento").value,
+      cuidador: $("dp-cuidador").value.trim(),
+      telefono: "+569" + $("dp-telefono").value,
+      voz: $("dp-voz").checked,
+      vibracion: $("dp-vibracion").checked
+    }));
+
+    $("dp-toast").style.display="block";
+    setTimeout(()=> $("dp-toast").style.display="none",2000);
+
+    actualizarBienvenida();
+  };
+
+  /* =========================
+     INIT
+  ========================= */
   actualizarBienvenida();
-};
 
-/* =========================
-   INIT
-========================= */
-document.addEventListener("DOMContentLoaded", actualizarBienvenida);
+});
 </script>
 
 
