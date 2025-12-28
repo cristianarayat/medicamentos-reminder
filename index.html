@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori187 de Medicamentos</h1>
+  <h1>💊 Recordatori188 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -959,13 +959,17 @@ function render() {
     `;
 
     div.querySelector("button").onclick = () => {
-      meds.splice(i, 1);
-      localStorage.setItem(
-        "medicamentos_guardados_v1",
-        JSON.stringify(meds)
-      );
-      
-    };
+  meds.splice(i, 1);
+
+  localStorage.setItem(
+    "medicamentos_guardados_v1",
+    JSON.stringify(meds)
+  );
+
+  // 🔑 refrescar UI inmediatamente
+  render();
+};
+
 
     lista.appendChild(div);
   });
