@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori178 de Medicamentos</h1>
+  <h1>💊 Recordatori179 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -945,145 +945,12 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
-<!-- =========================
-   BLOQUE 3 – FOTO DEL MEDICAMENTO
-   SELECCIÓN + MINIATURA
-========================= -->
-
-<style>
-.med-foto{
-  margin-top:16px;
-}
-
-.med-foto label{
-  display:block;
-  font-weight:600;
-  margin-bottom:6px;
-}
-
-.med-foto input[type="file"]{
-  width:100%;
-}
-
-.med-preview{
-  margin-top:10px;
-  width:90px;
-  height:90px;
-  border-radius:12px;
-  border:1px solid #ccc;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  background:#f5f5f5;
-}
-
-.med-preview img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  const card = document.querySelector("#medicamentos .med-card");
-  if (!card || document.getElementById("m-foto")) return;
-
-  /* ===== BLOQUE FOTO ===== */
-  const bloqueFoto = document.createElement("div");
-  bloqueFoto.className = "med-foto";
-  bloqueFoto.innerHTML = `
-    <label>Foto del medicamento</label>
-    <input type="file" id="m-foto" accept="image/*">
-    <div class="med-preview" id="m-preview">
-      <span style="font-size:12px;color:#777">Sin imagen</span>
-    </div>
-  `;
-
-  /* Insertar ANTES de Días y horas */
-  const bloqueDias = document.getElementById("med-dias");
-  card.insertBefore(bloqueFoto, bloqueDias);
-
-  /* ===== PREVISUALIZACIÓN ===== */
-  const inputFoto = document.getElementById("m-foto");
-  const preview = document.getElementById("m-preview");
-
-  inputFoto.addEventListener("change", () => {
-    const file = inputFoto.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-      preview.innerHTML = `<img src="${e.target.result}">`;
-    };
-    reader.readAsDataURL(file);
-  });
-
-});
-</script>
 
 
 
 
 
 
-
-
-
-
-
-<script>
-
-if (!hayHoras) {
-  btnGuardar.textContent = "Selecciona día y hora";
-  btnGuardar.style.background = "#bdbdbd";
-  setTimeout(() => {
-    btnGuardar.textContent = "Guardar medicamento";
-    btnGuardar.style.background = "#2f80ed";
-  }, 2000);
-  return;
-}
-
-
-   
-
-   /* ===== ESTADO ACTIVO / CADUCADO ===== */
-let estadoMed = "Activo";
-const hoy = new Date(); 
-hoy.setHours(0,0,0,0);
-
-if (periodicidad !== "0" && fin) {
-  const f = new Date(fin); 
-  f.setHours(0,0,0,0);
-  if (f < hoy) estadoMed = "Caducado";
-}
-
-
-
-
-
-/* ===== FOTO ===== */
-
-
-     
-});
-
-
-
-
-    /* ===== ESTADO ACTIVO / CADUCADO ===== */
-    let estadoMed = "Activo";
-    const hoy = new Date(); hoy.setHours(0,0,0,0);
-
-    if (periodicidad !== "0" && fin) {
-      const f = new Date(fin); f.setHours(0,0,0,0);
-      if (f < hoy) estadoMed = "Caducado";
-    }
-
-
-       
        
 <script>
 
@@ -1333,45 +1200,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 
-<script>
-/* ==================================================
-   PASO 4.1 – PERSISTENCIA LOCAL (LocalStorage)
-================================================== */
 
-(function(){
-
-  const STORAGE_KEY = "medicamentos_guardados";
-
-  // Sobrescribimos render para usar storage
-  const originalRender = window.renderMedicamentos || null;
-
-  // Cargar al abrir
-  document.addEventListener("DOMContentLoaded", () => {
-    const guardados = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    if (guardados.length && window.medicamentos) {
-      guardados.forEach(m => window.medicamentos.push(m));
-      if (typeof window.renderMedicamentos === "function") {
-        window.renderMedicamentos();
-      }
-    }
-  });
-
-  // Hook al guardar
-  const guardarOriginal = window.guardarMedicamento;
-  window.guardarMedicamento = function(med){
-    guardarOriginal(med);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(window.medicamentos));
-  };
-
-  // Hook al eliminar
-  window.eliminarMedicamento = function(index){
-    window.medicamentos.splice(index,1);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(window.medicamentos));
-    window.renderMedicamentos();
-  };
-
-})();
-</script>
 
 
 <script>
