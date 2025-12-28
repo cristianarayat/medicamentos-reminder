@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori191 de Medicamentos</h1>
+  <h1>💊 Recordatori192 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -142,9 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Abrir Medicamentos
   document.getElementById("btn-meds")?.addEventListener("click", () => {
-    document.getElementById("medicamentos").style.display = "block";
-    render(); // 🔑 mostrar lista al abrir
-  });
 
   // Abrir Seguimiento
   document.getElementById("btn-seg")?.addEventListener("click", () => {
@@ -684,6 +681,10 @@ document.getElementById("m-inicio").addEventListener("change", recalcularFin);
 /* =========================
    DÍAS Y HORAS
 ========================= */
+
+function inicializarMedicamentos() {
+
+     
 const DIAS = ["L","M","X","J","V","S","D"];
 const contDias = document.getElementById("med-dias");
 const estado = {};
@@ -1023,6 +1024,7 @@ function render() {
 }
 
 
+}
 
      
 </script>
