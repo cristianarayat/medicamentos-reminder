@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori171 de Medicamentos</h1>
+  <h1>💊 Recordatori172 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -966,38 +966,94 @@ document.addEventListener("DOMContentLoaded", () => {
     card.appendChild(lista);
   }
 
-  btnGuardar.addEventListener("click", e => {
-    e.preventDefault();
+ btnGuardar.addEventListener("click", e => {
+  e.preventDefault();
 
-    /* ===== DATOS ===== */
-    const nombre = document.getElementById("med-nombre").value.trim();
-    const ubicacion = document.getElementById("med-ubicacion")?.value.trim() || "";
-    const dosis = Number(document.getElementById("m-dosis").value);
-    const periodicidad = document.getElementById("m-periodicidad").value;
-    const dias = document.getElementById("m-dias").value;
-    const inicio = document.getElementById("m-inicio").value;
-    const fin = document.getElementById("m-fin").value;
-    const fotoInput = document.getElementById("m-foto");
+  const nombre = document.getElementById("med-nombre").value.trim();
+  const ubicacion = document.getElementById("med-ubicacion")?.value.trim() || "";
+  const dosis = Number(document.getElementById("m-dosis").value);
+  const periodicidad = document.getElementById("m-periodicidad").value;
+  const dias = document.getElementById("m-dias").value;
+  const inicio = document.getElementById("m-inicio").value;
+  const fin = document.getElementById("m-fin").value;
+  const fotoInput = document.getElementById("m-foto");
 
-    /* ===== VALIDACIONES ===== */
-    if (!nombre || dosis <= 0 || !periodicidad) {
-      alert("Faltan datos obligatorios");
-      return;
-    }
+  if (!nombre || dosis <= 0) {
+    alert("Completa los datos obligatorios");
+    return;
+  }
 
-    if (periodicidad !== "0" && (!dias || !inicio || !fin)) {
-      alert("Completa días y fechas");
-      return;
-    }
+  if (periodicidad !== "0" && (!dias || !inicio || !fin)) {
+    alert("Completa días y fechas");
+    return;
+  }
 
-    // ✅ VALIDACIÓN REAL DE HORAS (DOM)
-let hayHoras = false;
+  let hayHoras = false;
+  document
+    .querySelectorAll('#med-dias input[type="time"]')
+    .forEach(i => { if (i.value) hayHoras = true; });
 
-document
-  .querySelectorAll('#med-dias input[type="time"]')
-  .forEach(input => {
-    if (input.value) hayHoras = true;
-  });
+  if (!hayHoras) {
+    alert("Selecciona al menos un día y una hora");
+    return;
+  }
+
+  const estadoMed = (() => {
+    if (periodicidad === "0") return "Activo";
+    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    const f = new Date(fin); f.setHours(0,0,0,0);
+    return f < hoy ? "Caducado" : "Activo";
+  })();
+
+  const guardarFinal = (fotoBase64 = "") => {
+
+    const med = {
+      id: Date.now().toString(),
+      nombre,
+      ubicacion,
+      dosis,
+      periodicidad,
+      inicio,
+      fin,
+      estado: estadoMed,
+      fotoURL: fotoBase64,
+      horas: JSON.parse(JSON.stringify(estado))
+    };
+
+    const meds = JSON.parse(
+      localStorage.getItem("medicamentos_guardados_v1")
+    ) || [];
+
+    meds.push(med);
+
+    localStorage.setItem(
+      "medicamentos_guardados_v1",
+      JSON.stringify(meds)
+    );
+
+    render();
+    limpiar();
+
+    Object.keys(estado).forEach(d => estado[d] = []);
+    document.querySelectorAll("#med-dias button").forEach(b => {
+      b.classList.remove("activo");
+      b.style.background = "#e0e0e0";
+      b.style.color = "#000";
+    });
+    document
+      .querySelectorAll('#med-dias input[type="time"]')
+      .forEach(i => i.remove());
+  };
+
+  if (fotoInput?.files?.[0]) {
+    const reader = new FileReader();
+    reader.onload = () => guardarFinal(reader.result);
+    reader.readAsDataURL(fotoInput.files[0]);
+  } else {
+    guardarFinal("");
+  }
+});
+
 
 if (!hayHoras) {
   btnGuardar.textContent = "Selecciona día y hora";
@@ -1023,24 +1079,7 @@ if (periodicidad !== "0" && fin) {
   if (f < hoy) estadoMed = "Caducado";
 }
 
-/* ===== GUARDADO FINAL (ORDEN CORRECTO) ===== */
-const finalizarGuardado = (fotoBase64 = "") => {
-  guardarMedicamento(fotoBase64);
-  render();
-  limpiar();
 
-  // 🔄 REINICIAR HORAS (estado + UI)
-  Object.keys(estado).forEach(d => estado[d] = []);
-
-  document.querySelectorAll("#med-dias button").forEach(btn => {
-    btn.classList.remove("activo");
-    btn.style.background = "#e0e0e0";
-    btn.style.color = "#000";
-  });
-
-  document
-    .querySelectorAll('#med-dias input[type="time"]')
-    .forEach(input => input.remove());
 
 
 
