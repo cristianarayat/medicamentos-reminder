@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori189 de Medicamentos</h1>
+  <h1>💊 Recordatori190 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -980,12 +980,23 @@ function render() {
     `;
 
     div.querySelector("button").onclick = () => {
+
+  const ok = confirm(
+    `¿Seguro que deseas eliminar el medicamento "${m.nombre}"?`
+  );
+
+  if (!ok) return;
+
   meds.splice(i, 1);
 
   localStorage.setItem(
     "medicamentos_guardados_v1",
     JSON.stringify(meds)
   );
+
+  render(); // 🔑 refresco inmediato
+};
+
 
   // 🔑 refrescar UI inmediatamente
   render();
