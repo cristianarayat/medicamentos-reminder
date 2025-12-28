@@ -108,7 +108,7 @@ button{
      HEADER
 ========================= -->
 <header>
-  <h1>💊 Recordatori203 de Medicamentos</h1>
+  <h1>💊 Recordatori204 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -134,6 +134,265 @@ button{
   </div>
 </div>
 
+
+<!-- =========================
+     BLOQUE 2 – DATOS PERSONALES
+========================= -->
+
+<style>
+#pantalla-datos{
+  position:fixed;
+  inset:0;
+  background:#eef1f4;
+  z-index:1000;
+  overflow:auto;
+}
+
+.dp-container{
+  max-width:480px;
+  margin:0 auto;
+  padding:24px 16px;
+}
+
+.dp-card{
+  background:#fff;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 12px 28px rgba(0,0,0,.12);
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.dp-card h2{
+  text-align:center;
+  margin:0;
+}
+
+.dp-group label{
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:6px;
+  display:block;
+}
+
+.dp-group input{
+  width:100%;
+  height:50px;
+  border-radius:16px;
+  border:1px solid #cfcfcf;
+  padding:0 16px;
+  font-size:16px;
+}
+
+.phone-wrap{
+  display:flex;
+  align-items:center;
+  border:1px solid #cfcfcf;
+  border-radius:16px;
+  height:50px;
+  overflow:hidden;
+}
+
+.phone-prefix{
+  padding:0 14px;
+  background:#f1f3f4;
+  font-weight:600;
+  border-right:1px solid #cfcfcf;
+}
+
+.phone-wrap input{
+  border:none;
+  height:100%;
+  padding:0 14px;
+  flex:1;
+  font-size:16px;
+}
+
+.switch-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.switch-left{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:15px;
+}
+
+.switch{
+  position:relative;
+  width:50px;
+  height:28px;
+}
+.switch input{ opacity:0; }
+.slider{
+  position:absolute;
+  inset:0;
+  background:#ccc;
+  border-radius:28px;
+  transition:.3s;
+}
+.slider:before{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  left:3px;
+  top:3px;
+  background:#fff;
+  border-radius:50%;
+  transition:.3s;
+}
+.switch input:checked + .slider{ background:#2f80ed; }
+.switch input:checked + .slider:before{ transform:translateX(22px); }
+
+.dp-btn{
+  width:100%;
+  height:56px;
+  border:none;
+  border-radius:18px;
+  font-size:17px;
+  font-weight:700;
+}
+
+.dp-btn.primario{ background:#2f80ed; color:#fff; }
+.dp-btn.secundario{ background:#bdbdbd; }
+
+.dp-error{
+  display:none;
+  color:#d32f2f;
+  font-size:13px;
+  text-align:center;
+}
+
+.dp-toast{
+  display:none;
+  text-align:center;
+  font-weight:600;
+  color:#2e7d32;
+}
+</style>
+
+<div class="dp-container">
+  <div class="dp-card">
+
+    <h2>Datos personales</h2>
+
+    <div class="dp-group">
+      <label>Nombre del paciente</label>
+      <input id="dp-paciente" type="text">
+    </div>
+
+    <div class="dp-group">
+      <label>Fecha de nacimiento</label>
+      <input id="dp-nacimiento" type="date">
+    </div>
+
+    <div class="dp-group">
+      <label>Nombre del cuidador</label>
+      <input id="dp-cuidador" type="text">
+    </div>
+
+    <div class="dp-group">
+      <label>Teléfono del cuidador</label>
+      <div class="phone-wrap">
+        <div class="phone-prefix">+569</div>
+        <input id="dp-telefono" type="tel" maxlength="8" placeholder="12345678">
+      </div>
+    </div>
+
+    <div class="switch-row">
+      <div class="switch-left">🔊 Recordatorios por voz</div>
+      <label class="switch">
+        <input id="dp-voz" type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="switch-row">
+      <div class="switch-left">📳 Vibración</div>
+      <label class="switch">
+        <input id="dp-vibracion" type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div id="dp-error" class="dp-error">
+      Completa todos los campos correctamente
+    </div>
+
+    <div id="dp-toast" class="dp-toast">
+      ✅ Datos guardados correctamente
+    </div>
+
+    <button class="dp-btn primario" id="dp-guardar">
+      Guardar
+    </button>
+
+    <button class="dp-btn secundario" id="dp-volver">
+      Volver
+    </button>
+
+  </div>
+</div>
+
+<script>
+(function(){
+
+  const $ = id => document.getElementById(id);
+
+  function telefonoValido(){
+    return /^\d{8}$/.test($("dp-telefono").value);
+  }
+
+  function guardarDatos(){
+    const data = {
+      paciente: $("dp-paciente").value.trim(),
+      nacimiento: $("dp-nacimiento").value,
+      cuidador: $("dp-cuidador").value.trim(),
+      telefono: "+569" + $("dp-telefono").value,
+      voz: $("dp-voz").checked,
+      vibracion: $("dp-vibracion").checked
+    };
+
+    if(!data.paciente || !data.nacimiento || !data.cuidador || !telefonoValido()){
+      $("dp-error").style.display="block";
+      return;
+    }
+
+    $("dp-error").style.display="none";
+    localStorage.setItem("datosPersonales", JSON.stringify(data));
+
+    $("dp-toast").style.display="block";
+    setTimeout(()=> $("dp-toast").style.display="none", 2000);
+  }
+
+  function cargarDatos(){
+    const d = JSON.parse(localStorage.getItem("datosPersonales"));
+    if(!d) return;
+
+    $("dp-paciente").value = d.paciente;
+    $("dp-nacimiento").value = d.nacimiento;
+    $("dp-cuidador").value = d.cuidador;
+    $("dp-telefono").value = d.telefono.replace("+569","");
+    $("dp-voz").checked = d.voz;
+    $("dp-vibracion").checked = d.vibracion;
+  }
+
+  document.addEventListener("DOMContentLoaded", cargarDatos);
+  $("dp-guardar").onclick = guardarDatos;
+  $("dp-volver").onclick = () =>
+    document.getElementById("pantalla-datos").classList.add("oculto");
+
+})();
+</script>
+
+   
+   
+   
 <!-- =========================
      CONTENEDORES DE MÓDULOS
      (SE COMPLETAN EN BLOQUES FUTUROS)
