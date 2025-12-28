@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori195 de Medicamentos</h1>
+  <h1>💊 Recordatori196 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -729,9 +729,14 @@ function inicializarMedicamentos() {
   /* ===== BLOQUE FOTO ===== */
   const card = document.querySelector("#medicamentos .med-card");
 
-  if (!card || document.getElementById("m-foto")) return;
+if (!card) return;
 
-  const bloqueFoto = document.createElement("div");
+if (!document.getElementById("m-foto")) {
+  // crear bloque foto
+}
+
+
+const bloqueFoto = document.createElement("div");
   bloqueFoto.className = "med-foto";
   bloqueFoto.innerHTML = `
     <label>Foto del medicamento</label>
@@ -757,6 +762,7 @@ function inicializarMedicamentos() {
     };
     reader.readAsDataURL(file);
   });
+}
 
      
 const DIAS = ["L","M","X","J","V","S","D"];
