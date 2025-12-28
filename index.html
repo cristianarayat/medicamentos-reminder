@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori180 de Medicamentos</h1>
+  <h1>💊 Recordatori181 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -543,6 +543,7 @@ window.addEventListener("focus", actualizarBienvenida);
       <div class="med-group">
         <label>Nombre del medicamento</label>
         <input id="med-nombre" placeholder="Ej: Paracetamol">
+        <div id="lista-meds"></div>
       </div>
 
 <div class="med-group">
@@ -830,8 +831,7 @@ btnGuardar.addEventListener("click", () => {
       JSON.stringify(meds)
     );
 
-    limpiar();
-    render();
+    
 
     // reset horas
     Object.keys(estado).forEach(d => estado[d] = []);
@@ -856,7 +856,50 @@ btnGuardar.addEventListener("click", () => {
 
 });
 
+function render() {
+  const lista = document.getElementById("lista-meds");
+  if (!lista) return;
 
+  lista.innerHTML = "";
+
+  const meds = JSON.parse(
+    localStorage.getItem("medicamentos_guardados_v1")
+  ) || [];
+
+  if (meds.length === 0) {
+    lista.innerHTML = "<p style='text-align:center;color:#777'>Sin medicamentos</p>";
+    return;
+  }
+
+  meds.forEach((m, i) => {
+    const div = document.createElement("div");
+    div.className = "med-item";
+
+    div.innerHTML = `
+      <strong>${m.nombre}</strong><br>
+      ${m.ubicacion ? `📍 ${m.ubicacion}<br>` : ""}
+      Dosis: ${m.dosis}<br>
+      Estado: <b>${m.estado}</b>
+      ${m.fotoURL ? `<img src="${m.fotoURL}">` : ""}
+      <button>Eliminar</button>
+    `;
+
+    div.querySelector("button").onclick = () => {
+      meds.splice(i, 1);
+      localStorage.setItem(
+        "medicamentos_guardados_v1",
+        JSON.stringify(meds)
+      );
+      
+    };
+
+    lista.appendChild(div);
+  });
+}
+
+
+
+     
 </script>
 
 
