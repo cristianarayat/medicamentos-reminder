@@ -108,7 +108,7 @@ button{
      HEADER
 ========================= -->
 <header>
-  <h1>💊 Recordatori207 de Medicamentos</h1>
+  <h1>💊 Recordatori208 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -140,55 +140,6 @@ button{
 ========================= -->
 
 
-(function(){
-
-  const $ = id => document.getElementById(id);
-
-  function telefonoValido(){
-    return /^\d{8}$/.test($("dp-telefono").value);
-  }
-
-  function guardarDatos(){
-    const data = {
-      paciente: $("dp-paciente").value.trim(),
-      nacimiento: $("dp-nacimiento").value,
-      cuidador: $("dp-cuidador").value.trim(),
-      telefono: "+569" + $("dp-telefono").value,
-      voz: $("dp-voz").checked,
-      vibracion: $("dp-vibracion").checked
-    };
-
-    if(!data.paciente || !data.nacimiento || !data.cuidador || !telefonoValido()){
-      $("dp-error").style.display="block";
-      return;
-    }
-
-    $("dp-error").style.display="none";
-    localStorage.setItem("datosPersonales", JSON.stringify(data));
-
-    $("dp-toast").style.display="block";
-    setTimeout(()=> $("dp-toast").style.display="none", 2000);
-  }
-
-  function cargarDatos(){
-    const d = JSON.parse(localStorage.getItem("datosPersonales"));
-    if(!d) return;
-
-    $("dp-paciente").value = d.paciente;
-    $("dp-nacimiento").value = d.nacimiento;
-    $("dp-cuidador").value = d.cuidador;
-    $("dp-telefono").value = d.telefono.replace("+569","");
-    $("dp-voz").checked = d.voz;
-    $("dp-vibracion").checked = d.vibracion;
-  }
-
-  document.addEventListener("DOMContentLoaded", cargarDatos);
-  $("dp-guardar").onclick = guardarDatos;
-  $("dp-volver").onclick = () =>
-    document.getElementById("pantalla-datos").classList.add("oculto");
-
-})();
-</script>
 
    
    
@@ -204,33 +155,7 @@ button{
        BLOQUE 2 – DATOS PERSONALES
   ========================= -->
 
-  <div class="dp-container">
-    <div class="dp-card">
-
-      <h2>Datos personales</h2>
-
-      <div class="dp-group">
-        <label>Nombre del paciente</label>
-        <input id="dp-paciente" type="text">
-      </div>
-
-      <div class="dp-group">
-        <label>Fecha de nacimiento</label>
-        <input id="dp-nacimiento" type="date">
-      </div>
-
-      <div class="dp-group">
-        <label>Nombre del cuidador</label>
-        <input id="dp-cuidador" type="text">
-      </div>
-
-      <div class="dp-group">
-        <label>Teléfono del cuidador</label>
-        <div class="phone-wrap">
-          <div class="phone-prefix">+569</div>
-          <input id="dp-telefono" type="tel" maxlength="8" placeholder="12345678">
-        </div>
-      </div>
+  
 
       <div class="switch-row">
         <div class="switch-left">🔊 Recordatorios por voz</div>
