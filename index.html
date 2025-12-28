@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori188 de Medicamentos</h1>
+  <h1>💊 Recordatori189 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -865,7 +865,27 @@ btnGuardar.addEventListener("click", () => {
        
      // 🔑 AÑADIR ESTA LÍNEA
      render();
-    
+
+       // 🧹 LIMPIEZA DE CAMPOS
+document.getElementById("med-nombre").value = "";
+document.getElementById("med-ubicacion").value = "";
+document.getElementById("m-dosis").value = 1;
+document.getElementById("m-periodicidad").value = "1";
+document.getElementById("m-dias").value = "";
+document.getElementById("m-inicio").value = "";
+document.getElementById("m-fin").value = "";
+
+// limpiar foto
+const preview = document.getElementById("m-preview");
+const foto = document.getElementById("m-foto");
+if (preview) preview.innerHTML = `<span style="font-size:12px;color:#777">Sin imagen</span>`;
+if (foto) foto.value = "";
+
+// desactivar botón guardar
+btnGuardar.disabled = true;
+btnGuardar.textContent = "Guardar (desactivado)";
+btnGuardar.style.background = "#9e9e9e";
+
 
     // reset horas
     Object.keys(estado).forEach(d => estado[d] = []);
@@ -877,6 +897,7 @@ btnGuardar.addEventListener("click", () => {
     document
       .querySelectorAll('#med-dias input[type="time"]')
       .forEach(i => i.remove());
+       
   };
 
  // ===== FOTO (MINIATURA SEGURA) =====
