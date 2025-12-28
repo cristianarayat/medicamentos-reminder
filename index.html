@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori175 de Medicamentos</h1>
+  <h1>💊 Recordatori176 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -1033,57 +1033,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-<script>
 
-
-  const guardarFinal = (fotoBase64 = "") => {
-
-    const med = {
-      id: Date.now().toString(),
-      nombre,
-      ubicacion,
-      dosis,
-      periodicidad,
-      inicio,
-      fin,
-      estado: estadoMed,
-      fotoURL: fotoBase64,
-      horas: JSON.parse(JSON.stringify(estado))
-    };
-
-    const meds = JSON.parse(
-      localStorage.getItem("medicamentos_guardados_v1")
-    ) || [];
-
-    meds.push(med);
-
-    localStorage.setItem(
-      "medicamentos_guardados_v1",
-      JSON.stringify(meds)
-    );
-
-    render();
-    limpiar();
-
-    Object.keys(estado).forEach(d => estado[d] = []);
-    document.querySelectorAll("#med-dias button").forEach(b => {
-      b.classList.remove("activo");
-      b.style.background = "#e0e0e0";
-      b.style.color = "#000";
-    });
-    document
-      .querySelectorAll('#med-dias input[type="time"]')
-      .forEach(i => i.remove());
-  };
-
-  if (fotoInput?.files?.[0]) {
-    const reader = new FileReader();
-    reader.onload = () => guardarFinal(reader.result);
-    reader.readAsDataURL(fotoInput.files[0]);
-  } else {
-    guardarFinal("");
-  }
-});
 
 
 if (!hayHoras) {
@@ -1116,14 +1066,7 @@ if (periodicidad !== "0" && fin) {
 
 /* ===== FOTO ===== */
 
-const fotoInput = document.getElementById("m-foto");
-if (fotoInput?.files?.[0]) {
-  const reader = new FileReader();
-  reader.onload = () => finalizarGuardado(reader.result);
-  reader.readAsDataURL(fotoInput.files[0]);
-} else {
-  finalizarGuardado("");
-}
+
      
 });
 
@@ -1144,12 +1087,7 @@ if (fotoInput?.files?.[0]) {
        
 
 
-  // ✅ guardar
-  medicamentos.push(med);
-  localStorage.setItem(
-    "medicamentos_guardados_v1",
-    JSON.stringify(medicamentos)
-  );
+  
 
   // ✅ render + limpiar SOLO después de guardar
   render();
