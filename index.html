@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori181 de Medicamentos</h1>
+  <h1>💊 Recordatori182 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -845,14 +845,54 @@ btnGuardar.addEventListener("click", () => {
       .forEach(i => i.remove());
   };
 
-  // ===== FOTO =====
-  if (fotoInput?.files?.[0]) {
-    const reader = new FileReader();
-    reader.onload = () => guardar(reader.result);
-    reader.readAsDataURL(fotoInput.files[0]);
-  } else {
-    guardar("");
-  }
+ // ===== FOTO (MINIATURA SEGURA) =====
+if (fotoInput?.files?.[0]) {
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    const img = new Image();
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const size = 120;
+
+      canvas.width = size;
+      canvas.height = size;
+
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, size, size);
+
+      // Mantener proporción
+      const scale = Math.min(
+        size / img.width,
+        size / img.height
+      );
+
+      const w = img.width * scale;
+      const h = img.height * scale;
+
+      const x = (size - w) / 2;
+      const y = (size - h) / 2;
+
+      ctx.drawImage(img, x, y, w, h);
+
+      // 🔑 JPEG comprimido
+      const miniatura = canvas.toDataURL("image/jpeg", 0.5);
+
+      guardar(miniatura);
+    };
+
+    img.src = reader.result;
+  };
+
+  reader.readAsDataURL(fotoInput.files[0]);
+
+} else {
+  guardar("");
+}
+
 
 });
 
