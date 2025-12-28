@@ -202,7 +202,7 @@ button{
 <body>
 
 <header>
-  <h1>💊 Recordatori217 Medicamentos</h1>
+  <h1>💊 Recordatori218 Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -303,46 +303,7 @@ button{
   Desarrollado por <strong>CA Tecnología</strong>
 </div>
 
-<script>
-/* =========================
-   UTILIDADES
-========================= */
-const $ = id => document.getElementById(id);
 
-function calcularEdad(fecha){
-  const nacimiento = new Date(fecha);
-  const hoy = new Date();
-
-  let años = hoy.getFullYear() - nacimiento.getFullYear();
-  let meses = hoy.getMonth() - nacimiento.getMonth();
-
-  if (meses < 0){
-    años--;
-    meses += 12;
-  }
-
-  return { años, meses };
-}
-
-/* =========================
-   BIENVENIDA
-========================= */
-function actualizarBienvenida(){
-  const cont = $("bienvenida");
-  const data = JSON.parse(localStorage.getItem("datosPersonales"));
-
-  if(!data){
-    cont.innerHTML = `<div class="nombre">Bienvenido</div>`;
-    return;
-  }
-
-  const edad = calcularEdad(data.nacimiento);
-
-  cont.innerHTML = `
-    <div class="nombre">Bienvenido ${data.paciente}</div>
-    <div class="edad">${edad.años} años · ${edad.meses} meses</div>
-  `;
-}
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -405,6 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
      GUARDAR DATOS
   ========================= */
   $("dp-guardar").onclick = () => {
+
     if(
       !$("dp-paciente").value.trim() ||
       !$("dp-nacimiento").value ||
@@ -439,7 +401,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 </script>
-
 
    
 
