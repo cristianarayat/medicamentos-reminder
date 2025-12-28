@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori179 de Medicamentos</h1>
+  <h1>💊 Recordatori180 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -951,119 +951,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-       
-<script>
-
-  
-
-  // ✅ render + limpiar SOLO después de guardar
-  render();
-  limpiar();
-
-  // 🔄 reiniciar estado horas
-  Object.keys(estado).forEach(d => estado[d] = []);
-
-  document.querySelectorAll("#med-dias button").forEach(btn => {
-    btn.classList.remove("activo");
-    btn.style.background = "#e0e0e0";
-    btn.style.color = "#000";
-  });
-
-  document
-    .querySelectorAll('#med-dias input[type="time"]')
-    .forEach(input => input.remove());
-}
-
-
-  function render(){
-    lista.innerHTML = "";
-
-    medicamentos
-      .sort((a,b)=> a.estado === b.estado ? 0 : a.estado === "Activo" ? -1 : 1)
-      .forEach((m,i)=>{
-        const div = document.createElement("div");
-        div.style.background = "#f1f8ff";
-        div.style.borderRadius = "14px";
-        div.style.padding = "12px";
-        div.style.marginBottom = "10px";
-
-        div.innerHTML = `
-          <div style="font-weight:600;font-size:15px">
-  ${m.nombre}
-</div>
-<div style="font-size:11px;color:#999">
-  ID: ${m.id}
-</div>
-
-          ${m.ubicacion ? `<div style="font-size:13px;color:#555">📍 ${m.ubicacion}</div>` : ""}
-          <br>
-          Dosis: ${m.dosis} por día<br>
-          ${m.inicio ? `Inicio: ${m.inicio}<br>` : ""}
-          ${m.fin ? `Fin: ${m.fin}<br>` : ""}
-          <div style="
-            margin-top:6px;
-            font-weight:700;
-            color:${m.estado==="Activo" ? "#2e7d32" : "#b71c1c"};
-          ">
-            Estado: ${m.estado}
-          </div>
-          ${m.fotoURL ? `
-            <img src="${m.fotoURL}"
-              style="width:70px;border-radius:8px;margin-top:6px;">
-          ` : ""}
-          <button style="
-            margin-top:8px;
-            background:#e53935;
-            color:#fff;
-            border:none;
-            padding:6px 10px;
-            border-radius:8px;
-            width:100%;
-          ">Eliminar</button>
-        `;
-
-        div.querySelector("button").onclick = ()=>{
-  medicamentos.splice(i,1);
-  localStorage.setItem(
-    "medicamentos_guardados_v1",
-    JSON.stringify(medicamentos)
-  );
-  render();
-};
-
-
-        lista.appendChild(div);
-      });
-  }
-
-  function limpiar(){
-  document.getElementById("med-nombre").value="";
-  document.getElementById("med-ubicacion").value = "";   
-  document.getElementById("m-dosis").value=1;
-  document.getElementById("m-periodicidad").value="1";
-  document.getElementById("m-dias").value="";
-  document.getElementById("m-inicio").value="";
-  document.getElementById("m-fin").value="";
-  const foto = document.getElementById("m-foto");
-const preview = document.getElementById("m-preview");
-
-if (foto) foto.value = "";
-if (preview) {
-  preview.innerHTML = `<span style="font-size:12px;color:#777">Sin imagen</span>`;
-}
-
-}
-
-// 🔄 PASO 2: renderizar medicamentos cargados desde localStorage
-render();
-
-
-
-
      
-})();
-
-</script>
 
 
 <script>
