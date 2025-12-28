@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori190 de Medicamentos</h1>
+  <h1>💊 Recordatori191 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -116,9 +116,10 @@ button{
     </div>
 
     <!-- BOTONES DE NAVEGACIÓN -->
-    <button>Datos personales</button>
-    <button>Medicamentos</button>
-    <button>Seguimiento</button>
+     <button id="btn-datos">Datos personales</button>
+     <button id="btn-meds">Medicamentos</button>
+     <button id="btn-seg">Seguimiento</button>
+
 
     <!-- IMAGEN INFERIOR -->
     <img 
@@ -130,6 +131,33 @@ button{
   </div>
 </div>
 
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // Abrir Datos Personales
+  document.getElementById("btn-datos")?.addEventListener("click", () => {
+    document.getElementById("datos-personales").style.display = "block";
+  });
+
+  // Abrir Medicamentos
+  document.getElementById("btn-meds")?.addEventListener("click", () => {
+    document.getElementById("medicamentos").style.display = "block";
+    render(); // 🔑 mostrar lista al abrir
+  });
+
+  // Abrir Seguimiento
+  document.getElementById("btn-seg")?.addEventListener("click", () => {
+    document.getElementById("seguimiento").style.display = "block";
+    cargarHoy();
+    prepararHistorial();
+  });
+
+});
+</script>
+
+
+     
 <!-- =========================
      FOOTER
      ========================= -->
@@ -609,20 +637,7 @@ window.addEventListener("focus", actualizarBienvenida);
 /* =========================
    ABRIR / CERRAR
 ========================= */
-document.addEventListener("pointerdown", e=>{
-  let el = e.target;
-  while(el && el!==document.body){
-    if(el.textContent?.trim().toLowerCase()==="medicamentos"){
-      document.getElementById("medicamentos").style.display="block";
 
-      // 🔑 MOSTRAR LISTA AL ABRIR
-      render();
-
-      return;
-    }
-    el = el.parentElement;
-  }
-}, true);
 
 
 /* =========================
