@@ -57,10 +57,19 @@ header h1{
    HOME
 ========================= */
 #bienvenida{
-  font-size:18px;
-  font-weight:700;
   text-align:center;
   margin-bottom:12px;
+}
+
+#bienvenida .nombre{
+  font-size:18px;
+  font-weight:700;
+}
+
+#bienvenida .edad{
+  font-size:14px;
+  color:#666;
+  margin-top:4px;
 }
 
 .imagen-home{
@@ -193,16 +202,18 @@ button{
 <body>
 
 <header>
-  <h1>💊 Recordatori212 de Medicamentos</h1>
+  <h1>💊 Recordatori213 Medicamentos</h1>
 </header>
 
 <!-- =========================
-     HOME
+     HOME (BLOQUE 1)
 ========================= -->
 <div class="container" id="home">
   <div class="card">
 
-    <div id="bienvenida">Bienvenido</div>
+    <div id="bienvenida">
+      <div class="nombre">Bienvenido</div>
+    </div>
 
     <img src="personas-inclusivas.png" class="imagen-home" alt="Personas inclusivas">
 
@@ -214,7 +225,7 @@ button{
 </div>
 
 <!-- =========================
-     DATOS PERSONALES
+     DATOS PERSONALES (BLOQUE 2)
 ========================= -->
 <div id="pantalla-datos" class="hidden">
   <div class="container">
@@ -277,34 +288,18 @@ button{
 
 <script>
 /* =========================
-   NAVEGACIÓN
+   UTILIDADES
 ========================= */
-const home = document.getElementById("home");
-const datos = document.getElementById("pantalla-datos");
+const $ = id => document.getElementById(id);
 
-document.getElementById("btn-datos").onclick = () => {
-  home.classList.add("hidden");
-  datos.classList.remove("hidden");
-};
-
-document.getElementById("dp-volver").onclick = () => {
-  datos.classList.add("hidden");
-  home.classList.remove("hidden");
-};
-
-<script>
-/* =========================
-   BIENVENIDA + EDAD
-========================= */
-
-function calcularEdad(fechaNacimiento){
+function calcularEdad(fecha){
+  const nacimiento = new Date(fecha);
   const hoy = new Date();
-  const nac = new Date(fechaNacimiento);
 
-  let años = hoy.getFullYear() - nac.getFullYear();
-  let meses = hoy.getMonth() - nac.getMonth();
+  let años = hoy.getFullYear() - nacimiento.getFullYear();
+  let meses = hoy.getMonth() - nacimiento.getMonth();
 
-  if (meses < 0) {
+  if (meses < 0){
     años--;
     meses += 12;
   }
@@ -312,37 +307,43 @@ function calcularEdad(fechaNacimiento){
   return { años, meses };
 }
 
+/* =========================
+   BIENVENIDA
+========================= */
 function actualizarBienvenida(){
-  const cont = document.getElementById("bienvenida");
+  const cont = $("bienvenida");
   const data = JSON.parse(localStorage.getItem("datosPersonales"));
 
-  if(!data || !data.paciente || !data.nacimiento){
-    cont.textContent = "Bienvenido";
+  if(!data){
+    cont.innerHTML = `<div class="nombre">Bienvenido</div>`;
     return;
   }
 
   const edad = calcularEdad(data.nacimiento);
 
   cont.innerHTML = `
-    <div style="text-align:center">
-      <div style="font-size:18px;font-weight:700">
-        Bienvenido ${data.paciente}
-      </div>
-      <div style="font-size:14px;color:#555;margin-top:4px">
-        ${edad.años} años · ${edad.meses} meses
-      </div>
-    </div>
+    <div class="nombre">Bienvenido ${data.paciente}</div>
+    <div class="edad">${edad.años} años · ${edad.meses} meses</div>
   `;
 }
-</script>
 
-   
 /* =========================
-   GUARDADO DATOS
+   NAVEGACIÓN
 ========================= */
-const $ = id => document.getElementById(id);
+$("btn-datos").onclick = () => {
+  $("home").classList.add("hidden");
+  $("pantalla-datos").classList.remove("hidden");
+};
 
-document.getElementById("dp-guardar").onclick = () => {
+$("dp-volver").onclick = () => {
+  $("pantalla-datos").classList.add("hidden");
+  $("home").classList.remove("hidden");
+};
+
+/* =========================
+   GUARDAR DATOS
+========================= */
+$("dp-guardar").onclick = () => {
 
   if(
     !$("dp-paciente").value.trim() ||
@@ -357,9 +358,9 @@ document.getElementById("dp-guardar").onclick = () => {
   $("dp-error").style.display="none";
 
   localStorage.setItem("datosPersonales", JSON.stringify({
-    paciente:$("dp-paciente").value,
+    paciente:$("dp-paciente").value.trim(),
     nacimiento:$("dp-nacimiento").value,
-    cuidador:$("dp-cuidador").value,
+    cuidador:$("dp-cuidador").value.trim(),
     telefono:"+569"+$("dp-telefono").value,
     voz:$("dp-voz").checked,
     vibracion:$("dp-vibracion").checked
@@ -368,14 +369,13 @@ document.getElementById("dp-guardar").onclick = () => {
   $("dp-toast").style.display="block";
   setTimeout(()=> $("dp-toast").style.display="none",2000);
 
-   actualizarBienvenida();
-   
-   
-   
+  actualizarBienvenida();
 };
 
+/* =========================
+   INIT
+========================= */
 document.addEventListener("DOMContentLoaded", actualizarBienvenida);
-   
 </script>
 
 </body>
