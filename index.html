@@ -344,14 +344,54 @@ function actualizarBienvenida(){
   `;
 }
 
-</script>
-   
+<script>
+/* =========================
+   UTILIDAD
+========================= */
+const $ = id => document.getElementById(id);
+
+/* =========================
+   EDAD
+========================= */
+function calcularEdad(fecha){
+  const n = new Date(fecha);
+  const h = new Date();
+  let años = h.getFullYear() - n.getFullYear();
+  let meses = h.getMonth() - n.getMonth();
+  if (meses < 0){ años--; meses += 12; }
+  return {años, meses};
+}
+
+/* =========================
+   BIENVENIDA
+========================= */
+function actualizarBienvenida(){
+  const cont = $("bienvenida");
+  const data = JSON.parse(localStorage.getItem("datosPersonales"));
+
+  if(!data){
+    cont.innerHTML = `<div class="nombre">Bienvenido</div>`;
+    return;
+  }
+
+  const e = calcularEdad(data.nacimiento);
+  cont.innerHTML = `
+    <div class="nombre">Bienvenido ${data.paciente}</div>
+    <div class="edad">${e.años} años · ${e.meses} meses</div>
+  `;
+}
+
 /* =========================
    NAVEGACIÓN
 ========================= */
 $("btn-datos").onclick = () => {
   $("home").classList.add("hidden");
   $("pantalla-datos").classList.remove("hidden");
+};
+
+$("btn-medicamentos").onclick = () => {
+  $("home").classList.add("hidden");
+  $("pantalla-medicamentos").classList.remove("hidden");
 };
 
 $("dp-volver").onclick = () => {
@@ -363,7 +403,6 @@ $("dp-volver").onclick = () => {
    GUARDAR DATOS
 ========================= */
 $("dp-guardar").onclick = () => {
-
   if(
     !$("dp-paciente").value.trim() ||
     !$("dp-nacimiento").value ||
@@ -377,12 +416,12 @@ $("dp-guardar").onclick = () => {
   $("dp-error").style.display="none";
 
   localStorage.setItem("datosPersonales", JSON.stringify({
-    paciente:$("dp-paciente").value.trim(),
-    nacimiento:$("dp-nacimiento").value,
-    cuidador:$("dp-cuidador").value.trim(),
-    telefono:"+569"+$("dp-telefono").value,
-    voz:$("dp-voz").checked,
-    vibracion:$("dp-vibracion").checked
+    paciente: $("dp-paciente").value.trim(),
+    nacimiento: $("dp-nacimiento").value,
+    cuidador: $("dp-cuidador").value.trim(),
+    telefono: "+569" + $("dp-telefono").value,
+    voz: $("dp-voz").checked,
+    vibracion: $("dp-vibracion").checked
   }));
 
   $("dp-toast").style.display="block";
@@ -394,160 +433,6 @@ $("dp-guardar").onclick = () => {
 /* =========================
    INIT
 ========================= */
-document.addEventListener("DOMContentLoaded", actualizarBienvenida);
-
-
-<script>
-/* =========================
-   BLOQUE 3 – LÓGICA MEDICAMENTOS
-========================= */
-
-const diasSeleccionados = new Set();
-
-$("btn-medicamentos").onclick = () => {
-  $("home").classList.add("hidden");
-  $("pantalla-medicamentos").classList.remove("hidden");
-  renderMedicamentos();
-};
-
-$("med-volver").onclick = () => {
-  $("pantalla-medicamentos").classList.add("hidden");
-  $("home").classList.remove("hidden");
-};
-
-$("med-periodicidad").onchange = e => {
-  $("grupo-horas").classList.add("hidden");
-  $("grupo-dias").classList.add("hidden");
-
-  if(e.target.value === "horas") $("grupo-horas").classList.remove("hidden");
-  if(e.target.value === "dias") $("grupo-dias").classList.remove("hidden");
-};
-
-document.querySelectorAll("#med-dias button").forEach(btn=>{
-  btn.onclick = ()=>{
-    btn.classList.toggle("activo");
-    btn.style.background = btn.classList.contains("activo") ? "#2f80ed" : "";
-    btn.style.color = btn.classList.contains("activo") ? "#fff" : "";
-    btn.classList.contains("activo")
-      ? diasSeleccionados.add(btn.dataset.dia)
-      : diasSeleccionados.delete(btn.dataset.dia);
-  };
-});
-
-$("med-guardar").onclick = ()=>{
-  const data = {
-    nombre: $("med-nombre").value.trim(),
-    dosis: $("med-dosis").value.trim(),
-    periodicidad: $("med-periodicidad").value,
-    horas: $("med-cada-horas").value,
-    dias: [...diasSeleccionados],
-    hora: $("med-hora").value
-  };
-
-  if(!data.nombre || !data.dosis || !data.periodicidad || !data.hora){
-    $("med-error").style.display="block";
-    return;
-  }
-
-  $("med-error").style.display="none";
-
-  const meds = JSON.parse(localStorage.getItem("medicamentos") || "[]");
-  meds.push(data);
-  localStorage.setItem("medicamentos", JSON.stringify(meds));
-
-  limpiarFormularioMedicamentos();
-  renderMedicamentos();
-};
-
-function renderMedicamentos(){
-  const cont = $("lista-meds");
-  cont.innerHTML = "";
-
-  const meds = JSON.parse(localStorage.getItem("medicamentos") || "[]");
-  if(meds.length === 0){
-    cont.innerHTML = "<p style='color:#777'>Sin medicamentos</p>";
-    return;
-  }
-
-  meds.forEach((m,i)=>{
-    const div = document.createElement("div");
-    div.style.marginBottom="10px";
-    div.innerHTML = `
-      <strong>${m.nombre}</strong><br>
-      ${m.dosis}<br>
-      ${m.periodicidad}<br>
-      <button onclick="eliminarMed(${i})" style="background:#d32f2f">Eliminar</button>
-    `;
-    cont.appendChild(div);
-  });
-}
-
-function eliminarMed(i){
-  const meds = JSON.parse(localStorage.getItem("medicamentos"));
-  meds.splice(i,1);
-  localStorage.setItem("medicamentos", JSON.stringify(meds));
-  renderMedicamentos();
-}
-
-function limpiarFormularioMedicamentos(){
-  $("med-nombre").value="";
-  $("med-dosis").value="";
-  $("med-periodicidad").value="";
-  $("med-cada-horas").value="";
-  $("med-hora").value="";
-  diasSeleccionados.clear();
-  document.querySelectorAll("#med-dias button").forEach(b=>{
-    b.classList.remove("activo");
-    b.style.background="";
-    b.style.color="";
-  });
-}
-</script>
-
-
-<script>
-const $ = id => document.getElementById(id);
-
-/* navegación */
-$("btn-datos").onclick = () => {
-  $("home").classList.add("hidden");
-  $("pantalla-datos").classList.remove("hidden");
-};
-
-$("btn-medicamentos").onclick = () => {
-  $("home").classList.add("hidden");
-  $("pantalla-medicamentos").classList.remove("hidden");
-};
-
-$("dp-volver").onclick = () => {
-  $("pantalla-datos").classList.add("hidden");
-  $("home").classList.remove("hidden");
-};
-
-/* bienvenida */
-function calcularEdad(fecha){
-  const n = new Date(fecha);
-  const h = new Date();
-  let años = h.getFullYear() - n.getFullYear();
-  let meses = h.getMonth() - n.getMonth();
-  if (meses < 0){ años--; meses += 12; }
-  return {años, meses};
-}
-
-function actualizarBienvenida(){
-  const cont = $("bienvenida");
-  const data = JSON.parse(localStorage.getItem("datosPersonales"));
-  if(!data){
-    cont.innerHTML = `<div class="nombre">Bienvenido</div>`;
-    return;
-  }
-  const e = calcularEdad(data.nacimiento);
-  cont.innerHTML = `
-    <div class="nombre">Bienvenido ${data.paciente}</div>
-    <div class="edad">${e.años} años · ${e.meses} meses</div>
-  `;
-}
-
 document.addEventListener("DOMContentLoaded", actualizarBienvenida);
 </script>
 
