@@ -202,7 +202,7 @@ button{
 <body>
 
 <header>
-  <h1>💊 Recordatori214 Medicamentos</h1>
+  <h1>💊 Recordatori215 Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -218,8 +218,8 @@ button{
     <img src="personas-inclusivas.png" class="imagen-home" alt="Personas inclusivas">
 
     <button id="btn-datos">Datos personales</button>
-    <button disabled>Medicamentos</button>
-    <button disabled>Seguimiento</button>
+    <button id="btn-medicamentos">Medicamentos</button>
+    <button id="btn-seguimiento">Seguimiento</button>
 
   </div>
 </div>
@@ -344,6 +344,8 @@ function actualizarBienvenida(){
   `;
 }
 
+</script>
+   
 /* =========================
    NAVEGACIÓN
 ========================= */
@@ -503,9 +505,55 @@ function limpiarFormularioMedicamentos(){
 </script>
 
 
+<script>
+const $ = id => document.getElementById(id);
 
+/* navegación */
+$("btn-datos").onclick = () => {
+  $("home").classList.add("hidden");
+  $("pantalla-datos").classList.remove("hidden");
+};
 
+$("btn-medicamentos").onclick = () => {
+  $("home").classList.add("hidden");
+  $("pantalla-medicamentos").classList.remove("hidden");
+};
+
+$("dp-volver").onclick = () => {
+  $("pantalla-datos").classList.add("hidden");
+  $("home").classList.remove("hidden");
+};
+
+/* bienvenida */
+function calcularEdad(fecha){
+  const n = new Date(fecha);
+  const h = new Date();
+  let años = h.getFullYear() - n.getFullYear();
+  let meses = h.getMonth() - n.getMonth();
+  if (meses < 0){ años--; meses += 12; }
+  return {años, meses};
+}
+
+function actualizarBienvenida(){
+  const cont = $("bienvenida");
+  const data = JSON.parse(localStorage.getItem("datosPersonales"));
+  if(!data){
+    cont.innerHTML = `<div class="nombre">Bienvenido</div>`;
+    return;
+  }
+  const e = calcularEdad(data.nacimiento);
+  cont.innerHTML = `
+    <div class="nombre">Bienvenido ${data.paciente}</div>
+    <div class="edad">${e.años} años · ${e.meses} meses</div>
+  `;
+}
+
+document.addEventListener("DOMContentLoaded", actualizarBienvenida);
 </script>
 
+
+   
+
+   
 </body>
 </html>
