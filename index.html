@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori199 de Medicamentos</h1>
+  <h1>💊 Recordatori200 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -765,7 +765,11 @@ function inicializarMedicamentos() {
   // =========================
 
   // evitar duplicar si ya existe
-  if (document.getElementById("lista-meds")) return;
+  if (document.getElementById("lista-meds")) {
+  window._btnGuardarMed = document.querySelector(".btn-primario");
+  return;
+}
+
 
   // BOTONES
   const btnGuardar = document.createElement("button");
@@ -806,9 +810,10 @@ function inicializarMedicamentos() {
   card.appendChild(listaWrapper);
 
   // exponer botón guardar para el resto del código
-  const btnGuardar = window._btnGuardarMed;
-
   
+
+ render();
+ 
   
   }
 
