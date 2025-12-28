@@ -202,7 +202,7 @@ button{
 <body>
 
 <header>
-  <h1>💊 Recordatori213 Medicamentos</h1>
+  <h1>💊 Recordatori214 Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -282,6 +282,23 @@ button{
   </div>
 </div>
 
+
+<!-- =========================
+     BLOQUE 3 – MEDICAMENTOS
+========================= -->
+<div id="pantalla-medicamentos" class="hidden">
+  <div class="container">
+    <div class="card">
+      <h2 style="text-align:center;margin-top:0">Medicamentos</h2>
+
+      <!-- aquí va TODO el formulario de medicamentos -->
+      
+    </div>
+  </div>
+</div>
+
+   
+   
 <div class="footer">
   Desarrollado por <strong>CA Tecnología</strong>
 </div>
@@ -376,6 +393,118 @@ $("dp-guardar").onclick = () => {
    INIT
 ========================= */
 document.addEventListener("DOMContentLoaded", actualizarBienvenida);
+
+
+<script>
+/* =========================
+   BLOQUE 3 – LÓGICA MEDICAMENTOS
+========================= */
+
+const diasSeleccionados = new Set();
+
+$("btn-medicamentos").onclick = () => {
+  $("home").classList.add("hidden");
+  $("pantalla-medicamentos").classList.remove("hidden");
+  renderMedicamentos();
+};
+
+$("med-volver").onclick = () => {
+  $("pantalla-medicamentos").classList.add("hidden");
+  $("home").classList.remove("hidden");
+};
+
+$("med-periodicidad").onchange = e => {
+  $("grupo-horas").classList.add("hidden");
+  $("grupo-dias").classList.add("hidden");
+
+  if(e.target.value === "horas") $("grupo-horas").classList.remove("hidden");
+  if(e.target.value === "dias") $("grupo-dias").classList.remove("hidden");
+};
+
+document.querySelectorAll("#med-dias button").forEach(btn=>{
+  btn.onclick = ()=>{
+    btn.classList.toggle("activo");
+    btn.style.background = btn.classList.contains("activo") ? "#2f80ed" : "";
+    btn.style.color = btn.classList.contains("activo") ? "#fff" : "";
+    btn.classList.contains("activo")
+      ? diasSeleccionados.add(btn.dataset.dia)
+      : diasSeleccionados.delete(btn.dataset.dia);
+  };
+});
+
+$("med-guardar").onclick = ()=>{
+  const data = {
+    nombre: $("med-nombre").value.trim(),
+    dosis: $("med-dosis").value.trim(),
+    periodicidad: $("med-periodicidad").value,
+    horas: $("med-cada-horas").value,
+    dias: [...diasSeleccionados],
+    hora: $("med-hora").value
+  };
+
+  if(!data.nombre || !data.dosis || !data.periodicidad || !data.hora){
+    $("med-error").style.display="block";
+    return;
+  }
+
+  $("med-error").style.display="none";
+
+  const meds = JSON.parse(localStorage.getItem("medicamentos") || "[]");
+  meds.push(data);
+  localStorage.setItem("medicamentos", JSON.stringify(meds));
+
+  limpiarFormularioMedicamentos();
+  renderMedicamentos();
+};
+
+function renderMedicamentos(){
+  const cont = $("lista-meds");
+  cont.innerHTML = "";
+
+  const meds = JSON.parse(localStorage.getItem("medicamentos") || "[]");
+  if(meds.length === 0){
+    cont.innerHTML = "<p style='color:#777'>Sin medicamentos</p>";
+    return;
+  }
+
+  meds.forEach((m,i)=>{
+    const div = document.createElement("div");
+    div.style.marginBottom="10px";
+    div.innerHTML = `
+      <strong>${m.nombre}</strong><br>
+      ${m.dosis}<br>
+      ${m.periodicidad}<br>
+      <button onclick="eliminarMed(${i})" style="background:#d32f2f">Eliminar</button>
+    `;
+    cont.appendChild(div);
+  });
+}
+
+function eliminarMed(i){
+  const meds = JSON.parse(localStorage.getItem("medicamentos"));
+  meds.splice(i,1);
+  localStorage.setItem("medicamentos", JSON.stringify(meds));
+  renderMedicamentos();
+}
+
+function limpiarFormularioMedicamentos(){
+  $("med-nombre").value="";
+  $("med-dosis").value="";
+  $("med-periodicidad").value="";
+  $("med-cada-horas").value="";
+  $("med-hora").value="";
+  diasSeleccionados.clear();
+  document.querySelectorAll("#med-dias button").forEach(b=>{
+    b.classList.remove("activo");
+    b.style.background="";
+    b.style.color="";
+  });
+}
+</script>
+
+
+
+
 </script>
 
 </body>
