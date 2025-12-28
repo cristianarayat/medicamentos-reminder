@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori198 de Medicamentos</h1>
+  <h1>💊 Recordatori199 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -806,7 +806,7 @@ function inicializarMedicamentos() {
   card.appendChild(listaWrapper);
 
   // exponer botón guardar para el resto del código
-  window._btnGuardarMed = btnGuardar;
+  const btnGuardar = window._btnGuardarMed;
 
   
   
@@ -817,54 +817,7 @@ function inicializarMedicamentos() {
      
 
      
-/* =========================
-   BOTONES AL FINAL REAL
-========================= */
-const card = document.querySelector(".med-card");
-
-const btnGuardar = document.createElement("button");
-btnGuardar.className="btn-primario";
-btnGuardar.disabled=true;
-btnGuardar.textContent="Guardar (desactivado)";
-
-const btnVolver = document.createElement("button");
-btnVolver.className="btn-primario btn-volver";
-btnVolver.textContent="Volver";
-btnVolver.onclick=()=>document.getElementById("medicamentos").style.display="none";
-
-const footer=document.createElement("div");
-footer.style.marginTop="20px";
-footer.style.display="flex";
-footer.style.flexDirection="column";
-footer.style.gap="8px";
-
-footer.appendChild(btnGuardar);
-footer.appendChild(btnVolver);
-card.appendChild(footer);
-
-// =========================
-// LISTA DE MEDICAMENTOS (ABAJO DE LOS BOTONES)
-// =========================
-const listaWrapper = document.createElement("div");
-listaWrapper.style.marginTop = "30px";
-
-const tituloLista = document.createElement("h3");
-tituloLista.textContent = "Medicamentos guardados";
-tituloLista.style.textAlign = "center";
-tituloLista.style.marginBottom = "12px";
-
-const listaMeds = document.createElement("div");
-listaMeds.id = "lista-meds";
-
-listaWrapper.appendChild(tituloLista);
-listaWrapper.appendChild(listaMeds);
-
-// 🔑 SE AGREGA DESPUÉS DE GUARDAR Y VOLVER
-card.appendChild(listaWrapper);
-
-
-
-     
+    
 btnGuardar.addEventListener("click", () => {
 
   // ===== DATOS =====
