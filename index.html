@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori173 de Medicamentos</h1>
+  <h1>💊 Recordatori174 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -768,212 +768,13 @@ footer.appendChild(btnVolver);
 card.appendChild(footer);
 </script>
 
-<!-- =========================
-   BLOQUE 3 – FOTO DEL MEDICAMENTO
-   SELECCIÓN + MINIATURA
-========================= -->
 
-<style>
-.med-foto{
-  margin-top:16px;
-}
-
-.med-foto label{
-  display:block;
-  font-weight:600;
-  margin-bottom:6px;
-}
-
-.med-foto input[type="file"]{
-  width:100%;
-}
-
-.med-preview{
-  margin-top:10px;
-  width:90px;
-  height:90px;
-  border-radius:12px;
-  border:1px solid #ccc;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  background:#f5f5f5;
-}
-
-.med-preview img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  const card = document.querySelector("#medicamentos .med-card");
-  if (!card || document.getElementById("m-foto")) return;
-
-  /* ===== BLOQUE FOTO ===== */
-  const bloqueFoto = document.createElement("div");
-  bloqueFoto.className = "med-foto";
-  bloqueFoto.innerHTML = `
-    <label>Foto del medicamento</label>
-    <input type="file" id="m-foto" accept="image/*">
-    <div class="med-preview" id="m-preview">
-      <span style="font-size:12px;color:#777">Sin imagen</span>
-    </div>
-  `;
-
-  /* Insertar ANTES de Días y horas */
-  const bloqueDias = document.getElementById("med-dias");
-  card.insertBefore(bloqueFoto, bloqueDias);
-
-  /* ===== PREVISUALIZACIÓN ===== */
-  const inputFoto = document.getElementById("m-foto");
-  const preview = document.getElementById("m-preview");
-
-  inputFoto.addEventListener("change", () => {
-    const file = inputFoto.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-      preview.innerHTML = `<img src="${e.target.result}">`;
-    };
-    reader.readAsDataURL(file);
-  });
-
-});
-</script>
-
-
-<!-- =========================
-   BLOQUE 3 – FOTO DEL MEDICAMENTO
-   SELECCIÓN + MINIATURA
-========================= -->
-
-<style>
-.med-foto{
-  margin-top:16px;
-}
-
-.med-foto label{
-  display:block;
-  font-weight:600;
-  margin-bottom:6px;
-}
-
-.med-foto input[type="file"]{
-  width:100%;
-}
-
-.med-preview{
-  margin-top:10px;
-  width:90px;
-  height:90px;
-  border-radius:12px;
-  border:1px solid #ccc;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  background:#f5f5f5;
-}
-
-.med-preview img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  const card = document.querySelector("#medicamentos .med-card");
-  if (!card || document.getElementById("m-foto")) return;
-
-  /* ===== BLOQUE FOTO ===== */
-  const bloqueFoto = document.createElement("div");
-  bloqueFoto.className = "med-foto";
-  bloqueFoto.innerHTML = `
-    <label>Foto del medicamento</label>
-    <input type="file" id="m-foto" accept="image/*">
-    <div class="med-preview" id="m-preview">
-      <span style="font-size:12px;color:#777">Sin imagen</span>
-    </div>
-  `;
-
-  /* Insertar ANTES de Días y horas */
-  const bloqueDias = document.getElementById("med-dias");
-  card.insertBefore(bloqueFoto, bloqueDias);
-
-  /* ===== PREVISUALIZACIÓN ===== */
-  const inputFoto = document.getElementById("m-foto");
-  const preview = document.getElementById("m-preview");
-
-  inputFoto.addEventListener("change", () => {
-    const file = inputFoto.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-      preview.innerHTML = `<img src="${e.target.result}">`;
-    };
-    reader.readAsDataURL(file);
-  });
-
-});
-</script>
-
-
-
-
-
-
-
-
-
-
-<script>
-/* ==================================================
-   BLOQUE 3 – GUARDADO FINAL (CORREGIDO Y FUNCIONAL)
-================================================== */
-
-(function(){
-
-  const card = document.querySelector("#medicamentos .med-card");
-
-  // 🔵 botón guardar REAL (el que se creó arriba)
-  const btnGuardar = document.querySelector(".btn-primario");
-
-  btnGuardar.disabled = false;
-  btnGuardar.textContent = "Guardar medicamento";
-  btnGuardar.style.background = "#2f80ed";
-
-  const medicamentos = JSON.parse(
-  localStorage.getItem("medicamentos_guardados_v1")
-) || [];
-
-
-  // Contenedor lista
-  let lista = document.getElementById("lista-meds");
-  if (!lista) {
-    lista = document.createElement("div");
-    lista.id = "lista-meds";
-    lista.style.marginTop = "20px";
-    card.appendChild(lista);
-  }
-
- btnGuardar.addEventListener("click", e => {
-  e.preventDefault();
+btnGuardar.addEventListener("click", () => {
 
   const nombre = document.getElementById("med-nombre").value.trim();
-  const ubicacion = document.getElementById("med-ubicacion")?.value.trim() || "";
+  const ubicacion = document.getElementById("med-ubicacion").value.trim();
   const dosis = Number(document.getElementById("m-dosis").value);
   const periodicidad = document.getElementById("m-periodicidad").value;
-  const dias = document.getElementById("m-dias").value;
   const inicio = document.getElementById("m-inicio").value;
   const fin = document.getElementById("m-fin").value;
   const fotoInput = document.getElementById("m-foto");
@@ -983,27 +784,237 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  if (periodicidad !== "0" && (!dias || !inicio || !fin)) {
-    alert("Completa días y fechas");
-    return;
-  }
+  let hayHora = false;
+  document.querySelectorAll('#med-dias input[type="time"]')
+    .forEach(i => { if (i.value) hayHora = true; });
 
-  let hayHoras = false;
-  document
-    .querySelectorAll('#med-dias input[type="time"]')
-    .forEach(i => { if (i.value) hayHoras = true; });
-
-  if (!hayHoras) {
+  if (!hayHora) {
     alert("Selecciona al menos un día y una hora");
     return;
   }
 
   const estadoMed = (() => {
     if (periodicidad === "0") return "Activo";
+    if (!fin) return "Activo";
     const hoy = new Date(); hoy.setHours(0,0,0,0);
     const f = new Date(fin); f.setHours(0,0,0,0);
     return f < hoy ? "Caducado" : "Activo";
   })();
+
+  const guardar = (fotoBase64 = "") => {
+
+    const med = {
+      id: Date.now().toString(),
+      nombre,
+      ubicacion,
+      dosis,
+      periodicidad,
+      inicio,
+      fin,
+      estado: estadoMed,
+      fotoURL: fotoBase64,
+      horas: JSON.parse(JSON.stringify(estado))
+    };
+
+    const meds = JSON.parse(
+      localStorage.getItem("medicamentos_guardados_v1")
+    ) || [];
+
+    meds.push(med);
+
+    localStorage.setItem(
+      "medicamentos_guardados_v1",
+      JSON.stringify(meds)
+    );
+
+    limpiar();
+    render();
+  };
+
+  if (fotoInput?.files?.[0]) {
+    const reader = new FileReader();
+    reader.onload = () => guardar(reader.result);
+    reader.readAsDataURL(fotoInput.files[0]);
+  } else {
+    guardar("");
+  }
+
+});
+  
+     
+
+
+     
+<!-- =========================
+   BLOQUE 3 – FOTO DEL MEDICAMENTO
+   SELECCIÓN + MINIATURA
+========================= -->
+
+<style>
+.med-foto{
+  margin-top:16px;
+}
+
+.med-foto label{
+  display:block;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.med-foto input[type="file"]{
+  width:100%;
+}
+
+.med-preview{
+  margin-top:10px;
+  width:90px;
+  height:90px;
+  border-radius:12px;
+  border:1px solid #ccc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background:#f5f5f5;
+}
+
+.med-preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const card = document.querySelector("#medicamentos .med-card");
+  if (!card || document.getElementById("m-foto")) return;
+
+  /* ===== BLOQUE FOTO ===== */
+  const bloqueFoto = document.createElement("div");
+  bloqueFoto.className = "med-foto";
+  bloqueFoto.innerHTML = `
+    <label>Foto del medicamento</label>
+    <input type="file" id="m-foto" accept="image/*">
+    <div class="med-preview" id="m-preview">
+      <span style="font-size:12px;color:#777">Sin imagen</span>
+    </div>
+  `;
+
+  /* Insertar ANTES de Días y horas */
+  const bloqueDias = document.getElementById("med-dias");
+  card.insertBefore(bloqueFoto, bloqueDias);
+
+  /* ===== PREVISUALIZACIÓN ===== */
+  const inputFoto = document.getElementById("m-foto");
+  const preview = document.getElementById("m-preview");
+
+  inputFoto.addEventListener("change", () => {
+    const file = inputFoto.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.innerHTML = `<img src="${e.target.result}">`;
+    };
+    reader.readAsDataURL(file);
+  });
+
+});
+</script>
+
+
+<!-- =========================
+   BLOQUE 3 – FOTO DEL MEDICAMENTO
+   SELECCIÓN + MINIATURA
+========================= -->
+
+<style>
+.med-foto{
+  margin-top:16px;
+}
+
+.med-foto label{
+  display:block;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.med-foto input[type="file"]{
+  width:100%;
+}
+
+.med-preview{
+  margin-top:10px;
+  width:90px;
+  height:90px;
+  border-radius:12px;
+  border:1px solid #ccc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background:#f5f5f5;
+}
+
+.med-preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  const card = document.querySelector("#medicamentos .med-card");
+  if (!card || document.getElementById("m-foto")) return;
+
+  /* ===== BLOQUE FOTO ===== */
+  const bloqueFoto = document.createElement("div");
+  bloqueFoto.className = "med-foto";
+  bloqueFoto.innerHTML = `
+    <label>Foto del medicamento</label>
+    <input type="file" id="m-foto" accept="image/*">
+    <div class="med-preview" id="m-preview">
+      <span style="font-size:12px;color:#777">Sin imagen</span>
+    </div>
+  `;
+
+  /* Insertar ANTES de Días y horas */
+  const bloqueDias = document.getElementById("med-dias");
+  card.insertBefore(bloqueFoto, bloqueDias);
+
+  /* ===== PREVISUALIZACIÓN ===== */
+  const inputFoto = document.getElementById("m-foto");
+  const preview = document.getElementById("m-preview");
+
+  inputFoto.addEventListener("change", () => {
+    const file = inputFoto.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.innerHTML = `<img src="${e.target.result}">`;
+    };
+    reader.readAsDataURL(file);
+  });
+
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+<script>
+
 
   const guardarFinal = (fotoBase64 = "") => {
 
