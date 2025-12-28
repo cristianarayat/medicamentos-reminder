@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori201 de Medicamentos</h1>
+  <h1>💊 Recordatori202 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -776,6 +776,8 @@ function inicializarMedicamentos() {
   btnGuardar.className = "btn-primario";
   btnGuardar.disabled = true;
   btnGuardar.textContent = "Guardar (desactivado)";
+  window._btnGuardarMed = btnGuardar;
+
 
   const btnVolver = document.createElement("button");
   btnVolver.className = "btn-primario btn-volver";
@@ -823,7 +825,7 @@ function inicializarMedicamentos() {
 
      
     
-btnGuardar.addEventListener("click", () => {
+
 
   // ===== DATOS =====
   const nombre = document.getElementById("med-nombre").value.trim();
@@ -974,7 +976,7 @@ if (fotoInput?.files?.[0]) {
 
 });
 
-function render() {
+  function render() {
   const lista = document.getElementById("lista-meds");
   if (!lista) return;
 
@@ -1021,17 +1023,11 @@ function render() {
 };
 
 
-  // 🔑 refrescar UI inmediatamente
-  render();
-};
-
-
+  
     lista.appendChild(div);
   });
 }
 
-
-}
 
      
 </script>
