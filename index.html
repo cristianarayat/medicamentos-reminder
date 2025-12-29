@@ -208,7 +208,7 @@ button{
 <body>
 
 <header>
-  <h1>💊 Recordatori222 Medicamentos</h1>
+  <h1>💊 Recordatori223 Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -568,13 +568,7 @@ function renderMedicamentos(){
   });
 }
 
-/* --- eliminar --- */
-function eliminarMedicamento(i){
-  const meds = JSON.parse(localStorage.getItem("medicamentos"));
-  meds.splice(i,1);
-  localStorage.setItem("medicamentos", JSON.stringify(meds));
-  renderMedicamentos();
-   function formatearPeriodicidad(m){
+function formatearPeriodicidad(m){
   if(m.periodicidad === "diaria"){
     return "Diaria";
   }
@@ -590,6 +584,15 @@ function eliminarMedicamento(i){
   return "";
 }
 
+
+   
+/* --- eliminar --- */
+function eliminarMedicamento(i){
+  const meds = JSON.parse(localStorage.getItem("medicamentos"));
+  meds.splice(i,1);
+  localStorage.setItem("medicamentos", JSON.stringify(meds));
+  renderMedicamentos();
+   
 }
 
 /* --- limpiar formulario --- */
