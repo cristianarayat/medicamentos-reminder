@@ -101,7 +101,7 @@ button{
      HEADER
      ========================= -->
 <header>
-  <h1>💊 Recordatori309 de Medicamentos</h1>
+  <h1>💊 Recordatori310 de Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -2258,6 +2258,117 @@ window.addEventListener("load", () => {
 });
 </script>
 
+<script>
+/* ==================================================
+   BLOQUE 5 – NOTIFICACIONES (VOZ + VIBRACIÓN)
+   NO TOCA CÓDIGO EXISTENTE
+================================================== */
+
+(function(){
+
+  // 🔑 pedir permiso una sola vez
+  if ("Notification" in window && Notification.permission === "default") {
+    Notification.requestPermission();
+  }
+
+  // 🔁 reloj cada 30 segundos
+  setInterval(verificarRecordatorios, 30000);
+
+  function verificarRecordatorios(){
+
+    const datos = JSON.parse(
+      localStorage.getItem("datosPersonales")
+    );
+    if (!datos) return;
+
+    const meds = JSON.parse(
+      localStorage.getItem("medicamentos_guardados_v1")
+    ) || [];
+
+    const ahora = new Date();
+    const horaActual = ahora.toTimeString().slice(0,5);
+    const hoyClave = ahora.toISOString().slice(0,10);
+
+    const diasMap = ["L","M","X","J","V","S","D"];
+    const diaHoy = diasMap[(ahora.getDay() + 6) % 7];
+
+    // evitar repetir notificación
+    const yaNotificados = JSON.parse(
+      localStorage.getItem("notificados_hoy_v1")
+    ) || {};
+
+    if (!yaNotificados[hoyClave]) {
+      yaNotificados[hoyClave] = [];
+    }
+
+    meds.forEach(m => {
+
+      if (!m.horas || !m.horas[diaHoy]) return;
+
+      m.horas[diaHoy].forEach(hora => {
+        if (!hora) return;
+
+        const clave = `${m.nombre}|${hora}`;
+
+        // ya notificado
+        if (yaNotificados[hoyClave].includes(clave)) return;
+
+        // no es la hora
+        if (hora !== horaActual) return;
+
+        // validar fechas si no es permanente
+        if (m.periodicidad !== "0") {
+          if (!m.inicio || !m.fin) return;
+
+          const ini = new Date(m.inicio);
+          const fin = new Date(m.fin);
+          ini.setHours(0,0,0,0);
+          fin.setHours(23,59,59,999);
+
+          if (ahora < ini || ahora > fin) return;
+        }
+
+        // 🔔 NOTIFICACIÓN
+        mostrarNotificacion(datos, m);
+
+        // marcar como notificado
+        yaNotificados[hoyClave].push(clave);
+        localStorage.setItem(
+          "notificados_hoy_v1",
+          JSON.stringify(yaNotificados)
+        );
+      });
+
+    });
+  }
+
+  function mostrarNotificacion(datos, med){
+
+    const mensaje = `${datos.paciente}, debes tomar el medicamento ${med.nombre}`;
+
+    // 🔔 visual
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("💊 Recordatorio", {
+        body: mensaje,
+        silent: true
+      });
+    }
+
+    // 🔊 voz
+    if (datos.voz && "speechSynthesis" in window) {
+      const voz = new SpeechSynthesisUtterance(mensaje);
+      voz.lang = "es-CL";
+      window.speechSynthesis.speak(voz);
+    }
+
+    // 📳 vibración
+    if (datos.vibracion && navigator.vibrate) {
+      navigator.vibrate([300, 200, 300]);
+    }
+  }
+
+})();
+</script>
 
      
 
