@@ -208,7 +208,7 @@ button{
 <body>
 
 <header>
-  <h1>💊 Recordatori221 Medicamentos</h1>
+  <h1>💊 Recordatori222 Medicamentos</h1>
 </header>
 
 <!-- =========================
@@ -365,12 +365,13 @@ button{
 
 
 <script>
+const $ = id => document.getElementById(id);
 document.addEventListener("DOMContentLoaded", () => {
 
   /* =========================
      UTILIDAD
   ========================= */
-  const $ = id => document.getElementById(id);
+  
 
   /* =========================
      EDAD
@@ -412,9 +413,11 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   $("btn-medicamentos").onclick = () => {
-    $("home").classList.add("hidden");
-    $("pantalla-medicamentos").classList.remove("hidden");
-  };
+  $("home").classList.add("hidden");
+  $("pantalla-medicamentos").classList.remove("hidden");
+  renderMedicamentos();
+};
+
 
   $("dp-volver").onclick = () => {
     $("pantalla-datos").classList.add("hidden");
@@ -471,11 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const diasSeleccionados = new Set();
 
 /* --- navegación --- */
-$("btn-medicamentos").onclick = () => {
-  $("home").classList.add("hidden");
-  $("pantalla-medicamentos").classList.remove("hidden");
-  renderMedicamentos();
-};
+
 
 $("med-volver").onclick = () => {
   $("pantalla-medicamentos").classList.add("hidden");
@@ -558,7 +557,7 @@ function renderMedicamentos(){
     div.innerHTML = `
       <strong>${m.nombre}</strong><br>
       ${m.dosis}<br>
-      ${m.periodicidad}<br>
+      ${formatearPeriodicidad(m)}<br>
       <small>${m.hora}</small><br>
       <button style="background:#d32f2f;margin-top:6px"
         onclick="eliminarMedicamento(${i})">
@@ -575,6 +574,22 @@ function eliminarMedicamento(i){
   meds.splice(i,1);
   localStorage.setItem("medicamentos", JSON.stringify(meds));
   renderMedicamentos();
+   function formatearPeriodicidad(m){
+  if(m.periodicidad === "diaria"){
+    return "Diaria";
+  }
+
+  if(m.periodicidad === "horas"){
+    return `Cada ${m.cadaHoras} horas`;
+  }
+
+  if(m.periodicidad === "dias"){
+    return `Días: ${m.dias.join(", ")}`;
+  }
+
+  return "";
+}
+
 }
 
 /* --- limpiar formulario --- */
